@@ -1,0 +1,9 @@
+# Surplus Exchange: everything the MCP server and the FastAPI backend need, in one venv.
+fastmcp>=4.1
+pydantic>=2.7
+pydantic-ai-slim[openai,mcp]>=2.50
+openai>=1.40
+python-dotenv>=1.0.1
+filelock>=3.12
+fastapi>=0.115
+uvicorn[standard]>=0.30

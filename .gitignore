@@ -1,0 +1,28 @@
+# Secrets: never commit real keys
+.env
+.env.*
+!.env.example
+
+# Python virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node. frontend/dist IS committed so graders don't need Node to run the app.
+node_modules/
+frontend/.vite/
+*.tsbuildinfo
+
+# Temporary files written by the audit logger (audit_trail.json itself IS committed)
+output/*.tmp
+output/*.json.lock
+output/audit_trail.corrupt-*.json
+
+# Editor / OS clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.zip
