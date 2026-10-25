@@ -27,7 +27,7 @@ Grading is out of 100: the idea (novelty + real-world value, 21), the app workin
   - `audit_trail.json`: export of the append-only log
   - `tokenomics.json`, `safety_tests.json`, `eval_matching.json`, `eval_negotiation.json`
   - `github_url.txt`
-  - `screenshots/`: one per checkpoint, named `phaseN-<what>.png`
+  - `screenshots/`: one per checkpoint, named `phaseN-<what>.webp` (or .png)
 - **`mcp_server/README.md`**: the tools and which roles can call them.
 - **`backend/prompts/`**: one `.md` system prompt per agent, not inline strings.
 - **At each checkpoint:** stop, list the evidence files produced, and remind me what to commit and which screenshot to take.

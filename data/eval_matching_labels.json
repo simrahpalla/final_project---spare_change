@@ -1,0 +1,121 @@
+{
+  "description": "Listing -> buyer that should rank #1 (has an open need for that part or a valid substitute). Decoys share a brand keyword but run an incompatible platform.",
+  "cases": [
+    {
+      "listing_id": 1,
+      "expected_buyer_id": 20,
+      "expected_need_id": 1,
+      "decoy_buyer_ids": [
+        18,
+        23,
+        44,
+        46
+      ]
+    },
+    {
+      "listing_id": 2,
+      "expected_buyer_id": 21,
+      "expected_need_id": 2,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 3,
+      "expected_buyer_id": 22,
+      "expected_need_id": 3,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 4,
+      "expected_buyer_id": 23,
+      "expected_need_id": 4,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 5,
+      "expected_buyer_id": 24,
+      "expected_need_id": 5,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 6,
+      "expected_buyer_id": 25,
+      "expected_need_id": 6,
+      "decoy_buyer_ids": [
+        6,
+        48
+      ]
+    },
+    {
+      "listing_id": 7,
+      "expected_buyer_id": 26,
+      "expected_need_id": 7,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 8,
+      "expected_buyer_id": 27,
+      "expected_need_id": 8,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 9,
+      "expected_buyer_id": 28,
+      "expected_need_id": 9,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 10,
+      "expected_buyer_id": 29,
+      "expected_need_id": 10,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 11,
+      "expected_buyer_id": 30,
+      "expected_need_id": 11,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 12,
+      "expected_buyer_id": 31,
+      "expected_need_id": 12,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 13,
+      "expected_buyer_id": 32,
+      "expected_need_id": 13,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 14,
+      "expected_buyer_id": 33,
+      "expected_need_id": 14,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 15,
+      "expected_buyer_id": 34,
+      "expected_need_id": 15,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 16,
+      "expected_buyer_id": 35,
+      "expected_need_id": 16,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 17,
+      "expected_buyer_id": 37,
+      "expected_need_id": 18,
+      "decoy_buyer_ids": []
+    },
+    {
+      "listing_id": 18,
+      "expected_buyer_id": 38,
+      "expected_need_id": 19,
+      "decoy_buyer_ids": []
+    }
+  ]
+}

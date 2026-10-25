@@ -70,11 +70,22 @@ Open **http://localhost:8000**. The header shows `gpt-6-luna · key from …` wh
 | `backend/` | FastAPI app. It runs the PydanticAI agents (all on `gpt-6-luna` via Portkey) and serves the dashboard from `frontend/dist`. |
 | `mcp_server/` | The only path to the SQLite database. Tools are restricted by role (seller agent, buyer agent, broker, human approver). *(Phase 2)* |
 | `frontend/` | React + Vite + TypeScript dashboard. Rebuild with `npm install && npm run build` only if you change it. |
-| `data/` | The original `exchange.db` (never modified) and the working copy `exchange_new.db`. *(Phase 1)* |
+| `data/` | The original `exchange.db` (never modified), the working copy `exchange_new.db`, and `eval_matching_labels.json`. Both databases are committed, so no setup step is needed. |
 | `scripts/` | The setup check, seeding, cost reports, safety tests and evals. |
 | `output/` | Evidence: the audit trail, token and cost reports, safety test results and screenshots. |
 
 **Safety by design:** only `gpt-6-luna` is used, there are per-run caps on model requests, tokens and tool calls, the audit trail is append-only, all user text is treated as data and never as instructions, and only a human can approve a deal.
+
+### The data
+
+There is one small, synthetic test dataset: 50 companies, 60 catalog parts, 25 listings (4 of them planted bad ones for the safety tests) and 20 buyer needs. It is already built and committed in `data/`. To rebuild it from scratch or to check it:
+
+```bash
+.venv/Scripts/python.exe scripts/seed_data.py           # rebuild data/exchange.db and the working copy
+.venv/Scripts/python.exe scripts/seed_data.py --check   # print row counts and sanity checks
+```
+
+To run against a different database, set `SURPLUS_DB=path/to/working_copy.db` in `.env`. The tables and the designed test cases are described in `output/harness.md`.
 
 ### Developing the frontend
 

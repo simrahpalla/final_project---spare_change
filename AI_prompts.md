@@ -33,3 +33,19 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 > 2 - see image for the gpt 6 luna price
 > 1 -i clicked enter - did it work
+
+> Yes, make the Phase 0 commit for me. I'll take the screenshot myself.
+
+## Phase 1 — Synthetic Marketplace Data
+
+### Initial prompt
+
+> Start Phase 1: build the seed script and synthetic database. Include the screenshot in the next commit.
+
+### What was missing
+
+- Nothing — completed with the initial prompt.
+
+### Follow-up prompt(s)
+
+> None.
