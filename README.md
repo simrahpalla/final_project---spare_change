@@ -70,7 +70,7 @@ Open **http://localhost:8000**. The header shows `gpt-6-luna · key from …` wh
 | `backend/` | FastAPI app. It runs the PydanticAI agents (all on `gpt-6-luna` via Portkey) and serves the dashboard from `frontend/dist`. |
 | `mcp_server/` | The only path to the SQLite database. Tools are restricted by role (seller agent, buyer agent, broker, human approver). *(Phase 2)* |
 | `frontend/` | React + Vite + TypeScript dashboard. Rebuild with `npm install && npm run build` only if you change it. |
-| `data/` | The original `exchange.db` (never modified), the working copy `exchange_new.db`, and `eval_matching_labels.json`. Both databases are committed, so no setup step is needed. |
+| `data/` | The original `exchange.db` (never modified), the working copy `exchange_new.db`, and `answer_keys.json`. Both databases are committed, so no setup step is needed. |
 | `scripts/` | The setup check, seeding, cost reports, safety tests and evals. |
 | `output/` | Evidence: the audit trail, token and cost reports, safety test results and screenshots. |
 
@@ -78,14 +78,25 @@ Open **http://localhost:8000**. The header shows `gpt-6-luna · key from …` wh
 
 ### The data
 
-There is one small, synthetic test dataset: 50 companies, 60 catalog parts, 25 listings (4 of them planted bad ones for the safety tests) and 20 buyer needs. It is already built and committed in `data/`. To rebuild it from scratch or to check it:
+**The data is synthetic.** Part numbers, manufacturers and machine platforms are real. Every company, listing, buyer need and price is made up. There is one small test dataset (128 KB): 50 companies, 62 catalog parts, 27 listings (6 of them deliberately bad, for the safety tests) and 21 buyer needs. It is already built and committed in `data/`, so you don't need to run anything to use it.
+
+- `data/exchange.db` is the original. It is read-only and the app never changes it.
+- `data/exchange_new.db` is the working copy the app writes to.
+
+**Reset** the working copy to a clean state at any time. This discards matches, negotiations and deals made while using the app:
 
 ```bash
-.venv/Scripts/python.exe scripts/seed_data.py           # rebuild data/exchange.db and the working copy
-.venv/Scripts/python.exe scripts/seed_data.py --check   # print row counts and sanity checks
+.venv/Scripts/python.exe scripts/reset_db.py
 ```
 
-To run against a different database, set `SURPLUS_DB=path/to/working_copy.db` in `.env`. The tables and the designed test cases are described in `output/harness.md`.
+Other data commands (optional):
+
+```bash
+.venv/Scripts/python.exe scripts/seed_data.py      # rebuild everything from scratch (identical result: fixed random seed)
+.venv/Scripts/python.exe scripts/data_report.py    # 11 data-quality checks -> output/data_report.md
+```
+
+To run against a different database, set `SURPLUS_DB=path/to/working_copy.db` in `.env`. The tables, the answer keys (`data/answer_keys.json`) and the designed test cases are described in `output/harness.md`.
 
 ### Developing the frontend
 

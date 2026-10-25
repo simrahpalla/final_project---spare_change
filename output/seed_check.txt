@@ -1,36 +1,26 @@
-﻿Database: data\exchange.db   (exchange today = 2026-10-25)
+Database: data\exchange.db   (exchange today = 2026-10-25)
 
 table                   rows
-exchange_meta              2
+exchange_meta              3
 companies                 50
-installed_equipment       90
-part_catalog              60
-compatibility             71
-listings                  25
-needs                     20
+installed_equipment       79
+part_catalog              62
+compatibility             74
+listings                  27
+needs                     21
 matches                    0
-seller_private            25
-buyer_private             20
+seller_private            27
+buyer_private             21
 negotiations               0
 offers                     0
 deals                      0
 notifications              0
 token_usage                0
 
-sellers with listings: 15   companies with installed equipment (potential buyers): 50
-
 Sanity checks
   [ok] no broken foreign keys
   [ok] every need's platform is installed at that buyer 
-  [ok] every labeled match is the same part or a listed substitute 
-  [ok] decoy buyers run no platform the listed part fits 
-  [ok] listing 1 / need 1: floor <= ceiling (deal possible)
-  [ok] listing 3 / need 3: floor > ceiling (should walk away)
+  [ok] needs that name only a machine have platform + family
+  [ok] data/answer_keys.json exists
 
-Planted bad listings (status 'submitted', for the compliance guard)
-  [ok] prompt injection in listing text: [22]
-  [ok] expired chemical: [(23, '2026-07-31')]
-  [ok] hazmat with no SDS: [24]
-  [ok] asking price > 3x new: [(25, 7500.0, 690.0)]
-
-All checks passed.
+All checks passed. Run scripts/data_report.py for the full data-quality report.
