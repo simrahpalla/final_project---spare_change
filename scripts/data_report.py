@@ -509,6 +509,7 @@ def build_report(x: Exchange, keys: dict | None, checks: list[dict], db: Path) -
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--db", type=Path, default=WORKING_DB)
+    p.add_argument("--brief", action="store_true", help="one line per check (fits a small terminal / screenshot)")
     args = p.parse_args()
     db = args.db.resolve()
     keys = json.loads(ANSWER_KEYS.read_text(encoding="utf-8")) if ANSWER_KEYS.exists() else None
@@ -519,8 +520,12 @@ def main() -> int:
     REPORT.parent.mkdir(exist_ok=True)
     REPORT.write_text(report, encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")
+    print(f"Surplus Exchange data report  |  {db.relative_to(REPO)}  |  exchange date {x.today}  |  no model calls\n")
     for c in checks:
-        print(f"[{'PASS' if c['passed'] else 'FAIL'}] {c['name']}\n       {c['detail']}" + (f"\n       FIX: {c['fix']}" if c["fix"] else ""))
+        if args.brief:
+            print(f"[{'PASS' if c['passed'] else 'FAIL'}] {c['name']}")
+        else:
+            print(f"[{'PASS' if c['passed'] else 'FAIL'}] {c['name']}\n       {c['detail']}" + (f"\n       FIX: {c['fix']}" if c["fix"] else ""))
     passed = sum(c["passed"] for c in checks)
     print(f"\n{passed}/{len(checks)} checks pass. Full report: {REPORT.relative_to(REPO)}")
     return 0 if passed == len(checks) else 1
