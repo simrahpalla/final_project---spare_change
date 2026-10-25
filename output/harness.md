@@ -9,7 +9,7 @@ Surplus Exchange is a marketplace for industrial surplus that AI agents run. A p
 
 A human approves every deal. All agents call `gpt-6-luna` through Portkey. An **MCP server** is the only path to the database, a **FastAPI** backend runs the agents, and a **React** dashboard shows everything.
 
-*This file grows phase by phase. Sections for tools (Phase 2), agents (Phase 3) and safety (Phase 8) are added as they are built.*
+*This file grows phase by phase. Sections for agents (Phase 3) and safety (Phase 8) are added as they are built.*
 
 ---
 
@@ -105,3 +105,30 @@ The first run on the original Phase 1 data passed **3/11**. That report is saved
 | 25 | Used 1756-IB16 at $7,500, more than 10× new | `price_gt_3x_new` | Blocked |
 | 26 *(subtle)* | Sodium hypochlorite: the text gives only the manufacture date (03/15/2026). Its 6-month shelf life means it expired 2026-09-15 | `expired` | Blocked once the expiry is derived |
 | 27 *(subtle)* | Discontinued 1756-L61 "NEW factory sealed", 5 units at ~29% of list, from an overseas warehouse | `counterfeit_risk` | Held for human review |
+
+---
+
+## 2. Tools: the MCP server (Phase 2)
+
+`mcp_server/server.py` (FastMCP, stdio) is the **only** path to the database. Each process starts with `SURPLUS_ROLE` and registers only that role's tools. A tool outside the role does not exist in that process, so the role boundary is enforced by the server, not by a prompt. The full tool-by-role table is in `mcp_server/README.md`.
+
+| Role | Tools | Can | Cannot |
+|---|---|---|---|
+| `broker` | 25 | Build and correct listings and needs, run the compliance rules, activate or flag, search both directions, record matches, open negotiations, request approval | Read any private limit, make offers, approve deals |
+| `seller_agent` | 9 | Read **its own** floor, see **its own** negotiation, make offers | See the buyer's ceiling or any other negotiation, approve |
+| `buyer_agent` | 9 | Read **its own** ceiling and downtime cost, see its own negotiation, make offers | See the seller's floor, approve |
+| `human_approver` | 15 | Approve or reject deals (human names only), plus dashboard views | Negotiate |
+| `system` | 16 | Log tokens, token summaries, dashboard views | Negotiate, approve, change listings |
+
+**Rules enforced in code:**
+- **Compliance:** rules are shared with the data report through `mcp_server/compliance_rules.py`. `activate_listing` re-runs them and flags a listing that trips one.
+- **Matching:** only `active` listings can be matched. `record_matches` rejects any buyer that isn't grounded in compatibility or an open need.
+- **Negotiation (`submit_offer`):** strict turns; no offer outside your own limit; the seller never raises and the buyer never lowers; the round cap is enforced; no message may contain your own limit; crossing offers close the deal.
+- **Approval:** only `approve_deal` closes a deal, it exists only for `human_approver`, and it refuses agent-like names.
+
+**Evidence:** `scripts/mcp_smoke.py` makes 72 real stdio calls across all 5 roles on a scratch copy of the DB. It calls all 31 tools, and every refusal must return its exact error code. Result: **72/72 as expected** (`output/mcp_smoke.json`). It includes one negotiation of each kind:
+- **Deal:** agreed at $1,250, then approved by a human.
+- **Walk-away.**
+- **Round cap:** stopped after 6 offers.
+
+It also includes all six planted bad listings being blocked or held for review.

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "surplus-exchange": {
+      "command": ".venv/Scripts/python.exe",
+      "args": ["mcp_server/server.py"],
+      "env": { "SURPLUS_ROLE": "system" }
+    }
+  }
+}

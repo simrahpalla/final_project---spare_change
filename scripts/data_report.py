@@ -34,32 +34,10 @@ REPORT = REPO / "output" / "data_report.md"
 sys.path.insert(0, str(REPO / "scripts"))
 
 # --------------------------------------------------------------------------- deterministic rules
-# The same rules the compliance guard will run in code (Phase 3). Here they verify that each planted
-# bad record trips its check and that no clean listing does.
-
-INJECTION_PATTERNS = [
-    r"ignore (all )?(previous|prior|above) instructions", r"\byou are now\b", r"system (note|prompt)",
-    r"do not flag", r"rank .{0,60}#\s*1", r"set the price to",
-]
-PRICE_MULTIPLE_LIMIT = 3.0       # asking > 3x new price looks fraudulent
-COUNTERFEIT_RATIO = 0.35         # obsolete part sold new-sealed below 35% of list: counterfeit / grey-market risk
-
-
-def rules_fired(l: dict, today: str) -> list[str]:
-    fired = []
-    text = l["raw_text"] or ""
-    if any(re.search(p, text, re.I) for p in INJECTION_PATTERNS):
-        fired.append("injection_pattern")
-    if l["expiry_date"] and l["expiry_date"] < today:
-        fired.append("expired")
-    if l["hazmat"] and l["sds_available"] != 1:
-        fired.append("hazmat_no_sds")
-    if l["asking_price"] and l["asking_price"] > PRICE_MULTIPLE_LIMIT * l["new_price"]:
-        fired.append("price_gt_3x_new")
-    if (l["obsolete"] and l["condition"] == "new_sealed" and l["asking_price"]
-            and l["asking_price"] < COUNTERFEIT_RATIO * l["new_price"]):
-        fired.append("counterfeit_risk")
-    return fired
+# The same rules the MCP server enforces (mcp_server/compliance_rules.py). Here they verify that each
+# planted bad record trips its check and that no clean listing does.
+sys.path.insert(0, str(REPO / "mcp_server"))
+from compliance_rules import rules_fired  # noqa: E402
 
 
 # Signs a real plant manager typed the listing, not a database.

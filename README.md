@@ -68,7 +68,7 @@ Open **http://localhost:8000**. The header shows `gpt-6-luna · key from …` wh
 | Part | What it does |
 |---|---|
 | `backend/` | FastAPI app. It runs the PydanticAI agents (all on `gpt-6-luna` via Portkey) and serves the dashboard from `frontend/dist`. |
-| `mcp_server/` | The only path to the SQLite database. Tools are restricted by role (seller agent, buyer agent, broker, human approver). *(Phase 2)* |
+| `mcp_server/` | The only path to the SQLite database. Tools are restricted by role (broker, seller agent, buyer agent, human approver, system); see `mcp_server/README.md`. Smoke test: `scripts/mcp_smoke.py`. |
 | `frontend/` | React + Vite + TypeScript dashboard. Rebuild with `npm install && npm run build` only if you change it. |
 | `data/` | The original `exchange.db` (never modified), the working copy `exchange_new.db`, and `answer_keys.json`. Both databases are committed, so no setup step is needed. |
 | `scripts/` | The setup check, seeding, cost reports, safety tests and evals. |

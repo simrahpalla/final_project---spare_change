@@ -1,0 +1,68 @@
+# surplus-exchange MCP server
+
+`server.py` is the **only** path to the marketplace database. It is a FastMCP server over stdio and always works on the working copy, `data/exchange_new.db` (or `SURPLUS_DB`). It refuses to open the original `data/exchange.db`.
+
+## Roles
+
+Each process is started with `SURPLUS_ROLE` and registers **only that role's tools**. A tool outside the role doesn't exist in that process, so an agent can't call it: the server answers `Unknown tool`.
+
+| Role | Who uses it | Extra env |
+|---|---|---|
+| `broker` | Listing, compliance and matching agents (via the backend) | — |
+| `seller_agent` | The seller negotiator for **one** negotiation | `SURPLUS_NEGOTIATION_ID` |
+| `buyer_agent` | The buyer negotiator for **one** negotiation | `SURPLUS_NEGOTIATION_ID` |
+| `human_approver` | The dashboard's Approve / Reject buttons | — |
+| `system` | Dashboard views and token logging (backend) | — |
+
+`MAX_NEGOTIATION_ROUNDS` (default 6) sets the round cap.
+
+## Tools by role (31 tools)
+
+| Tool | broker | seller_agent | buyer_agent | human_approver | system | What it does |
+|---|:-:|:-:|:-:|:-:|:-:|---|
+| `get_exchange_date` | ✓ | ✓ | ✓ | ✓ | ✓ | The exchange's "today" (never the clock) |
+| `lookup_part` | ✓ | ✓ | ✓ | ✓ | ✓ | Messy text or partial part number → catalog parts |
+| `get_compatibility` | ✓ | ✓ | ✓ | ✓ | ✓ | Platforms a part fits, plus its substitutes |
+| `get_price_reference` | ✓ | ✓ | ✓ | ✓ | ✓ | New price, scrap value, current asks, approved deals |
+| `get_listing` / `get_need` | ✓ | ✓ | ✓ | ✓ | ✓ | Public fields only. User text is returned as `*_text_untrusted` |
+| `create_listing` | ✓ | | | | | Store a structured listing (`submitted`). Unknown part numbers are refused. Expiry is derived from the manufacture date in code |
+| `update_listing_draft` | ✓ | | | | | Fix fields of a `submitted` listing |
+| `check_listing_rules` | ✓ | | | | ✓ | Deterministic compliance rules (read-only) |
+| `activate_listing` | ✓ | | | | | Publish. Re-runs the rules in code; a listing that trips one is set to `flagged` |
+| `flag_listing` | ✓ | | | | | The LLM guard's edge-case flag |
+| `create_need` | ✓ | | | | | Post a buyer need. The ceiling is stored write-only |
+| `search_buyers_for_listing` | ✓ | | | | | **SQL pre-filter**: top 10 grounded candidates for an *active* listing |
+| `search_listings_for_need` | ✓ | | | | | Reverse direction (two-sided matching) |
+| `list_buyer_profiles` | ✓ | | | | | All companies, unfiltered (only for the cost experiment) |
+| `record_matches` | ✓ | | | | | Save matches and notify both sides. **Ungrounded matches are rejected** |
+| `open_negotiation` | ✓ | | | | | Start one negotiation for a listing–need pair |
+| `get_negotiation` | ✓ | own only | own only | ✓ | ✓ | Offers and status. No private limits |
+| `request_deal_approval` | ✓ | | | | | Agreed → deal `pending_approval` |
+| `get_my_private_terms` | | ✓ (floor) | ✓ (ceiling) | | | **Only that side's** limit |
+| `submit_offer` | | ✓ | ✓ | | | Offer / accept / walk away, with the code rules below |
+| `approve_deal` / `reject_deal` | | | | ✓ | | **Human only**: refuses agent-like names |
+| `list_listings` / `list_needs` / `list_matches` / `list_negotiations` / `list_deals` / `list_notifications` | ✓ | | | ✓ | ✓ | Dashboard views (public fields) |
+| `log_tokens` / `get_token_summary` | | | | | ✓ | `token_usage` rows, the evidence for tokenomics |
+
+## Rules enforced in code (not in prompts)
+
+- **Compliance** (`compliance_rules.py`, shared with `scripts/data_report.py`): a listing is blocked if it has a prompt-injection pattern, is expired (expiry computed from the manufacture date if needed), is hazmat with no SDS, or asks more than 3× the new price. A discontinued part offered new-sealed at under 35% of list goes to human review. Only `active` listings can be searched or matched.
+- **Grounded matching:** `record_matches` saves a match only if the buyer runs a platform the part fits or has an open need the listing fills. An injected "rank Apex #1" is rejected.
+- **Private limits:** no tool returns a floor or ceiling except `get_my_private_terms`, which exists only in the negotiator processes. Each of those processes is bound to one negotiation and returns only its own side's limit.
+- **`submit_offer`:**
+  - Turns are strict and the seller moves first.
+  - The seller can't go below its floor, above its public ask, or raise its price.
+  - The buyer can't go above its ceiling or lower its price.
+  - At most `MAX_NEGOTIATION_ROUNDS` offers; after that, status is `round_cap`.
+  - A message containing your own limit is refused.
+  - Crossing offers close at the earlier offer's price.
+  - No moves are allowed after the negotiation closes.
+- **Human approval:** only `human_approver` has `approve_deal`, and it refuses agent-like names. A deal closes only there.
+
+## Smoke test
+
+```bash
+.venv/Scripts/python.exe scripts/mcp_smoke.py
+```
+
+It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (72 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **72/72 as expected, 31/31 tools called.**

@@ -91,3 +91,17 @@ This file records the prompts I used while building my MGT 409 final project, Su
 > do I need to do anything? I tried to run the script but i dont think it worked
 
 > Got it, I'll cd first. Yes, go ahead with my Phase 1 data-hardening request: data_report.py, the checks, answer_keys.json, fixes, spot-checks, docs and summary. Don't start Phase 2.
+
+## Phase 2 — MCP Server Tools with Role-Based Access
+
+### Initial prompt
+
+> Start Phase 2: build the MCP server tools with role-based access and the smoke test.
+
+### What was missing
+
+- Nothing — completed with the initial prompt.
+
+### Follow-up prompt(s)
+
+> None.
