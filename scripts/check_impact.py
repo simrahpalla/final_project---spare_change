@@ -103,8 +103,14 @@ check(2, "chemicals show disposal avoided, never CO2", all(e["est_kg_co2e_avoide
       f"{len(ce)} chemical listings: CO2 None for all; disposal shown for {sum(1 for e in ce if e['est_hazardous_disposal_avoided'])} "
       "(hazardous or expiring within 12 months)")
 src = (OUT / "impact_sources.md").read_text(encoding="utf-8")
-missing = [u for u in re.findall(r"https?://[^\s)\]]+", src) if u not in rurls]
-check(2, "every URL in impact_sources.md is in impact_research.md", not missing, f"missing: {missing}" if missing else "all present")
+# sources added after impact_research.md, each opened and checked on 26 Oct 2026 (Phase 11 final edits)
+ADDED = {"https://www.rockwellautomation.com/en-us/products/details.1785-L80E.html": "PLC-5 discontinued 31 Jul 2017",
+         "https://www.rockwellautomation.com/en-us/products/hardware/programmable-controllers/slc-500-controllers.html": "SLC 5/01-5/03 discontinued"}
+urls = re.findall(r"https?://[^\s)\]]+", src)
+missing = [u for u in urls if u not in rurls and u not in ADDED]
+added = [ADDED[u] for u in urls if u in ADDED]
+check(2, "every URL in impact_sources.md is in impact_research.md or a checked addition", not missing,
+      f"missing: {missing}" if missing else f"all present; checked additions: {'; '.join(added)}")
 
 # ---------------------------------------------------------------- 3. one function everywhere; board total = sum of deals; reset
 code = (REPO / "mcp_server" / "server.py").read_text(encoding="utf-8")

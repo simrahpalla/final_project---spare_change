@@ -70,6 +70,23 @@ table.us-row tr.us td span { color: #C2410C; font-weight: 600; }
 .demo img { width: 100%; border: 1px solid #D5DCE5; border-radius: 6px; margin: 0; }
 .steps p { font-size: 0.8em; margin: 0.45em 0 !important; } .steps .big-num { margin-top: 0.6em !important; }
 .muted { color: #5B6575; font-size: 0.6em !important; }
+.reveal h2.long { font-size: 1.15em; }
+.gap3 { display: grid; grid-template-columns: 1fr 0.8fr 1fr; gap: 18px; align-items: stretch; }
+.gap3 .card p { font-size: 0.8em; } .gap3 .big-num { font-size: 1.6em !important; }
+.link { display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.link .today { font-weight: 700; color: #0C2340; font-size: 0.8em; } .link .muted2 { color: #5B6575; font-size: 0.65em; }
+.link .arrow { font-size: 2.6em; color: #F97316; line-height: 1; margin: 6px 0; font-weight: 800; }
+.link .connects { font-weight: 800; color: #C2410C; font-size: 0.85em; }
+.chip.teal { background: #E6F4F1; color: #0F766E; border-radius: 6px; padding: 4px 8px; font-size: 0.6em !important; margin-top: 8px !important; }
+.whynow { background: #F5F7FA; border-left: 6px solid #F97316; padding: 8px 14px; font-size: 22px; margin-top: 14px !important; }
+table.cmx { border-collapse: collapse; width: 100%; font-size: 21px; }
+table.cmx th { background: #0C2340; color: #fff; padding: 6px; font-weight: 600; font-size: 19px; border: 1px solid #fff; text-align: center; }
+table.cmx th.new { background: #F97316; color: #0C2340; }
+table.cmx tr.band th { font-size: 18px; padding: 3px; } table.cmx tr.band th:first-child { background: transparent; }
+table.cmx td { border-bottom: 1px solid #D5DCE5; padding: 5px 6px; text-align: center; font-size: 24px; }
+table.cmx td:first-child { text-align: left; font-size: 20px; } table.cmx td span { display: block; font-size: 18px; color: #5B6575; }
+table.cmx td.y { color: #3B6D11; font-weight: 800; } table.cmx td.p { color: #C2410C; } table.cmx td.n { color: #A9B4C3; }
+table.cmx tr.us td { background: #FFF7ED; color: #C2410C; font-weight: 800; }
 .closer { font-size: 1.15em; font-weight: 800; color: #C2410C; margin-top: 1.2em !important; }
 .reveal .slide-number { background: #0C2340; }
 .reveal .progress { color: #F97316; }

@@ -58,9 +58,9 @@
     },
     {
       "item": 2,
-      "check": "every URL in impact_sources.md is in impact_research.md",
+      "check": "every URL in impact_sources.md is in impact_research.md or a checked addition",
       "result": "PASS",
-      "detail": "all present"
+      "detail": "all present; checked additions: PLC-5 discontinued 31 Jul 2017; SLC 5/01-5/03 discontinued"
     },
     {
       "item": 3,

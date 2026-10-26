@@ -3,42 +3,35 @@
 <div class="title-slide">
 <div class="logo big">¢</div>
 <h1>Spare Change</h1>
-<p class="tag">Your next spare part is someone's spare change.</p>
+<p class="tag">From one plant's shelf to another plant's line.</p>
 <p class="sub">AI agents match industrial surplus to the plants that run the same machines, and negotiate the deal.</p>
 <p class="who">Simrah Palla · MGT 409 · <a href="{{github_url}}">{{github_url}}</a></p>
 </div>
 Note: One sentence: Spare Change is a marketplace where agents list a plant's surplus part, find the plants whose machines use it, and negotiate within limits enforced in code; humans approve.
 ---
-<h2>Two plants, one part</h2>
-<div class="cols2">
-<div class="card sell"><h3>Plant A: surplus on a shelf</h3><p class="big-num">{{idle_pct}}</p><p>of spare-parts stock unused 5+ years</p><p class="big-num">{{scrap_range}}</p><p>recovered when scrapped</p></div>
-<div class="card buy"><h3>Plant B: line down</h3><p class="big-num">≥ {{tcod_hour}}</p><p>per hour of downtime (lowest-cost sector)</p><p class="big-num">{{lead_new}}</p><p>for a new part vs. {{lead_surplus}} surplus</p></div>
+<h2 class="long">The part one plant scraps is the part another plant is waiting for.</h2>
+<div class="gap3">
+<div class="card sell"><h3>Plant A: surplus on a shelf</h3><p class="big-num">{{idle_pct}}</p><p>unused 5+ years</p><p class="big-num">{{scrap_range}}</p><p>recovered as scrap</p><p class="chip teal">Scrapping wastes the carbon already spent making it.</p></div>
+<div class="link"><p class="today">Today: no way to find each other</p><p class="muted2">keyword listings, broker calls, guesswork</p><div class="arrow">⟶</div><p class="connects">Spare Change connects them.</p></div>
+<div class="card buy"><h3>Plant B: line down</h3><p class="big-num">≥ {{tcod_hour}}/hr</p><p>downtime (lowest-cost sector)</p><p class="big-num">{{lead_new}}</p><p>for a new part vs. {{lead_surplus}} surplus</p></div>
 </div>
-<p class="src">Sources: SPARETECH 2025 survey (via Reliamag) · Maas Companies · Siemens True Cost of Downtime 2024 · Automa. Links: output/impact_sources.md</p>
-Note: Seller plants scrap or shelve working spares after upgrades. Buyer plants running the same old machines lose money every hour the line is down; S7-300 parts stopped shipping in {{s7_end}}. Nobody connects the shelf to the stopped line.
+<p class="whynow"><b>Why now:</b> legacy PLCs retired in waves · downtime cost per hour up {{tcod_range_x}} since 2019 · an agent negotiation costs ~{{neg_cost_round}}</p>
+<p class="src">Sources: SPARETECH 2025 (via Reliamag) · Maas Companies · Siemens TCOD 2024 · Automa · Rockwell, Siemens/Eichler (PLC discontinuations) · output/tokenomics.json (n={{neg_runs}} negotiations). Links: output/impact_sources.md</p>
+Note: Seller plants scrap or shelve working spares after upgrades, wasting the money and the emissions spent making them. Buyer plants running the same old machines lose money every hour the line is down. Why now: Rockwell discontinued the PLC-5 in 2017 and SLC 5/01–5/03 since; Siemens ended S7-300 deliveries in {{s7_end}}; downtime per hour is {{tcod_auto_x}} its 2019 cost in automotive and {{tcod_heavy_x}} in heavy industry; and an agent negotiation costs about {{neg_cost_round}}.
 ---
 <h2>What's new</h2>
-<div class="cmp2">
-<table class="cmp">
-<tr><th>Product</th><th>Mach.</th><th>Agents</th><th>Limits</th><th>Impact</th></tr>
-<tr><td><b>Automa</b><span>parts market, catalog matching</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-<tr><td><b>SPARETECH</b><span>parts data, surplus resale</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-<tr><td><b>eBay</b><span>general marketplace</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-<tr><td><b>B-Stock</b><span>retail liquidation auctions</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-<tr><td><b>Liquidity Services</b><span>surplus asset auctions</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<table class="cmx">
+<tr class="band"><th></th><th colspan="4">Table stakes</th><th colspan="4" class="new">New with Spare Change</th></tr>
+<tr><th>Category</th><th>List surplus</th><th>Reach buyers</th><th>Parts / catalog data</th><th>AI help</th><th class="new">Match on buyers' machines</th><th class="new">Agents negotiate both sides</th><th class="new">Limits in code</th><th class="new">$ + CO2e per deal</th></tr>
+<tr><td><b>Surplus marketplaces</b><span>Automa, eBay, B-Stock, Liquidity Services, EquipNet</span></td><td class="y">✓</td><td class="y">✓</td><td class="p">◐</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>
+<tr><td><b>Parts data &amp; inventory AI</b><span>SPARETECH, Verusen, Verdantis</span></td><td class="p">◐</td><td class="p">◐</td><td class="y">✓</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>
+<tr><td><b>Asset reuse</b><span>Rheaply</span></td><td class="y">✓</td><td class="p">◐</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="p">◐</td></tr>
+<tr><td><b>AI negotiation</b><span>Pactum</span></td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="y">✓</td><td class="n">–</td><td class="p">◐</td><td class="n">–</td><td class="n">–</td></tr>
+<tr><td><b>General chatbot</b><span>ChatGPT</span></td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>
+<tr class="us"><td><b>Spare Change</b></td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
 </table>
-<table class="cmp">
-<tr><th>Product</th><th>Mach.</th><th>Agents</th><th>Limits</th><th>Impact</th></tr>
-<tr><td><b>EquipNet</b><span>used equipment resale</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-<tr><td><b>Verusen, Verdantis</b><span>in-house MRO inventory AI</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-<tr><td><b>Rheaply</b><span>workplace asset reuse</span></td><td>–</td><td>–</td><td>–</td><td>◐</td></tr>
-<tr><td><b>Pactum</b><span>AI procurement negotiation</span></td><td>–</td><td>◐</td><td>–</td><td>–</td></tr>
-<tr><td><b>ChatGPT</b><span>general chatbot</span></td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
-</table>
-</div>
-<table class="cmp us-row"><tr class="us"><td><b>Spare Change</b><span>matches on buyers' machines · agents negotiate both sides · limits in code · $ + CO2e per deal</span></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr></table>
-<p class="src">Mach. = matches on the machines buyers run · Agents = agents negotiate on both sides · Limits = private limits enforced in code · Impact = $ + CO2e per deal. ✓ yes · ◐ partly (Rheaply: carbon counter; Pactum: buyer side only) · – no public evidence. Sources: each product's site or a third-party page, checked 26 Oct 2026 (output/competitors.md).</p>
-Note: Closest: Automa sells the same goods and matches inventory against parts and supplier catalogs; SPARETECH owns the parts data and resells through partners; Pactum negotiates for buyers on new procurement. We match against the machines buyers run, agents negotiate on both sides within limits enforced in code, and humans approve.
+<p class="src">✓ yes · ◐ partly · – no public evidence. ◐: Automa catalog matching; SPARETECH resale via partners; Rheaply carbon counter; Pactum buyer side only. Source: output/competitors.md, checked 26 Oct 2026.</p>
+Note: Surplus marketplaces list and reach buyers; Automa also matches inventory against parts catalogs. Data and inventory AI tools know the parts. Pactum negotiates, but only for buyers on new procurement. Nobody we found matches on the machines buyers run, puts agents on both sides with limits enforced in code, or reports $ and CO2e per deal.
 ---
 <h2>How the agents work</h2>
 !svg[report/architecture_simple.svg]
@@ -109,5 +102,5 @@ Note: Deals closed at {{recovery}} of new price versus {{scrap_range}} for scrap
 <div><h3>Limits today</h3><ul><li>Synthetic data, demo accounts</li><li>No company dashboard yet</li><li>No payments or part verification</li><li>No user test yet</li></ul></div>
 <div><h3>Next</h3><ul><li>Timed pilot with real maintenance managers: today's way vs. Spare Change</li><li>Start with discontinued PLCs and drives</li><li>Internal exchange across one manufacturer's sites</li></ul></div>
 </div>
-<p class="closer">Your next spare part is someone's spare change.</p>
+<p class="closer">From one plant's shelf to another plant's line.</p>
 Note: The company dashboard would show all of a company's listings, requests, negotiations, statuses and deal history in one view. Business challenges: getting both sides on board, scattered equipment data, trust and counterfeits, thin margins.

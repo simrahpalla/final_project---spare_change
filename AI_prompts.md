@@ -785,3 +785,52 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 - Removed `output/timed_test_template.md` (including the one recorded step), the report §7 placeholder, the slide 9 placeholder, the README and `impact_model.md` mentions, the evidence-index rows, and the template check in `check_impact.py` (now 24/24). Report §8 and slide 10 now list a **timed pilot with real users** (maintenance or MRO managers, today's process vs. Spare Change) as the first next step.
 - Kept: this prompt log's earlier entries about the test, since `AI_prompts.md` is a verbatim record of what was asked.
+
+
+## Final report and slide edits
+
+### Initial prompt
+
+> some final edits before we push
+>
+> Final report and slide edits:
+> 1. Tagline: replace "Your next spare part is someone's spare change" everywhere (title slide, report header, closing lines) with "From one plant's shelf to another plant's line." Keep the side taglines only on demo slides 5/6 and in report section 4 as already planned.
+> 2. Section 3: replace the "What's new versus my HW5" paragraph with: "Built on course foundations. The agent architecture follows the pattern from my HW5 (PydanticAI agents, an MCP server as the only path to the data, an audit trail, run caps). The problem, data, agents, two-sided matching, agent-vs-agent negotiation with code-enforced limits, human approvals and impact layer are new."
+> 3. Section 2: replace "Why now" with the text below, and add the sustainability paragraph after "What it costs":
+>    "Why now. Three things have changed. First, older control systems are being retired in waves: Rockwell discontinued its PLC-5 in 2017 and has since discontinued most SLC 500 controllers, and Siemens stopped standard deliveries of its widely used S7-300 in October 2025, with spares guaranteed only until 2033. Plants that keep these machines running increasingly depend on spares and surplus. Second, downtime has become far more expensive: an hour now costs about twice what it did in 2019 in automotive and four times as much in heavy industry, and emergency replacements take longer to arrive (Siemens, 2024). Third, AI agents make it affordable to broker a single part. A human broker can't spend an hour matching and haggling over a $500 PLC module, but in our runs a full agent negotiation cost about $0.002."
+>   "The environmental cost. Scrapping a working part throws away the emissions already spent making it, and a replacement has to be manufactured again. Steel parts carry about 1.95 kg CO2e per kg (ICE database), and a single PLC CPU about 12–14 kg CO2e to produce (Siemens product carbon footprints). Studies of remanufactured industrial parts find 46–93% lower emissions than new ones, and reusing a part as-is avoids even more. Near-expiry chemicals are worse: once they expire they become hazardous waste that costs money to dispose of (about $242 per 55-gallon drum in one public fee schedule, often more commercially), while another plant could have used them in production."
+> 4. Add sources to impact_sources.md and the report's sources table:
+>    - Rockwell PLC-5 discontinued 31 Jul 2017 and SLC 5/01–5/05 controllers discontinued (rockwellautomation.com product pages)
+>    - Siemens TCOD 2024: downtime cost per hour 2x 2019 in automotive, 4x in heavy industry
+>    - "$0.002 per negotiation" must match tokenomics.json ($0.00189). Round consistently.
+>
+> 5. Redesign slides 2 and 3.
+>
+> SLIDE 2: show the gap, not just two boxes.
+> - Headline: "The part one plant scraps is the part another plant is waiting for."
+> - Three columns:
+>   - Plant A, surplus on a shelf: 22% unused 5+ years; 5–15% recovered as scrap.
+>   - Middle, the missing link: "Today: no way to find each other: keyword listings, broker calls, guesswork", with an orange arrow and "Spare Change connects them."
+>   - Plant B, line down: ≥ $36,000/hour (lowest-cost sector); 16–20 weeks for a new part vs. 2–10 days surplus.
+> - Optional small teal chip on Plant A: "Scrapping wastes the carbon already spent making it."
+> - Thin "Why now" strip at the bottom: "Legacy PLCs retired in waves · downtime cost per hour up 2–4× since 2019 · an agent negotiation costs ~$0.002". Numbers must match the report and tokenomics.json.
+> - Keep the source footer, updated to include Rockwell and Siemens TCOD.
+>
+> SLIDE 3: replace the all-dashes product table with a category-by-feature matrix.
+> - Rows (5 categories, product names in small text under each): Surplus marketplaces (Automa, eBay, B-Stock, Liquidity Services, EquipNet) · Parts data & inventory AI (SPARETECH, Verusen, Verdantis) · Asset reuse (Rheaply) · AI negotiation (Pactum) · General chatbot (ChatGPT) · then a highlighted Spare Change row.
+> - Columns: table stakes first (List surplus · Reach buyers · Parts/catalog data · AI assistance), then the NEW columns with an orange header band: Match on buyers' machines · Agents negotiate both sides · Limits enforced in code · $ + CO2e per deal.
+> - Use ✓ / ◐ / – honestly. Give competitors credit where they have a capability, based only on evidence in output/competitors.md (e.g. Automa catalog matching = ◐ under Parts/catalog data, Pactum = ◐ under negotiation since it's buyer side only, Rheaply = ◐ under impact). If unsure, use ◐ and note it in competitors.md.
+> - Legend in one line, text ≥18pt, source footer "output/competitors.md, checked 26 Oct 2026".
+> - Keep the full product-by-product table in the report unchanged (apart from the earlier Automa fix).
+>
+> Click through both slides at 1280×720 to confirm nothing overflows. Log this in AI_prompts.md.
+>
+> 6. Rerun the numbers-ledger check, page count (10–15), and regenerate report.pdf. Log this in AI_prompts.md.
+
+### What was missing
+
+- **SLC 500 claim:** Rockwell's own SLC 500 page says only the SLC 5/01, 5/02 and 5/03 8K controllers are discontinued ("some SLC 500 Bulletin numbers"); 5/04 and 5/05 are not listed. The report says "SLC 5/01, 5/02 and 5/03", not "most SLC 500" or "5/01–5/05". PLC-5: discontinued 31 July 2017 (1785-L80E product page).
+- **Siemens 2×/4×:** confirmed on pp. 3–4 of the TCOD 2024 PDF (the same page notes FMCG costs stayed stable; recorded in impact_sources.md).
+- **"$500 PLC module" had no source:** the sentence now names the traced card's catalog new price ($530, from the ledger).
+- **$0.002:** a ledger key rounds tokenomics.json's $0.00189 to $0.002, used in the report and on slide 2.
+- **New sources weren't in impact_research.md:** check_impact.py now lists them as checked additions (24/24 PASS).

@@ -1,6 +1,6 @@
 # Spare Change
 
-<p class="tagline">Your next spare part is someone's spare change.</p>
+<p class="tagline">From one plant's shelf to another plant's line.</p>
 
 ## 1. Title and links
 
@@ -19,7 +19,9 @@
 
 **What it costs.** Siemens estimates unplanned downtime costs the world's 500 largest companies about {{tcod_pct}} of revenue, roughly {{tcod_total}} a year; even in the lowest-cost sector, consumer goods, an hour of downtime costs about {{tcod_hour}}. Restarting after an incident now takes {{restart_after}} minutes on average, up from {{restart_before}} in 2019, partly because "emergency replacements are more challenging to source and take longer to arrive" ([Siemens, *True Cost of Downtime 2024*](https://assets.new.siemens.com/siemens/assets/api/uuid:1b43afb5-2d07-47f7-9eb7-893fe7d0bc59/TCOD-2024_original.pdf)).
 
-**Why now.** According to industry distributors, new parts for Siemens' SIMATIC S7-300, a widely used PLC family (a PLC is the industrial computer that runs a machine), stopped shipping in {{s7_end}}, with spare parts guaranteed only until {{s7_spares}} ([Eichler](https://www.eichler-service.com/en/magazine/simatic-s7-300-et-200m-type-discontinuation-pm410-effective-october-2025)). Plants still running S7-300s increasingly depend on spares and surplus. The money lost on both sides is real; what is missing is a way to connect the shelf in one plant to the stopped line in another.
+**The environmental cost.** Scrapping a working part throws away the emissions already spent making it, and a replacement has to be manufactured again. Steel parts carry about {{f_steel}} kg CO2e per kg (ICE database), and a single PLC CPU about {{f_module}}–{{f_cpu}} kg CO2e to produce (Siemens product carbon footprints). Studies of remanufactured industrial parts find {{reman_range}} lower emissions than new ones, and reusing a part as-is avoids even more. Near-expiry chemicals are worse: once they expire they become hazardous waste that costs money to dispose of (about {{drum}} per 55-gallon drum in one public fee schedule, often more commercially), while another plant could have used them in production.
+
+**Why now.** Three things have changed. First, older control systems (PLCs, the industrial computers that run machines) are being retired in waves: Rockwell discontinued its PLC-5 processors on {{plc5_end}} and has since discontinued its SLC 5/01, 5/02 and 5/03 controllers ([Rockwell PLC-5](https://www.rockwellautomation.com/en-us/products/details.1785-L80E.html), [Rockwell SLC 500](https://www.rockwellautomation.com/en-us/products/hardware/programmable-controllers/slc-500-controllers.html)), and Siemens stopped standard deliveries of its widely used S7-300 in {{s7_end}}, with spares guaranteed only until {{s7_spares}} ([Eichler](https://www.eichler-service.com/en/magazine/simatic-s7-300-et-200m-type-discontinuation-pm410-effective-october-2025)). Plants that keep these machines running increasingly depend on spares and surplus. Second, downtime has become far more expensive: an hour now costs about {{tcod_auto_x}} what it did in 2019 in automotive and {{tcod_heavy_x}} as much in heavy industry, and emergency replacements take longer to arrive ([Siemens, 2024](https://assets.new.siemens.com/siemens/assets/api/uuid:1b43afb5-2d07-47f7-9eb7-893fe7d0bc59/TCOD-2024_original.pdf)). Third, AI agents make it affordable to broker a single part. A human broker can't spend an hour matching and haggling over a {{tr_new}} PLC input card, but in our runs a full agent negotiation cost about {{neg_cost_round}}.
 
 ## 3. What is new here
 
@@ -49,7 +51,7 @@ Surplus marketplaces and inventory tools already exist. Table 1 compares the clo
 
 **Honest comparison.** Automa and SPARETECH are closest. Automa already sells the same goods and matches surplus against parts and supplier catalogs, and SPARETECH owns the clean parts data that compatibility matching needs. Spare Change's addition is putting the matching, the two-sided negotiation and the human-approved close into one agent workflow. Its weakness against both is scale: they have real catalogs and customers; we have a synthetic demo market.
 
-**What's new versus my HW5.** The architecture pattern is reused from my HW5 (PydanticAI agents on gpt-6-luna, an MCP server as the only path to the database, a FastAPI backend, an audit trail and run caps). Everything else is new: the industrial-surplus domain and dataset, all the agents, the compliance rules, two-sided matching with alerts, the agent-versus-agent negotiation with code-enforced private limits, the two human touchpoints, the impact layer and the demo accounts.
+**Built on course foundations.** The agent architecture follows the pattern from my HW5 (PydanticAI agents, an MCP server as the only path to the data, an audit trail, run caps). The problem, data, agents, two-sided matching, agent-vs-agent negotiation with code-enforced limits, human approvals and impact layer are new.
 
 ## 4. The agents
 
@@ -227,6 +229,8 @@ One honest gap: the model call that crosses the per-run token cap is stopped, bu
 | Scrap recovery {{scrap_range}} | Maas Companies (liquidator) | Low to medium |
 | New part {{lead_new}} vs. surplus {{lead_surplus}} | Automa blog | Low to medium |
 | S7-300 deliveries ended {{s7_end}}; spares to {{s7_spares}} | Eichler, automa.net (distributors) | Medium |
+| PLC-5 discontinued {{plc5_end}}; SLC 5/01, 5/02, 5/03 discontinued | Rockwell Automation product pages | High (manufacturer) |
+| Downtime cost per hour vs. 2019: {{tcod_auto_x2}} automotive, {{tcod_heavy_x2}} heavy industry | Siemens, *True Cost of Downtime 2024*, pp. 3–4 | High (primary report) |
 | Steel {{f_steel}}, cast iron {{f_iron}} kg CO2e/kg; PLC {{f_module}}–{{f_cpu}} kg/unit used | ICE database; Ecoinvent; Siemens product footprints | High / medium |
 | Remanufacturing {{reman_range}} lower emissions | Energies 2024; MAN/Univ. of Bayreuth; Curtin Univ. | Medium |
 | Hazardous disposal {{drum}} per drum | Alachua County, FL fee schedule | Medium (conservative) |
@@ -253,4 +257,4 @@ One honest gap: the model call that crosses the per-run token cap is stopped, bu
 3. **First customer: an internal exchange** between the sites of one large manufacturer, which shares one equipment database and avoids the trust problem.
 4. **Verification:** firmware and revision checks, photos, and seller ratings before deals close.
 
-*Your next spare part is someone's spare change.*
+*From one plant's shelf to another plant's line.*

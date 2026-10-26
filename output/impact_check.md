@@ -13,7 +13,7 @@
 | 2 | every factor and source URL matches impact_research.md | PASS | 17 families: steel 1.95/kg, cast iron 1.86/kg (research §2), PLC CPU 14/unit and modules 12.4/unit (research: 12–15 kg per compact CPU), every URL found in impact_research.md |
 | 2 | disposal factor = $242 per drum ÷ ~180 kg | PASS | 1.34 $/kg = 242 / 180 for Chemical and Lubricant |
 | 2 | chemicals show disposal avoided, never CO2 | PASS | 6 chemical listings: CO2 None for all; disposal shown for 5 (hazardous or expiring within 12 months) |
-| 2 | every URL in impact_sources.md is in impact_research.md | PASS | all present |
+| 2 | every URL in impact_sources.md is in impact_research.md or a checked addition | PASS | all present; checked additions: PLC-5 discontinued 31 Jul 2017; SLC 5/01-5/03 discontinued |
 | 3 | the same function behind strip, deal card, Marketplace and impact_model | PASS | impact strip (seller run → get_impact_estimate): yes, deal card: yes, Marketplace summary: yes, impact_model.json: yes, frontend does no CO2 maths: yes |
 | 3 | Marketplace total = sum of the individual deals (3 approved deals on a scratch DB) | PASS | board {$ 4920.0, 54.1 kg, $ 469.0 disposal} = sum {$ 4920.0, 54.1 kg, $ 469.0 disposal} |
 | 3 | Reset demo clears impact totals | PASS | before reset: 2 session impacts, 3 approved deals on the board; after /api/reset: 0 and 0 |

@@ -33,3 +33,12 @@ Spare Change differs on four points: (1) matching on the buyer's installed base,
 - **PharmaCupboard as a UK/EU company:** We found no evidence of a UK/EU business. The only PharmaCupboard we found is Indian (Vadodara). Its own site (pharmacupboard.com) did not resolve, and yourstory.com returned 403. Details about what it trades come from search snippets.
 - **Own sites that would not open (HTTP 403):** bstock.com, equipnet.com, automa.net, govdeals.com, allsurplus.com, eBay's Business & Industrial category page, and openai.com. Those rows rely on the third-party pages listed in the table.
 - **Automa:** the homepage opened later with a browser user agent (26 Oct 2026); the row now uses its own figures (10M+ standardised products, 750+ suppliers).
+
+## Category-by-feature matrix (slide 3) — judgments
+
+Each cell is based only on the rows above. ◐ = partly, or unsure (noted):
+- **Surplus marketplaces** (Automa, eBay, B-Stock, Liquidity Services, EquipNet): list surplus ✓, reach buyers ✓; parts/catalog data ◐ (only Automa: inventory data-matching against its catalog); AI help – (Automa's matching is not described as AI).
+- **Parts data & inventory AI** (SPARETECH, Verusen, Verdantis): parts data ✓, AI ✓; list surplus and reach buyers ◐ (SPARETECH resells via vetted partners; Verusen covers moving excess between a company's own sites).
+- **Asset reuse** (Rheaply): list ✓; reach buyers ◐ (internal reuse plus linked marketplaces); $ + CO2e ◐ (a carbon-avoided counter, not per-deal $ and CO2e for industrial spares).
+- **AI negotiation** (Pactum): AI ✓; agents negotiate ◐ (buyer side only, new procurement); limits in code – (no public evidence).
+- **General chatbot** (ChatGPT): AI ✓; nothing else (drafting a listing is not publishing one).

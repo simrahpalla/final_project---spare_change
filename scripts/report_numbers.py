@@ -53,6 +53,7 @@ def build() -> dict:
         add(f"{label}_cached_pct", f"{r['cached_share_of_input']:.0%}", "tokenomics.json", f"per_run.{k}.cached_share_of_input")
         add(f"{label}_out", f"{r['avg_output_tokens']:,}", "tokenomics.json", f"per_run.{k}.avg_output_tokens")
         add(f"{label}_req", r["avg_model_requests"], "tokenomics.json", f"per_run.{k}.avg_model_requests")
+    add("neg_cost_round", _usd(round(tok["per_run"]["negotiation"]["avg_cost_usd"], 3), 3), "tokenomics.json", "per_run.negotiation.avg_cost_usd rounded to $0.001")
     r = tok["per_run"]["rematch"]
     add("rematch_cost", _usd(r["avg_cost_usd"], 5), "tokenomics.json", "per_run.rematch.avg_cost_usd")
     a = tok["assumptions_per_user_month"]
@@ -239,6 +240,12 @@ def build() -> dict:
                         ("reman_range", "46–93%", "reuse credit row (Energies 2024; MAN/Bayreuth; Curtin)"),
                         ("drum", "$242", "Alachua County fee schedule row")):
         add(key, v, S, row)
+    add("plc5_end", "31 July 2017", S, "Rockwell PLC-5 row (1785-L80E product page)")
+    add("tcod_auto_x", "twice", S, "Siemens TCOD 2024 p.3-4 row: automotive cost per hour 2x 2019")
+    add("tcod_heavy_x", "four times", S, "Siemens TCOD 2024 p.3-4 row: heavy industry cost per hour 4x 2019")
+    add("tcod_auto_x2", "2×", S, "Siemens TCOD 2024 p.3-4 row")
+    add("tcod_range_x", "2–4×", S, "Siemens TCOD 2024 p.3-4 row (automotive 2x, heavy industry 4x)")
+    add("tcod_heavy_x2", "4×", S, "Siemens TCOD 2024 p.3-4 row")
     add("automa_products", "10M+", "competitors.md", "Automa row: homepage '10 million unique, standardised products'")
     add("automa_suppliers", "750+", "competitors.md", "Automa row: homepage '750+ Trusted Suppliers'")
     add("share_10k", f"{10_000 / 280_000:.1%}", S, "10,000 ÷ about 280,000 US manufacturing establishments")

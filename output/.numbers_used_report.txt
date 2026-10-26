@@ -57,6 +57,7 @@ lead_surplus
 neg_cached
 neg_cached_pct
 neg_cost
+neg_cost_round
 neg_deals
 neg_in
 neg_n
@@ -80,6 +81,7 @@ pf_tok_with
 pf_tok_without
 pf_top1_with
 pf_top1_without
+plc5_end
 price_cached
 price_in
 price_out
@@ -112,8 +114,13 @@ share_10k
 smoke
 src_carry_mid
 src_idle_mid
+tcod_auto_x
+tcod_auto_x2
+tcod_heavy_x
+tcod_heavy_x2
 tcod_hour
 tcod_pct
+tcod_range_x
 tcod_total
 tools
 top1

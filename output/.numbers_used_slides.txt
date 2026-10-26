@@ -14,6 +14,7 @@ lead_new
 lead_surplus
 neg_cached_pct
 neg_cost
+neg_cost_round
 neg_n
 neg_runs
 neg_violations
@@ -35,7 +36,10 @@ saf_total
 scrap_range
 sell_cost
 sell_runs
+tcod_auto_x
+tcod_heavy_x
 tcod_hour
+tcod_range_x
 tr_ask
 tr_budget
 tr_floor
