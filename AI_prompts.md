@@ -604,3 +604,28 @@ This file records the prompts I used while building my MGT 409 final project, Su
 - **One-time vs. per-year:** the model outputs are now split into `one_time` and `per_year`; the UI's "$ recovered" is labelled "one-time" on the strip, deal card, Marketplace and rail.
 - **Repeatable check:** `scripts/check_impact.py` → `output/impact_check.md` (25/25 PASS; scratch DB, no model calls), added to `run_all_evidence.py`.
 - **Not rerun (already done earlier):** the S7-300 CPU hand check (21 kg), the IPA disposal check ($938), and the reset-restores-the-DB stress test.
+
+## Push to GitHub (before Phase 11)
+
+### Initial prompt
+
+> Before you start phase 11, lets push to github
+> I created this repository (not to be confused by the old one called surplus exchange)
+> https://github.com/simrahpalla/final_project---spare_change.git
+> 1. Set the git remote origin to that URL (add it if no remote exists yet).
+> 2. Update output/github_url.txt, the README, and any links in the report and slides source.
+> 3. Before pushing, confirm .gitignore excludes .env, .venv, node_modules, and the WAL/SHM side files, and that no keys exist anywhere in the git history.
+> 4. Merge the phase6 and any other branch into main if it isn't already, then push main.
+> Log this in AI_prompts.md.
+>
+> before you do it - tell me if you think theres something missing in my directions or if this is the right way to do it
+
+### What was missing
+
+- **The clone folder name:** cloning `final_project---spare_change.git` creates a folder of that name, but the README said `cd spare-change`. The README now clones into `spare-change` explicitly.
+- **Uncommitted work:** the Phase 11 screenshots and `output/phase11_trace.md` had to be committed first, or the push would not include them.
+- Already true: the repo was empty and public; `.gitignore` covered every item; no real key value in any commit (checked against the values in `../.env` without printing them); `phase6` already merged, so only `main` is pushed.
+
+### Follow-up prompt(s)
+
+> sure - push it and check it worked and then we move to actually doing phase 11?

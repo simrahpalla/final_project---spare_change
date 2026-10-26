@@ -17,9 +17,11 @@ You need **Python 3.11+** and the course **`PORTKEY_API_KEY`**. Node is **not** 
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/simrahpalla/spare-change.git
+git clone https://github.com/simrahpalla/final_project---spare_change.git spare-change
 cd spare-change
 ```
+
+The last word of the clone command names the folder `spare-change`, so the commands below work as written.
 
 ### 2. Put your key in a `.env` file
 
