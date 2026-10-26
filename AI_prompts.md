@@ -834,3 +834,44 @@ This file records the prompts I used while building my MGT 409 final project, Su
 - **"$500 PLC module" had no source:** the sentence now names the traced card's catalog new price ($530, from the ledger).
 - **$0.002:** a ledger key rounds tokenomics.json's $0.00189 to $0.002, used in the report and on slide 2.
 - **New sources weren't in impact_research.md:** check_impact.py now lists them as checked additions (24/24 PASS).
+
+
+## Phase 12 — Final dry run
+
+### Initial prompt
+
+> okay lets do phase 12 now
+>
+> Phase 12: final dry run, acting exactly as the teaching staff will. Don't rely on anything in my working folder (existing .venv, node_modules, databases, or .env).
+>
+> SETUP (simulate the grader)
+> 1. Create a fresh folder outside OneDrive and outside my project, e.g. C:\grader_test\submissions\.
+> 2. Put a .env file directly in submissions\ (one level ABOVE the repo) containing only PORTKEY_API_KEY and OPENAI_API_KEY, the two keys the staff will have.
+> 3. git clone https://github.com/simrahpalla/[repo-name] into submissions\. Use the public GitHub URL, not my local copy.
+>
+> RUN IT BY THE README ONLY
+> 4. Start a timer. Follow README.md word for word, step by step, as a stranger would. Don't use any knowledge that isn't in the README.
+> 5. Record the time to a working app, and every step where the README was unclear, wrong, or missing something. Must be under 10 minutes. Note if any step needs anything unusual (special software, versions, paths).
+> 6. Confirm the app found the .env one level up (not in the repo), and that it works with only those two key names.
+>
+> SMOKE TEST IN THE FRESH CLONE
+> 7. Pick a demo account and follow its sample test cases: one seller listing end to end, one buyer request with alert, one negotiation through to both approvals. Click Reset demo and confirm a clean state.
+> 8. Try one blocked case (the injection sample) and confirm the cost meter updates.
+> 9. Open report.html and slides.html from the fresh clone by double-clicking: every image shows, slides advance with arrow keys, F goes full screen, and the repo link in both points to this repo.
+>
+> REPO HYGIENE
+> 10. Confirm no .env, keys, or secrets are anywhere in the repo or git history; .env.example lists the required keys with no values; .gitignore covers .env, .venv, node_modules, WAL/SHM files.
+> 11. Confirm the repo is public (or zlisto is a collaborator), the README has the run steps, how to switch to the test dataset / reset, and the demo accounts with their sample test cases.
+> 12. Confirm output/github_url.txt, the README, report and slides all show the same repo URL, and that the report.html/slides.html on GitHub are the final versions.
+>
+> FIX AND REPEAT
+> 13. If anything fails or is unclear, fix it in the main project, commit, push, delete the test folder, and rerun the whole dry run from step 1 until it passes cleanly.
+>
+> Finish with output/dry_run.md: time to running app, OS and Python/Node versions used, every issue found and fixed, and the final PASS checklist. Then give me the exact list of what to upload to Canvas. Log this prompt in AI_prompts.md.
+
+### What was missing
+
+- **The README didn't say to confirm the buyer's budget**, which gates auto-negotiation; following it word for word left the sample negotiation waiting. Fixed, with a demo accounts and test cases table, and the stale "private max price" / "about 5 rounds" claims removed.
+- **`.env.example`** didn't list `OPENAI_API_KEY` and had a placeholder value; now both keys, no values.
+- **The source `.env` had no `OPENAI_API_KEY`**, so the simulated staff `.env` used a dummy value for it; the app only reads `PORTKEY_API_KEY`.
+- Result: run 2 from a fresh clone reached a working app in 4:43 and passed every check (`output/dry_run.md`).
