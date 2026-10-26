@@ -84,7 +84,7 @@
       "item": 4,
       "check": "downtime only for line-down deals, $36k/hr lower bound",
       "result": "PASS",
-      "detail": "8 of 33 logged deals were line down \u2192 $288,000; plant model: 1 line-down purchase/yr \u00d7 $36k"
+      "detail": "8 of 31 logged deals were line down (count only, no summed $); plant model: 1 line-down purchase/yr \u00d7 $36k"
     },
     {
       "item": 4,
@@ -108,7 +108,7 @@
       "item": 6,
       "check": "change an evidence file \u2192 the output changes",
       "result": "PASS",
-      "detail": "tokenomics cost/user-month $0.02428 \u2192 $0.243: model cost $0.29/yr \u2192 $2.91/yr; one deal price \u00d72 in eval_negotiation: recovery ratio 0.418 \u2192 0.433, extra recovered $104,940 \u2192 $109,890 (temp copies; real files untouched)"
+      "detail": "tokenomics cost/user-month $0.02428 \u2192 $0.243: model cost $0.29/yr \u2192 $2.91/yr; one deal price \u00d72 in eval_negotiation: recovery ratio 0.42 \u2192 0.436, extra recovered $105,600 \u2192 $110,880 (temp copies; real files untouched)"
     },
     {
       "item": 7,

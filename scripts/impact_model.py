@@ -55,12 +55,26 @@ def measured_inputs(evidence: Path) -> dict:
             continue  # no CO2 claim for chemicals
         e = server.get_impact_estimate(r["id"])
         per_dollar.append(e["est_kg_co2e_avoided"] / (r["new_price"] * r["qty"]))
-    shutil.rmtree(tmp, ignore_errors=True)
 
-    deals = [r for r in neg["logged_negotiations"] if r.get("price") and r["status"] in ("agreed", "approved", "rejected")]
-    ids = lambda r: [int(x) for x in str(r["pair"]).split("/")]  # noqa: E731  pair = "listing/need"
-    ratio = [r["price"] / new_price[ids(r)[0]] for r in deals if ids(r)[0] in new_price]
-    line_down = [r for r in deals if len(ids(r)) == 2 and urgency.get(ids(r)[1]) == "line_down"]
+    # ONE deal set for every price and impact statistic: logged deals whose listing AND request are in the seed
+    # database (a deal on a listing or request created during a test run can't be priced from the seed catalog)
+    all_deals = [r for r in neg["logged_negotiations"] if r.get("price") and r["status"] in ("agreed", "approved", "rejected")]
+    ids = lambda r: [int(x) for x in str(r["pair"]).split("/") if x.isdigit()]  # noqa: E731  pair = "listing/need"
+    deals = [r for r in all_deals if len(ids(r)) == 2 and ids(r)[0] in new_price and ids(r)[1] in urgency]
+    ratio = [r["price"] / new_price[ids(r)[0]] for r in deals]
+    line_down = [r for r in deals if urgency[ids(r)[1]] == "line_down"]
+    con = sqlite3.connect(tmp / "w.db")
+    vals, scraps, co2s = [], [], []
+    for r in deals:
+        lid, nid = ids(r)
+        q = min(con.execute("SELECT qty FROM listings WHERE id=?", (lid,)).fetchone()[0], con.execute("SELECT qty FROM needs WHERE id=?", (nid,)).fetchone()[0])
+        e = server.get_impact_estimate(lid, price=r["price"], qty=q)
+        vals.append(e["value_recovered"])
+        scraps.append(e["scrap_value_total"])
+        if e["est_kg_co2e_avoided"] is not None:
+            co2s.append(e["est_kg_co2e_avoided"])
+    con.close()
+    shutil.rmtree(tmp, ignore_errors=True)
     return {
         "suggested_ask_over_new_price": {"value": round(statistics.mean(asks), 3), "n": len(asks), "range": [round(min(asks), 3), round(max(asks), 3)],
                                          "file": "phase3_stress.json", "basis": "pricing agent's suggested ask ÷ catalog new price (coverage runs)"},
@@ -69,8 +83,13 @@ def measured_inputs(evidence: Path) -> dict:
         "kg_co2e_per_dollar_of_new_value": {"value": round(statistics.mean(per_dollar), 5), "n": len(per_dollar), "file": "data/exchange.db via get_impact_estimate",
                                             "basis": "get_impact_estimate (sourced factors × 0.5 reuse credit) ÷ new value, over active non-chemical listings"},
         "app_cost_per_user_month_usd": {"value": tok["cost_per_user_month_usd"], "file": "tokenomics.json", "basis": "real token logs × stated usage"},
+        "deal_set": {"used": len(deals), "logged": len(all_deals), "file": "eval_negotiation.json",
+                     "excluded": "deals on a listing or request created during a test run (not in the seed catalog, so they can't be priced)"},
+        "per_deal_average": {"n": len(deals), "value_recovered_usd": round(statistics.mean(vals)), "scrap_value_usd": round(statistics.mean(scraps)),
+                             "est_kg_co2e_avoided": round(statistics.mean(co2s), 1), "co2_n": len(co2s), "file": "eval_negotiation.json + get_impact_estimate",
+                             "basis": "average per logged test deal (agreed price × quantity); test deals repeat the same pairs, so these are averages, never totals"},
         "line_down_deals": {"value": len(line_down), "of_deals": len(deals), "file": "eval_negotiation.json",
-                            "basis": "logged deals whose buyer request was marked line down (the only deals given a downtime value)"},
+                            "basis": "deals whose buyer request was marked line down (the only kind of purchase given a downtime value in the plant model)"},
         "line_down_share_of_requests": {"value": round(req_share, 3), "n": len(urgency), "file": "data/exchange.db (synthetic demo data)",
                                         "basis": "share of seeded buy requests marked line down"},
     }
@@ -130,8 +149,7 @@ def main() -> int:
                            ("Line-down purchases / year", "ld", ASSUMPTIONS["line_down_purchases_per_year"])):
         sens.append({"input": name, **{lvl: {"value": rng[lvl], **model(M, **dict(base, **{key: rng[lvl]}))} for lvl in ("low", "mid", "high")}})
     per_deal = {"line_down_deals_logged": M["line_down_deals"]["value"], "deals_logged": M["line_down_deals"]["of_deals"],
-                "downtime_value_lower_bound_usd": M["line_down_deals"]["value"] * DOWNTIME_RATE,
-                "note": "only deals whose buyer request was marked line down; 1 hour each at $36k/hr (lower bound); other deals get $0"}
+                "note": "count only: test deals repeat the same pairs, so no dollar total is given; downtime is valued only in the plant model"}
     out = {"what": "Illustrative impact for one mid-size plant. MEASURED = read from this app's evidence files; SOURCED = external "
                    "(output/impact_sources.md); ASSUMPTION = stated guess with a range. ONE-TIME and PER-YEAR values are never added together.",
            "measured": M, "sourced": SOURCED | {"downtime_cost_per_hour": {"value": DOWNTIME_RATE, "source": "Siemens TCOD 2024, lowest-cost sector; lower bound"}},
@@ -177,9 +195,12 @@ def main() -> int:
           f"what scrapping does on the idle stock (one-time) and, compared with keeping it on the shelf, stops {usd(mid['per_year']['carrying_cost_avoided_usd'])} a year of carrying cost "
           f"(scrapping would stop that too, but recover only {usd(mid['one_time']['recovered_if_all_scrapped_usd'])}). On the buyer side, one line-down purchase filled from surplus "
           f"is worth at least {usd(DOWNTIME_RATE)} of avoided downtime, against ${mid['per_year']['app_model_cost_usd']:.2f} a year of model costs.",
-          "", "## Downtime in our logged deals", "",
-          f"Of the {per_deal['deals_logged']} deals logged in our runs (`eval_negotiation.json`), **{per_deal['line_down_deals_logged']}** filled a request marked **line down**. "
-          f"Only those get a downtime value: 1 hour each at $36k = **{usd(per_deal['downtime_value_lower_bound_usd'])}** (lower bound). The other deals get $0.",
+          "", "## Our logged test deals", "",
+          f"Of the {per_deal['deals_logged']} logged test deals used here (`eval_negotiation.json`; {M['deal_set']['logged'] - M['deal_set']['used']} more were excluded: {M['deal_set']['excluded']}), "
+          f"**{per_deal['line_down_deals_logged']}** filled a request marked **line down**. Test deals repeat the same pairs, so no dollar total is given; "
+          f"downtime is valued only in the plant model above (line-down purchases × 1 hour × $36k). "
+          f"Per test deal on average: {usd(M['per_deal_average']['value_recovered_usd'])} recovered vs. {usd(M['per_deal_average']['scrap_value_usd'])} scrap, "
+          f"est. {M['per_deal_average']['est_kg_co2e_avoided']} kg CO2e (n={M['per_deal_average']['n']}).",
           "", "## Scenarios", "", "| Output | All low | Mid | All high |", "|---|---|---|---|"]
     rows = [("Extra $ recovered vs. scrap (one-time)", "one_time", "extra_recovered_vs_scrap_usd", usd),
             ("est. kg CO2e avoided (one-time)", "one_time", "est_kg_co2e_avoided", lambda v: f"{v:,} kg"),

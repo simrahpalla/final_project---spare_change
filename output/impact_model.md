@@ -10,7 +10,7 @@
 | Share unused 5+ years (idle) | 22% | 15% – 22% | SOURCED | SPARETECH 2025 survey (22% unused 5+ years); low = ~15% obsolete (Reliable Plant) |
 | Annual carrying cost | 20% of value | 15% – 30% | SOURCED | industry range 15–30% of value per year |
 | Scrap recovery | 10% of value | 5% – 15% | SOURCED | industrial liquidator benchmarks 5–15% |
-| Recovery through Spare Change | **42%** of new price | 23% – 64% across deals | **MEASURED** | agreed price ÷ new price over every logged deal (`eval_negotiation.json`, n=32) |
+| Recovery through Spare Change | **42%** of new price | 23% – 64% across deals | **MEASURED** | agreed price ÷ new price over every logged deal (`eval_negotiation.json`, n=31) |
 | Suggested ask ÷ new price (cross-check) | 56% | 28% – 82% | **MEASURED** | pricing agent's suggested ask ÷ catalog new price (coverage runs) (`phase3_stress.json`, n=21) |
 | Sell-through of idle stock | 50% | 25% – 75% | ASSUMPTION | share of the idle stock that finds a buyer (the rest is still scrapped); not measured |
 | Line-down purchases filled per year | 1 | 0 – 3 | ASSUMPTION | line-down emergencies per year this plant fills with a surplus part; each counts 1 hour at $36k (lower bound). Only line-down purchases get a downtime value. Cross-check: 14% of our demo requests are line down; at the tokenomics usage of 4 requests a month that would be ~7 a year, so 1–3 is conservative. |
@@ -27,8 +27,8 @@
 |---|---|
 | Idle spare-parts inventory | $660,000 |
 | Recovered if all of it is scrapped (one-time) | $66,000 |
-| Recovered with Spare Change: sold share at the measured deal ratio, the rest still scrapped (one-time) | **$170,940** |
-| Extra $ recovered vs. scrap (one-time) | **$104,940** |
+| Recovered with Spare Change: sold share at the measured deal ratio, the rest still scrapped (one-time) | **$171,600** |
+| Extra $ recovered vs. scrap (one-time) | **$105,600** |
 | est. CO2e avoided by the sold share (one-time) | **1,901 kg** |
 
 **Per year:**
@@ -42,15 +42,15 @@
 
 **Reading:** at the mid case, Spare Change recovers 2.6× what scrapping does on the idle stock (one-time) and, compared with keeping it on the shelf, stops $66,000 a year of carrying cost (scrapping would stop that too, but recover only $66,000). On the buyer side, one line-down purchase filled from surplus is worth at least $36,000 of avoided downtime, against $0.29 a year of model costs.
 
-## Downtime in our logged deals
+## Our logged test deals
 
-Of the 33 deals logged in our runs (`eval_negotiation.json`), **8** filled a request marked **line down**. Only those get a downtime value: 1 hour each at $36k = **$288,000** (lower bound). The other deals get $0.
+Of the 31 logged test deals used here (`eval_negotiation.json`; 2 more were excluded: deals on a listing or request created during a test run (not in the seed catalog, so they can't be priced)), **8** filled a request marked **line down**. Test deals repeat the same pairs, so no dollar total is given; downtime is valued only in the plant model above (line-down purchases × 1 hour × $36k). Per test deal on average: $1,889 recovered vs. $63 scrap, est. 14.0 kg CO2e (n=31).
 
 ## Scenarios
 
 | Output | All low | Mid | All high |
 |---|---|---|---|
-| Extra $ recovered vs. scrap (one-time) | $20,700 | $104,940 | $265,320 |
+| Extra $ recovered vs. scrap (one-time) | $20,812 | $105,600 | $267,300 |
 | est. kg CO2e avoided (one-time) | 324 kg | 1,901 kg | 5,702 kg |
 | Carrying cost avoided (per year) | $8,438 | $66,000 | $297,000 |
 | Buyer downtime value (per year, line-down only) | $0 | $36,000 | $108,000 |
@@ -62,11 +62,11 @@ Of the 33 deals logged in our runs (`eval_negotiation.json`), **8** filled a req
 
 | Input | Low | Mid | High |
 |---|---|---|---|
-| MRO inventory | $1,500,000: extra $52,470 once · carrying $33,000/yr | $3,000,000: extra $104,940 once · carrying $66,000/yr | $6,000,000: extra $209,880 once · carrying $132,000/yr |
-| Idle share | 15%: extra $71,550 once · carrying $45,000/yr | 22%: extra $104,940 once · carrying $66,000/yr | 22%: extra $104,940 once · carrying $66,000/yr |
-| Carrying cost rate | 15%: extra $104,940 once · carrying $49,500/yr | 20%: extra $104,940 once · carrying $66,000/yr | 30%: extra $104,940 once · carrying $99,000/yr |
-| Scrap recovery | 5%: extra $121,440 once · carrying $66,000/yr | 10%: extra $104,940 once · carrying $66,000/yr | 15%: extra $88,440 once · carrying $66,000/yr |
-| Sell-through | 25%: extra $52,470 once · carrying $33,000/yr | 50%: extra $104,940 once · carrying $66,000/yr | 75%: extra $157,410 once · carrying $99,000/yr |
+| MRO inventory | $1,500,000: extra $52,800 once · carrying $33,000/yr | $3,000,000: extra $105,600 once · carrying $66,000/yr | $6,000,000: extra $211,200 once · carrying $132,000/yr |
+| Idle share | 15%: extra $72,000 once · carrying $45,000/yr | 22%: extra $105,600 once · carrying $66,000/yr | 22%: extra $105,600 once · carrying $66,000/yr |
+| Carrying cost rate | 15%: extra $105,600 once · carrying $49,500/yr | 20%: extra $105,600 once · carrying $66,000/yr | 30%: extra $105,600 once · carrying $99,000/yr |
+| Scrap recovery | 5%: extra $122,100 once · carrying $66,000/yr | 10%: extra $105,600 once · carrying $66,000/yr | 15%: extra $89,100 once · carrying $66,000/yr |
+| Sell-through | 25%: extra $52,800 once · carrying $33,000/yr | 50%: extra $105,600 once · carrying $66,000/yr | 75%: extra $158,400 once · carrying $99,000/yr |
 | Line-down purchases / year | 0: downtime $0/yr | 1: downtime $36,000/yr | 3: downtime $108,000/yr |
 
 ## Caveats

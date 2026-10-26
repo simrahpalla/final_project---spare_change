@@ -23,6 +23,7 @@ crash_before
 crash_conc
 data_size
 drum
+ds_excluded
 f_cpu
 f_iron
 f_module
@@ -48,7 +49,6 @@ imp_scrap
 imp_with
 ld_deals
 ld_of
-ld_value
 lead_new
 lead_surplus
 neg_cached
@@ -62,6 +62,7 @@ neg_req
 neg_runs
 neg_violations
 pd_co2
+pd_co2_n
 pd_n
 pd_scrap
 pd_value
@@ -82,7 +83,6 @@ price_write
 recovery
 recovery_hi
 recovery_lo
-recovery_n
 reman_range
 req_flagged
 req_n

@@ -190,7 +190,6 @@ def build() -> dict:
     dd = imp["downtime_in_our_logged_deals"]
     add("ld_deals", dd["line_down_deals_logged"], "impact_model.json", "downtime_in_our_logged_deals.line_down_deals_logged")
     add("ld_of", dd["deals_logged"], "impact_model.json", "downtime_in_our_logged_deals.deals_logged")
-    add("ld_value", _usd(dd["downtime_value_lower_bound_usd"], 0), "impact_model.json", "downtime_in_our_logged_deals.downtime_value_lower_bound_usd")
     for k, (lab, f) in {"mro_inventory_usd": ("inv", lambda v: _usd(v, 0)), "sell_through": ("sell", lambda v: f"{v:.0%}"),
                         "line_down_purchases_per_year": ("ldpy", str)}.items():
         for lvl in ("low", "mid", "high"):
@@ -198,11 +197,14 @@ def build() -> dict:
     for k, lab in (("idle_share", "idle"), ("carrying_cost_rate", "carry"), ("scrap_recovery", "scrap")):
         for lvl in ("low", "mid", "high"):
             add(f"src_{lab}_{lvl}", f"{imp['sourced'][k][lvl]:.0%}", "impact_model.json", f"sourced.{k}.{lvl}")
-    pd = per_deal_averages(neg)
-    add("pd_n", pd["n"], "eval_negotiation.json + data/exchange.db", "logged deals with a price, impact via get_impact_estimate(listing, price, qty)")
-    add("pd_value", _usd(pd["value"], 0), "eval_negotiation.json + get_impact_estimate", "mean value_recovered per deal")
-    add("pd_scrap", _usd(pd["scrap"], 0), "eval_negotiation.json + get_impact_estimate", "mean scrap_value_total per deal")
-    add("pd_co2", f"{pd['co2']:.1f}", "eval_negotiation.json + get_impact_estimate", "mean est_kg_co2e_avoided per deal (non-chemical)")
+    pa, ds = M["per_deal_average"], M["deal_set"]
+    add("pd_n", pa["n"], "impact_model.json", "measured.per_deal_average.n")
+    add("pd_value", _usd(pa["value_recovered_usd"], 0), "impact_model.json", "measured.per_deal_average.value_recovered_usd")
+    add("pd_scrap", _usd(pa["scrap_value_usd"], 0), "impact_model.json", "measured.per_deal_average.scrap_value_usd")
+    add("pd_co2", f"{pa['est_kg_co2e_avoided']:.1f}", "impact_model.json", "measured.per_deal_average.est_kg_co2e_avoided")
+    add("pd_co2_n", pa["co2_n"], "impact_model.json", "measured.per_deal_average.co2_n (chemical deals have no CO2 claim)")
+    add("ds_logged", ds["logged"], "impact_model.json", "measured.deal_set.logged")
+    add("ds_excluded", ds["logged"] - ds["used"], "impact_model.json", "measured.deal_set.logged - used")
 
     # ---- external numbers (each a sourced row of output/impact_sources.md)
     S = "impact_sources.md"

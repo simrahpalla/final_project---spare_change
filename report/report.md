@@ -17,7 +17,7 @@
 
 **What it costs.** Siemens estimates unplanned downtime costs the world's 500 largest companies about {{tcod_pct}} of revenue, roughly {{tcod_total}} a year; even in the lowest-cost sector, consumer goods, an hour of downtime costs about {{tcod_hour}}. Restarting after an incident now takes {{restart_after}} minutes on average, up from {{restart_before}} in 2019, partly because "emergency replacements are more challenging to source and take longer to arrive" ([Siemens, *True Cost of Downtime 2024*](https://assets.new.siemens.com/siemens/assets/api/uuid:1b43afb5-2d07-47f7-9eb7-893fe7d0bc59/TCOD-2024_original.pdf)).
 
-**Why now.** According to industry distributors, new parts for Siemens' SIMATIC S7-300, one of the most widely installed PLC families (a PLC is the industrial computer that runs a machine), stopped shipping in {{s7_end}}, with spare parts guaranteed only until {{s7_spares}} ([Eichler](https://www.eichler-service.com/en/magazine/simatic-s7-300-et-200m-type-discontinuation-pm410-effective-october-2025)). Every plant still running S7-300s now depends on surplus. The money lost on both sides is real; what is missing is a way to connect the shelf in one plant to the stopped line in another.
+**Why now.** According to industry distributors, new parts for Siemens' SIMATIC S7-300, a widely used PLC family (a PLC is the industrial computer that runs a machine), stopped shipping in {{s7_end}}, with spare parts guaranteed only until {{s7_spares}} ([Eichler](https://www.eichler-service.com/en/magazine/simatic-s7-300-et-200m-type-discontinuation-pm410-effective-october-2025)). Plants still running S7-300s increasingly depend on spares and surplus. The money lost on both sides is real; what is missing is a way to connect the shelf in one plant to the stopped line in another.
 
 ## 3. What is new here
 
@@ -25,7 +25,7 @@ Surplus marketplaces and inventory tools already exist. Table 1 compares the clo
 
 | Product | What it does | What it doesn't do that Spare Change does |
 |---|---|---|
-| **Automa** | B2B marketplace for surplus and discontinued automation parts | Part-number search and quotes; no matching on the buyer's machines, no agent negotiation |
+| **Automa** | B2B marketplace for surplus and discontinued automation parts, with an inventory data-matching tool against 10M+ standardised products from 750+ suppliers | Matches against parts and supplier catalogs; we match against the equipment buyers run, and agents negotiate the deal |
 | **SPARETECH** | AI cleans spare-parts data; resells surplus via vetted partners | No open two-sided market with buyer "wanted" posts; no negotiation |
 | **eBay** (Business & Industrial) | General marketplace that maintenance teams use for obsolete parts | Keyword search; no compatibility matching, agents, or impact |
 | **B-Stock** | Liquidation auctions for retail and brand overstock | Sells lots of consumer goods, not industrial spares by compatibility |
@@ -45,7 +45,7 @@ Surplus marketplaces and inventory tools already exist. Table 1 compares the clo
 3. **The whole loop.** From a messy sentence to a compliant listing, matched buyers, alerts, negotiation and a deal both companies approve.
 4. **Impact on every deal.** Dollars recovered versus scrap and estimated CO2e avoided, computed in code from sourced factors.
 
-**Honest comparison.** Automa and SPARETECH are closest. Automa already sells the same goods, and SPARETECH owns the clean parts data that compatibility matching needs. Spare Change's addition is putting the matching, the two-sided negotiation and the human-approved close into one agent workflow. Its weakness against both is scale: they have real catalogs and customers; we have a synthetic demo market.
+**Honest comparison.** Automa and SPARETECH are closest. Automa already sells the same goods and matches surplus against parts and supplier catalogs, and SPARETECH owns the clean parts data that compatibility matching needs. Spare Change's addition is putting the matching, the two-sided negotiation and the human-approved close into one agent workflow. Its weakness against both is scale: they have real catalogs and customers; we have a synthetic demo market.
 
 **What's new versus my HW5.** The architecture pattern is reused from my HW5 (PydanticAI agents on gpt-6-luna, an MCP server as the only path to the database, a FastAPI backend, an audit trail and run caps). Everything else is new: the industrial-surplus domain and dataset, all the agents, the compliance rules, two-sided matching with alerts, the agent-versus-agent negotiation with code-enforced private limits, the two human touchpoints, the impact layer and the demo accounts.
 
@@ -176,7 +176,7 @@ One honest gap: the model call that crosses the per-run token cap is stopped, bu
 
 ## 7. Impact
 
-**Measured in our runs (synthetic market).** Across {{pd_n}} logged test deals, the average deal recovered **{{pd_value}}** against {{pd_scrap}} of scrap value and avoided an est. {{pd_co2}} kg CO2e. Deals closed at {{recovery}} of the new price on average (range {{recovery_lo}}–{{recovery_hi}}, n={{recovery_n}}), well above scrap's {{scrap_range}}. These are test deals, not real-world results.
+**Measured in our runs (synthetic market).** Of the {{neg_deals}} logged test deals, {{pd_n}} are used for prices and impact ({{ds_excluded}} used a listing or request created during a test run, which the seed catalog can't price). On average a deal recovered **{{pd_value}}** against {{pd_scrap}} of scrap value and avoided an est. {{pd_co2}} kg CO2e (the {{pd_co2_n}} non-chemical deals). Deals closed at {{recovery}} of the new price (range {{recovery_lo}}–{{recovery_hi}}). Test deals repeat the same pairs, so these are averages, never totals, and not real-world results.
 
 **One mid-size plant (illustrative model, `output/impact_model.md`).** Inputs are labelled MEASURED (from our runs), SOURCED or ASSUMPTION; one-time and per-year values are never added together.
 
@@ -193,7 +193,7 @@ One honest gap: the model call that crosses the per-run token cap is stopped, bu
 
 <p class="caption">Table 5: Mid case. All-low to all-high: extra recovered {{imp_extra_lo}}–{{imp_extra_hi}} one-time; carrying cost avoided {{imp_carry_lo}}–{{imp_carry_hi}} a year; downtime value {{imp_down_lo}}–{{imp_down_hi}} a year.</p>
 
-**How CO2e is estimated.** est. CO2e avoided = part weight × a material factor (steel {{f_steel}} kg CO2e/kg; cast iron {{f_iron}}), or a per-unit factor for electronics ({{f_cpu}} kg per PLC CPU, {{f_module}} per module, from Siemens product footprints), × a {{reuse}} reuse credit. The credit is conservative: remanufacturing studies find {{reman_range}} lower emissions. Chemicals get no CO2 claim; instead the app shows disposal cost avoided (about {{drum}} per 55-gallon drum). Downtime is valued only when the buyer's request was marked line down: {{ld_deals}} of our {{ld_of}} logged deals, worth at least {{ld_value}} at one hour each.
+**How CO2e is estimated.** est. CO2e avoided = part weight × a material factor (steel {{f_steel}} kg CO2e/kg; cast iron {{f_iron}}), or a per-unit factor for electronics ({{f_cpu}} kg per PLC CPU, {{f_module}} per module, from Siemens product footprints), × a {{reuse}} reuse credit. The credit is conservative: remanufacturing studies find {{reman_range}} lower emissions. Chemicals get no CO2 claim; instead the app shows disposal cost avoided (about {{drum}} per 55-gallon drum). Downtime is valued only for purchases that fill a request marked line down ({{ld_deals}} of the {{ld_of}} test deals were), and only in the plant model, at one hour each.
 
 **Timed test (measured by the author, not an independent user).**
 

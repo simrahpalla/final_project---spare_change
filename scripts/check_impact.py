@@ -146,8 +146,8 @@ im = json.loads((OUT / "impact_model.json").read_text(encoding="utf-8"))
 txt = (OUT / "impact_model.json").read_text(encoding="utf-8") + (OUT / "impact_model.md").read_text(encoding="utf-8")
 dd = im["downtime_in_our_logged_deals"]
 check(4, "downtime only for line-down deals, $36k/hr lower bound", im["sourced"]["downtime_cost_per_hour"]["value"] == 36000
-      and dd["downtime_value_lower_bound_usd"] == dd["line_down_deals_logged"] * 36000 and dd["line_down_deals_logged"] < dd["deals_logged"],
-      f"{dd['line_down_deals_logged']} of {dd['deals_logged']} logged deals were line down → ${dd['downtime_value_lower_bound_usd']:,}; "
+      and "downtime_value_lower_bound_usd" not in dd and dd["line_down_deals_logged"] < dd["deals_logged"],
+      f"{dd['line_down_deals_logged']} of {dd['deals_logged']} logged deals were line down (count only, no summed $); "
       f"plant model: {im['assumptions']['line_down_purchases_per_year']['mid']} line-down purchase/yr × $36k")
 check(4, "no $2.3M or $150k downtime rate in the model", not re.search(r"2\.3\s?M|2,300,000|2\.3 million|150,000|150k|150000", txt), "none found")
 mid = im["mid_scenario"]

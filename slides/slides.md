@@ -20,7 +20,7 @@ Note: Seller plants scrap or shelve working spares after upgrades. Buyer plants 
 <h2>What's new</h2>
 <table class="cmp">
 <tr><th></th><th>Matches on buyers' machines</th><th>Agents negotiate both sides</th><th>Limits enforced in code</th><th>$ + CO2e per deal</th></tr>
-<tr><td>Automa</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>Automa</td><td>parts &amp; supplier catalogs</td><td>–</td><td>–</td><td>–</td></tr>
 <tr><td>SPARETECH</td><td>parts data</td><td>–</td><td>–</td><td>–</td></tr>
 <tr><td>eBay</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
 <tr><td>Pactum</td><td>–</td><td>buyer only</td><td>–</td><td>–</td></tr>

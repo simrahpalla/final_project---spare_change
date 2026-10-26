@@ -12,8 +12,8 @@
       "basis": "pricing agent's suggested ask \u00f7 catalog new price (coverage runs)"
     },
     "negotiated_price_over_new_price": {
-      "value": 0.418,
-      "n": 32,
+      "value": 0.42,
+      "n": 31,
       "range": [
         0.23,
         0.642
@@ -32,11 +32,26 @@
       "file": "tokenomics.json",
       "basis": "real token logs \u00d7 stated usage"
     },
+    "deal_set": {
+      "used": 31,
+      "logged": 33,
+      "file": "eval_negotiation.json",
+      "excluded": "deals on a listing or request created during a test run (not in the seed catalog, so they can't be priced)"
+    },
+    "per_deal_average": {
+      "n": 31,
+      "value_recovered_usd": 1889,
+      "scrap_value_usd": 63,
+      "est_kg_co2e_avoided": 14.0,
+      "co2_n": 28,
+      "file": "eval_negotiation.json + get_impact_estimate",
+      "basis": "average per logged test deal (agreed price \u00d7 quantity); test deals repeat the same pairs, so these are averages, never totals"
+    },
     "line_down_deals": {
       "value": 8,
-      "of_deals": 33,
+      "of_deals": 31,
       "file": "eval_negotiation.json",
-      "basis": "logged deals whose buyer request was marked line down (the only deals given a downtime value)"
+      "basis": "deals whose buyer request was marked line down (the only kind of purchase given a downtime value in the plant model)"
     },
     "line_down_share_of_requests": {
       "value": 0.143,
@@ -99,8 +114,8 @@
     "idle_inventory_usd": 660000,
     "one_time": {
       "recovered_if_all_scrapped_usd": 66000,
-      "recovered_with_spare_change_usd": 170940,
-      "extra_recovered_vs_scrap_usd": 104940,
+      "recovered_with_spare_change_usd": 171600,
+      "extra_recovered_vs_scrap_usd": 105600,
       "est_kg_co2e_avoided": 1901
     },
     "per_year": {
@@ -114,8 +129,8 @@
     "idle_inventory_usd": 225000,
     "one_time": {
       "recovered_if_all_scrapped_usd": 11250,
-      "recovered_with_spare_change_usd": 31950,
-      "extra_recovered_vs_scrap_usd": 20700,
+      "recovered_with_spare_change_usd": 32062,
+      "extra_recovered_vs_scrap_usd": 20812,
       "est_kg_co2e_avoided": 324
     },
     "per_year": {
@@ -129,8 +144,8 @@
     "idle_inventory_usd": 1320000,
     "one_time": {
       "recovered_if_all_scrapped_usd": 198000,
-      "recovered_with_spare_change_usd": 463320,
-      "extra_recovered_vs_scrap_usd": 265320,
+      "recovered_with_spare_change_usd": 465300,
+      "extra_recovered_vs_scrap_usd": 267300,
       "est_kg_co2e_avoided": 5702
     },
     "per_year": {
@@ -148,8 +163,8 @@
         "idle_inventory_usd": 330000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 33000,
-          "recovered_with_spare_change_usd": 85470,
-          "extra_recovered_vs_scrap_usd": 52470,
+          "recovered_with_spare_change_usd": 85800,
+          "extra_recovered_vs_scrap_usd": 52800,
           "est_kg_co2e_avoided": 950
         },
         "per_year": {
@@ -164,8 +179,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -180,8 +195,8 @@
         "idle_inventory_usd": 1320000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 132000,
-          "recovered_with_spare_change_usd": 341880,
-          "extra_recovered_vs_scrap_usd": 209880,
+          "recovered_with_spare_change_usd": 343200,
+          "extra_recovered_vs_scrap_usd": 211200,
           "est_kg_co2e_avoided": 3802
         },
         "per_year": {
@@ -199,8 +214,8 @@
         "idle_inventory_usd": 450000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 45000,
-          "recovered_with_spare_change_usd": 116550,
-          "extra_recovered_vs_scrap_usd": 71550,
+          "recovered_with_spare_change_usd": 117000,
+          "extra_recovered_vs_scrap_usd": 72000,
           "est_kg_co2e_avoided": 1296
         },
         "per_year": {
@@ -215,8 +230,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -231,8 +246,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -250,8 +265,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -266,8 +281,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -282,8 +297,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -301,8 +316,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 33000,
-          "recovered_with_spare_change_usd": 154440,
-          "extra_recovered_vs_scrap_usd": 121440,
+          "recovered_with_spare_change_usd": 155100,
+          "extra_recovered_vs_scrap_usd": 122100,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -317,8 +332,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -333,8 +348,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 99000,
-          "recovered_with_spare_change_usd": 187440,
-          "extra_recovered_vs_scrap_usd": 88440,
+          "recovered_with_spare_change_usd": 188100,
+          "extra_recovered_vs_scrap_usd": 89100,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -352,8 +367,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 118470,
-          "extra_recovered_vs_scrap_usd": 52470,
+          "recovered_with_spare_change_usd": 118800,
+          "extra_recovered_vs_scrap_usd": 52800,
           "est_kg_co2e_avoided": 950
         },
         "per_year": {
@@ -368,8 +383,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -384,8 +399,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 223410,
-          "extra_recovered_vs_scrap_usd": 157410,
+          "recovered_with_spare_change_usd": 224400,
+          "extra_recovered_vs_scrap_usd": 158400,
           "est_kg_co2e_avoided": 2851
         },
         "per_year": {
@@ -403,8 +418,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -419,8 +434,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -435,8 +450,8 @@
         "idle_inventory_usd": 660000,
         "one_time": {
           "recovered_if_all_scrapped_usd": 66000,
-          "recovered_with_spare_change_usd": 170940,
-          "extra_recovered_vs_scrap_usd": 104940,
+          "recovered_with_spare_change_usd": 171600,
+          "extra_recovered_vs_scrap_usd": 105600,
           "est_kg_co2e_avoided": 1901
         },
         "per_year": {
@@ -450,9 +465,8 @@
   ],
   "downtime_in_our_logged_deals": {
     "line_down_deals_logged": 8,
-    "deals_logged": 33,
-    "downtime_value_lower_bound_usd": 288000,
-    "note": "only deals whose buyer request was marked line down; 1 hour each at $36k/hr (lower bound); other deals get $0"
+    "deals_logged": 31,
+    "note": "count only: test deals repeat the same pairs, so no dollar total is given; downtime is valued only in the plant model"
   },
   "pilot": {
     "status": "planned, not done",

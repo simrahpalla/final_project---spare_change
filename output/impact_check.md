@@ -17,11 +17,11 @@
 | 3 | the same function behind strip, deal card, Marketplace and impact_model | PASS | impact strip (seller run → get_impact_estimate): yes, deal card: yes, Marketplace summary: yes, impact_model.json: yes, frontend does no CO2 maths: yes |
 | 3 | Marketplace total = sum of the individual deals (3 approved deals on a scratch DB) | PASS | board {$ 4920.0, 54.1 kg, $ 469.0 disposal} = sum {$ 4920.0, 54.1 kg, $ 469.0 disposal} |
 | 3 | Reset demo clears impact totals | PASS | before reset: 2 session impacts, 3 approved deals on the board; after /api/reset: 0 and 0 |
-| 4 | downtime only for line-down deals, $36k/hr lower bound | PASS | 8 of 33 logged deals were line down → $288,000; plant model: 1 line-down purchase/yr × $36k |
+| 4 | downtime only for line-down deals, $36k/hr lower bound | PASS | 8 of 31 logged deals were line down (count only, no summed $); plant model: 1 line-down purchase/yr × $36k |
 | 4 | no $2.3M or $150k downtime rate in the model | PASS | none found |
 | 5 | one-time and per-year outputs kept apart and labelled | PASS | one_time: ['recovered_if_all_scrapped_usd', 'recovered_with_spare_change_usd', 'extra_recovered_vs_scrap_usd', 'est_kg_co2e_avoided']; per_year: ['carrying_cost_of_idle_stock_usd', 'carrying_cost_avoided_usd', 'buyer_downtime_value_usd', 'app_model_cost_usd']; UI $ recovered labelled 'one-time' (strip, deal card, Marketplace, rail) |
 | 5 | UI labels $ recovered as one-time | PASS | 5 labels in the frontend |
-| 6 | change an evidence file → the output changes | PASS | tokenomics cost/user-month $0.02428 → $0.243: model cost $0.29/yr → $2.91/yr; one deal price ×2 in eval_negotiation: recovery ratio 0.418 → 0.433, extra recovered $104,940 → $109,890 (temp copies; real files untouched) |
+| 6 | change an evidence file → the output changes | PASS | tokenomics cost/user-month $0.02428 → $0.243: model cost $0.29/yr → $2.91/yr; one deal price ×2 in eval_negotiation: recovery ratio 0.42 → 0.436, extra recovered $105,600 → $110,880 (temp copies; real files untouched) |
 | 7 | no invented user quotes, testimonials or pilot claims | PASS | no hits |
 | 7 | timed test template results still empty | PASS | 20 result cells, all blank |
 | 8 | don't-claim: MRO market size | PASS | only in the 'Not used' list of impact_sources.md |
