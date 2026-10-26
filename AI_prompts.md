@@ -729,3 +729,48 @@ This file records the prompts I used while building my MGT 409 final project, Su
 - **Found while building:** the evidence index's Impact row read the old impact-model keys and printed $0 (fixed); the slides' notes plugin URL was wrong (fixed).
 - **Section numbering:** the requirements count Title + links as section 1, so Motivation is 2 … Limits is 8.
 - **No natural blocked offer to screenshot:** the traced run closed in round 2, so the "blocked offer shown to its own side" is evidenced by the scripted rogue-agent test (`safety_extra.json`, M3), not a screenshot.
+
+
+## Phase 11 review fixes
+
+### Initial prompt
+
+> Commit.
+>
+> After that:
+>
+> Review fixes for report.html and slides.html. Priority order matters: we're close to the deadline, so do MUST-FIX first and commit, then SHOULD-FIX.
+>
+> MUST-FIX
+> 1. Timed test: most important but I still havent done it - I'll give you the numbers for this in an hour
+> 2. Deal counts are inconsistent (exec summary 33, section 7 "31 logged test deals", price range n=32, downtime "8 of our 33"). Use one dataset everywhere and explain any exclusions in one line. also explain to me why its inconsistent
+> 3. Remove "worth at least $288,000 at one hour each". It sums repeated test deals. Keep only per-deal averages and the plant model.
+> 4. Confirm the repo URL in both files matches the actual GitHub repo name and that the link works.
+> 5. Automa: its site advertises a matching tool comparing surplus against 10.5M+ parts and 750+ suppliers. Update the report table and slide 3: it matches against parts/supplier catalogs; we match against the equipment buyers run, plus agent negotiation.
+> 6. Motivation overclaims: change "Every plant still running S7-300s now depends on surplus" to "increasingly depends on spares and surplus" (Siemens guarantees spares to 2033), and change "one of the most widely installed PLC families" to "a widely used PLC family" (we have no source for install counts).
+>
+> SHOULD-FIX
+> 7. Usage assumptions: show the per-plant usage assumption on slide 7 next to "$ per plant per month", and add light / typical / heavy scenarios (e.g. 5/2/3, 10/4/6, 100/20/50 seller posts / requests / negotiations per month) with monthly cost per plant and at 100 and 10,000 users, in the report tokenomics section and as a compact row on the slide.
+> 8. Negotiation example: replace the traced run with one that shows real negotiating. Use a narrow-overlap pair WITHOUT line-down urgency so the agents counter for 4–6 rounds. Run it end to end in the app after a reset, take new screenshots (both companies' views, price-by-round chart, private reasons, ideally one blocked offer shown only to its own side), update section 4's trace, phase11_trace.md, slide 6 and all affected numbers. Add one sentence and a small figure showing a walk-away outcome from eval_negotiation.json.
+> 9. Slide 3: expand the competitor matrix to ~9–10 rows (Automa, SPARETECH, eBay, B-Stock, Liquidity Services, EquipNet, Verusen/Verdantis, Rheaply, Pactum, ChatGPT) with a 3–4 word "what they do" column and the four checkmark columns. Keep text ≥18pt. Split into two columns rather than shrinking the font.
+> 10. Sources: add a consistent small source footer to every slide with numbers (external by short name, internal by file and n), especially slides 3, 7, 8, 9.
+> 11. Limits + next steps (report and slide 10): add "No company dashboard yet: one view of all your listings, requests, negotiations, statuses and deal history."
+> 12. Screenshots: crop Figures 1, 2, 4, 5, 8, 9 to the relevant region and enlarge them so text is readable when printed.
+> 13. Exec summary: add "on my own answer keys over a synthetic market" next to 126/126 and 18/18.
+> 14. Slide 4: use a simplified diagram (main boxes + two human touchpoints, ≤40 words). Keep the detailed one in the report.
+> 15. Add a "1. Title and links" label to the report's first section.
+> 16. Taglines: use one consistent approach in the report and slides.
+>    - Title slide and report header: "Spare Change", then the tagline "Your next spare part is someone's spare change.", then the existing one-sentence descriptor. Remove "Turn spare parts into spare change. Spare yourself the downtime." from the report header and the sell-side tagline from the title slide.
+>    - Keep "Your next spare part is someone's spare change." as the closing line in both (deliberate bookend).
+>    - Use the side taglines only where the side is clear: slide 5 heading "Seller side: turn spare parts into spare change", slide 6 heading "Buyer side: spare yourself the downtime", and once each in report section 4 where the seller and buyer flows are introduced.
+>    - Leave the app's tab taglines unchanged.
+>
+> Then rerun the verification: page count 10–15, ≤10 slides only remaining todo being the manual run, every number matches output/report_numbers.md, images embedded, no console errors. Regenerate deliverables/report.pdf. List what changed. Log this in AI_prompts.md.
+
+### What was missing
+
+- **Why the deal counts differed:** three statistics used three filters over the same 33 logged deals. The deal count used all 33. The price ratio dropped 1 deal whose listing was created during a test (not in the seed catalog). The per-deal averages also dropped 1 deal whose request was created during a test. Now one set is used everywhere: 31 of the 33 deals, with that exclusion stated in one line.
+- **Automa's figures:** the homepage (opened with a browser user agent) says "10 million unique, standardised products" and "750+ Trusted Suppliers", not 10.5M+; the report uses the site's wording, cited in `output/competitors.md`.
+- **The narrow-overlap run needed a human edit:** the pricing agent suggested a $185.50 floor, above Prairie Packaging's $131 budget, so Hartwell lowered its floor to $122 when confirming it (a real human touchpoint). The run was driven through the real UI with Playwright (using the installed Chrome) so every screenshot comes from one in-app run. The agents bargained for 6 rounds; no blocked offer happened naturally, so that defense stays evidenced by the scripted rogue-agent test.
+- **Walk-away figure:** `eval_negotiation.json` has outcomes but not offers, so the chart reads pair 3/3's offers from `phase3_stress.json` (same runs).
+- **"10,000 users" is shown as plants** to match the per-plant usage assumption.

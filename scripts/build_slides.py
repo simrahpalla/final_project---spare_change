@@ -11,6 +11,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
+import make_figures  # noqa: E402
 import report_numbers  # noqa: E402
 from build_report import data_uri, fill  # noqa: E402
 
@@ -41,7 +42,7 @@ CSS = """
 .big-num { font-size: 1.7em; font-weight: 800; color: #0C2340; display: block; line-height: 1.1; }
 .cols3 .big-num { font-size: 2.2em; }
 .pass { background: #EAF3DE; color: #3B6D11; border-radius: 6px; padding: 0 8px; font-size: 0.8em; }
-.src, .caption { font-size: 0.5em; color: #5B6575; margin-top: 0.8em !important; }
+.src, .caption { font-size: 18px; color: #5B6575; margin-top: 0.8em !important; }
 .caption { font-size: 0.6em; }
 table.cmp { font-size: 0.62em; border-collapse: collapse; width: 100%; }
 table.cmp th { background: #0C2340; color: #fff; padding: 8px; font-weight: 600; border: none; }
@@ -59,7 +60,17 @@ table.cmp tr.us td { background: #FFF7ED; color: #C2410C; font-weight: 800; font
 .callout { background: #F5F7FA; border-left: 6px solid #F97316; padding: 12px 18px; font-size: 0.8em; margin-top: 0.8em !important; }
 .todo { border: 3px dashed #B91C1C; color: #B91C1C; padding: 8px 14px; font-weight: 700; font-size: 0.65em; display: inline-block; }
 .lab { font-size: 0.6em; font-weight: 700; margin: 0 0 4px !important; } .lab.sell { color: #C2410C; } .lab.buy { color: #2563EB; }
-table.tok { margin-top: 0.6em; font-size: 0.55em; }
+table.tok { margin-top: 0.5em; font-size: 22px; }
+.cmp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+table.cmp td span { display: block; font-size: 0.8em; font-weight: 400; color: #5B6575; }
+.cmp2 table.cmp, table.us-row { font-size: 24px; }
+.cmp2 table.cmp th:not(:first-child), .cmp2 table.cmp td:not(:first-child) { width: 13%; }
+table.us-row { margin-top: 8px; } table.us-row td:not(:first-child) { width: 7%; font-size: 1.2em; }
+table.us-row tr.us td span { color: #C2410C; font-weight: 600; }
+.demo { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; align-items: start; }
+.demo img { width: 100%; border: 1px solid #D5DCE5; border-radius: 6px; margin: 0; }
+.steps p { font-size: 0.8em; margin: 0.45em 0 !important; } .steps .big-num { margin-top: 0.6em !important; }
+.muted { color: #5B6575; font-size: 0.6em !important; }
 .closer { font-size: 1.15em; font-weight: 800; color: #C2410C; margin-top: 1.2em !important; }
 .reveal .slide-number { background: #0C2340; }
 .reveal .progress { color: #F97316; }
@@ -84,6 +95,7 @@ def slide_html(block: str) -> tuple[str, str]:
 
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")
+    make_figures.write_all()
     N = report_numbers.build()
     used = {}
     raw = re.sub(r"<!--.*?-->", "", (REPO / "slides" / "slides.md").read_text(encoding="utf-8"), flags=re.S)

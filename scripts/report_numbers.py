@@ -74,8 +74,17 @@ def build() -> dict:
     add("pf_cost_without", _usd(n["avg_cost_usd"], 5), "tokenomics.json", "cost_cutting_experiment.no_prefilter.avg_cost_usd")
     add("pf_top1_with", f"{w['top1_correct']}/{w['listings']}", "tokenomics.json", "cost_cutting_experiment.with_prefilter.top1_correct / listings")
     add("pf_top1_without", f"{n['top1_correct']}/{n['listings']}", "tokenomics.json", "cost_cutting_experiment.no_prefilter.top1_correct / listings")
+    add("pf_n", w["listings"], "tokenomics.json", "cost_cutting_experiment.with_prefilter.listings")
     add("pf_tok_cut", f"{e['token_reduction_per_matching_call']:.0%}", "tokenomics.json", "cost_cutting_experiment.token_reduction_per_matching_call")
     add("pf_cost_cut", f"{e['cost_reduction_per_matching_call']:.0%}", "tokenomics.json", "cost_cutting_experiment.cost_reduction_per_matching_call")
+    pr = {k: tok["per_run"][k]["avg_cost_usd"] for k in ("seller_flow", "buy_request", "negotiation")}
+    for name, (sp, bq, ng) in (("light", (5, 2, 3)), ("typical", (a["seller_flows"], a["buy_requests"], a["negotiations"])), ("heavy", (100, 20, 50))):
+        m = round(sp * pr["seller_flow"] + bq * pr["buy_request"] + ng * pr["negotiation"], 5)  # rounded like tokenomics.json
+        add(f"use_{name}", f"{sp} / {bq} / {ng}", "tokenomics.json", f"usage scenario ({name}): seller posts / buy requests / negotiations per month")
+        add(f"use_{name}_month", _usd(m, 3), "tokenomics.json", "Σ runs × per_run.*.avg_cost_usd")
+        add(f"use_{name}_100", _usd(m * 100), "tokenomics.json", "per plant per month × 100")
+        add(f"use_{name}_10k", _usd(m * 10_000), "tokenomics.json", "per plant per month × 10,000")
+        add(f"use_{name}_10k_year", _usd(m * 10_000 * 12), "tokenomics.json", "per plant per month × 10,000 × 12")
     c = tok["caps"]
     add("cap_requests", c["MAX_MODEL_REQUESTS"], "tokenomics.json", "caps.MAX_MODEL_REQUESTS")
     add("cap_tokens", f"{c['MAX_TOKENS_PER_RUN']:,}", "tokenomics.json", "caps.MAX_TOKENS_PER_RUN")
@@ -84,23 +93,38 @@ def build() -> dict:
     add("cap_session", _usd(c["SESSION_BUDGET_USD"]), "tokenomics.json", "caps.SESSION_BUDGET_USD")
     add("blocked_runs", tok["per_run"]["seller_flow"]["blocked_posts"]["runs"], "tokenomics.json", "per_run.seller_flow.blocked_posts.runs (0 model requests each)")
 
-    # ---- the traced run (audit trail, one real run on 2026-10-26)
-    audit = _load("audit_trail.json")
-    ends = {x["run_id"]: json.loads(x["result"]) for x in audit if x.get("action") == "run_end" and x["run_id"] in ("bb3d14b89de2", "fe8ce4b551be", "808f89078e9c")}
-    t1, t2, t3 = ends["bb3d14b89de2"], ends["fe8ce4b551be"], ends["808f89078e9c"]
-    add("trace_sell_cost", _usd(t1["cost_usd"], 5), "audit_trail.json", "run_end of run bb3d14b89de2 .cost_usd")
-    add("trace_sell_req", t1["requests"], "audit_trail.json", "run_end bb3d14b89de2 .requests")
-    add("trace_sell_in", f"{t1['input_tokens']:,}", "audit_trail.json", "run_end bb3d14b89de2 .input_tokens (uncached)")
-    add("trace_sell_cached", f"{t1['cached_tokens']:,}", "audit_trail.json", "run_end bb3d14b89de2 .cached_tokens")
-    add("trace_sell_out", f"{t1['output_tokens']:,}", "audit_trail.json", "run_end bb3d14b89de2 .output_tokens")
-    add("trace_neg_cost", _usd(t2["cost_usd"], 5), "audit_trail.json", "run_end fe8ce4b551be .cost_usd")
-    add("trace_neg_req", t2["requests"], "audit_trail.json", "run_end fe8ce4b551be .requests")
-    add("trace_inj_cost", _usd(t3["cost_usd"]), "audit_trail.json", "run_end 808f89078e9c .cost_usd (0 requests)")
+    # ---- the traced run (one real run in the app on 2026-10-26; output/phase11_trace.json, run ids in the audit trail)
+    tr = _load("phase11_trace.json")
+    t1, t2 = tr["runs"][tr["sell_run"]], tr["runs"][tr["negotiation_run"]]
+    audit_ids = {x["run_id"] for x in _load("audit_trail.json") if x.get("action") == "run_end"}
+    assert {tr["sell_run"], tr["negotiation_run"], tr["injection_run"]} <= audit_ids, "trace run ids missing from the audit trail"
+    add("trace_sell_cost", _usd(t1["cost_usd"], 5), "phase11_trace.json", f"runs[{tr['sell_run']}].cost_usd (= audit run_end)")
+    add("trace_sell_req", t1["requests"], "phase11_trace.json", f"runs[{tr['sell_run']}].requests")
+    add("trace_neg_cost", _usd(t2["cost_usd"], 5), "phase11_trace.json", f"runs[{tr['negotiation_run']}].cost_usd (= audit run_end)")
+    add("trace_neg_req", t2["requests"], "phase11_trace.json", f"runs[{tr['negotiation_run']}].requests")
+    add("trace_sell_run", tr["sell_run"], "phase11_trace.json", "sell_run (audit run id)")
+    add("trace_neg_run", tr["negotiation_run"], "phase11_trace.json", "negotiation_run (audit run id)")
+    add("trace_inj_cost", "$0.00", "audit_trail.json", f"run_end {tr['injection_run']} (0 model requests)")
+    sf = tr["seller_flow"]
+    for key, v, what in (("tr_score", sf["score"], "seller_flow.score"), ("tr_ask", _usd(sf["ask"], 0), "seller_flow.ask"),
+                         ("tr_new", _usd(sf["new_price"], 0), "seller_flow.new_price"), ("tr_scrapunit", _usd(sf["scrap_per_unit"]), "seller_flow.scrap_per_unit"),
+                         ("tr_floor_sugg", _usd(sf["floor_suggested"]), "seller_flow.floor_suggested"), ("tr_floor", _usd(sf["floor_confirmed"], 0), "seller_private.floor_price"),
+                         ("tr_budget", _usd(sf["budget"], 0), "buyer_private.ceiling_price"), ("tr_rounds", tr["negotiation"]["rounds_used"], "negotiation.rounds_used"),
+                         ("tr_price", _usd(tr["deal"]["price"], 0), "deal.price"), ("tr_qty", tr["deal"]["qty"], "deal.qty"),
+                         ("tr_total", _usd(sf["deal_total"], 0), "seller_flow.deal_total (price × qty)"), ("tr_under", _usd(sf["under_budget"], 0), "seller_flow.under_budget"),
+                         ("tr_co2_listing", sf["listing_co2"], "seller_flow.listing_co2 (12 units)"), ("tr_co2_deal", f"{sf['deal_co2']:.0f}", "seller_flow.deal_co2 (6 units)"),
+                         ("tr_listing_qty", sf["qty"], "seller_flow.qty"), ("tr_other1", sf["other_buyers"][0][1], "seller_flow.other_buyers[0]"),
+                         ("tr_other2", sf["other_buyers"][1][1], "seller_flow.other_buyers[1]")):
+        add(key, v, "phase11_trace.json", what)
+    o = tr["offers"]
+    add("tr_offers", " → ".join(f"{'S' if x['from_side'] == 'seller' else 'B'} {_usd(x['price'], 0)}{' accept' if x['action'] == 'accept' else ''}" for x in o),
+        "phase11_trace.json", "offers[] (S = seller agent, B = buyer agent)")
 
     # ---- safety and reliability
     sm = saf["summary"]
     for k in ("attack", "malfunction", "overspending"):
         add(f"saf_{k}", f"{sm[k]['pass']}/{sm[k]['tests']}", "safety_tests.json", f"summary.{k}")
+    add("saf_total", sum(v["tests"] for v in sm.values()), "safety_tests.json", "summary (sum of tests)")
     b = conc["before"][0]
     add("crash_before", f"{b['crashes']}/{b['jobs']}", "concurrency_test.json", "before[0].crashes / jobs (6 at once, process per run)")
     r0 = conc["runs"][0]
@@ -117,6 +141,14 @@ def build() -> dict:
     wa = neg["by_pair_type"]["walk_away"]
     add("walk_n", wa["negotiations"], "eval_negotiation.json", "by_pair_type.walk_away.negotiations")
     add("walk_deals", wa["deals"], "eval_negotiation.json", "by_pair_type.walk_away.deals")
+    p3raw = _load("phase3_stress.json")["raw"]["neg:3/3#1"]["result"]
+    wo = p3raw["negotiation"]["offers"]
+    wa1 = next(r for r in neg["logged_negotiations"] if r["pair"] == "3/3")
+    add("wa_floor", _usd(wa1["floor"], 0), "eval_negotiation.json", "logged_negotiations[pair 3/3].floor")
+    add("wa_budget", _usd(wa1["ceiling"], 0), "eval_negotiation.json", "logged_negotiations[pair 3/3].ceiling")
+    add("wa_rounds", len(wo), "phase3_stress.json", "raw['neg:3/3#1'].result.negotiation.offers (count)")
+    add("wa_last_s", _usd(min(x["price"] for x in wo if x["from_side"] == "seller" and x["action"] == "offer"), 0), "phase3_stress.json", "lowest seller offer, pair 3/3 run 1")
+    add("wa_last_b", _usd(max(x["price"] for x in wo if x["from_side"] == "buyer" and x["action"] == "offer"), 0), "phase3_stress.json", "highest buyer offer, pair 3/3 run 1")
     add("auto_e2e", f"{neg['auto_negotiate_e2e']['pass']}/{neg['auto_negotiate_e2e']['checks']}", "eval_negotiation.json", "auto_negotiate_e2e")
     add("top1", mat["forward_matching"]["top1"], "eval_matching.json", "forward_matching.top1")
     add("top3", mat["forward_matching"]["top3"], "eval_matching.json", "forward_matching.top3")
@@ -149,18 +181,6 @@ def build() -> dict:
     add("f_iron", fx["Pump"][0], "data/exchange.db", "carbon_factors[Pump].kg_co2e_per_kg (= impact_sources.md cast iron row)")
     add("f_cpu", f"{fx['PLC CPU'][1]:g}", "data/exchange.db", "carbon_factors[PLC CPU].kg_co2e_per_unit")
     add("f_module", f"{fx['PLC I/O'][1]:g}", "data/exchange.db", "carbon_factors[PLC I/O].kg_co2e_per_unit")
-
-    # ---- the traced run, as shown on the phase11-* screenshots (see output/phase11_trace.md)
-    T = "phase11_trace.md + screenshots"
-    for key, v, what in (("tr_score", "98", "Riverbend's match score (phase11-sell-buyers)"), ("tr_ask", "$1,425", "suggested ask (phase11-sell-buyers)"),
-                         ("tr_new", "$2,966", "new (list) price (phase11-sell-buyers)"), ("tr_scrapunit", "$45.64", "scrap value per unit (phase11-sell-buyers)"),
-                         ("tr_floor", "$998", "seller's confirmed floor (phase11-negotiation-seller)"), ("tr_budget", "$1,890", "buyer's budget (phase11-negotiation-buyer)"),
-                         ("tr_rounds", "2", "rounds used (negotiations.rounds_used)"), ("tr_price", "$1,425", "deal price (deals.price)"),
-                         ("tr_co2_listing", "21", "est. kg CO2e for the 3-unit listing (phase11-sell-top)"),
-                         ("tr_co2_deal", "7", "est. kg CO2e for the 1-unit deal (phase11-deal-approved)"),
-                         ("tr_under", "$465", "deal under the buyer's budget (phase11-deal-approved)"),
-                         ("tr_tokens_ui", "7,593", "tokens on the cost meter, incl. cache-write (phase11-sell-top)")):
-        add(key, v, T, what)
 
     # ---- impact (impact_model.json) and per-deal averages from the logged test deals
     mid = imp["mid_scenario"]
@@ -219,6 +239,8 @@ def build() -> dict:
                         ("reman_range", "46–93%", "reuse credit row (Energies 2024; MAN/Bayreuth; Curtin)"),
                         ("drum", "$242", "Alachua County fee schedule row")):
         add(key, v, S, row)
+    add("automa_products", "10M+", "competitors.md", "Automa row: homepage '10 million unique, standardised products'")
+    add("automa_suppliers", "750+", "competitors.md", "Automa row: homepage '750+ Trusted Suppliers'")
     add("share_10k", f"{10_000 / 280_000:.1%}", S, "10,000 ÷ about 280,000 US manufacturing establishments")
     return N
 

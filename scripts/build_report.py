@@ -16,6 +16,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
+import make_figures  # noqa: E402
 import report_numbers  # noqa: E402
 
 try:
@@ -77,6 +78,12 @@ class Doc:
             return (f'<figure class="pair"><div><img src="{data_uri(REPO / m.group(1))}" alt="Figure {a}"><span>Figure {a}</span></div>'
                     f'<div><img src="{data_uri(REPO / m.group(2))}" alt="Figure {b}"><span>Figure {b}</span></div>'
                     f'<figcaption><b>Figures {a} and {b}:</b> {inline(m.group(3))}</figcaption></figure>')
+        m = re.match(r"!svgfig\[([^|]+)\|([^|]+)\|?([^\]]*)\]", line)
+        if m:
+            self.fig += 1
+            svg = (REPO / m.group(1)).read_text(encoding="utf-8")
+            return (f'<figure class="diagram" style="width:{m.group(3) or "100%"}">{svg}'
+                    f'<figcaption><b>Figure {self.fig}:</b> {inline(m.group(2))}</figcaption></figure>')
         m = re.match(r"!svg\[([^|]+)\|([^\]]+)\]", line)
         if m:
             svg = (REPO / m.group(1)).read_text(encoding="utf-8")
@@ -168,6 +175,7 @@ figure.pair { display: flex; flex-wrap: wrap; gap: 8pt; width: 100%%; }
 figure.pair > div { flex: 1 1 0; text-align: center; font-size: 8.5pt; color: %(muted)s; }
 figure.pair figcaption { flex-basis: 100%%; }
 figure.diagram svg { width: 100%%; height: auto; }
+.offers { font-family: Consolas, Menlo, monospace; font-size: 9.5pt; background: #F5F7FA; border-left: 3pt solid #F97316; padding: 5pt 9pt; }
 .todo { border: 2pt dashed %(red)s; color: %(red)s; background: #FEF2F2; padding: 8pt 10pt; margin: 6pt 0; font-weight: 600; break-inside: avoid; }
 b.teal, .teal { color: %(teal)s; }
 @media print { body { padding: 0; } .titlebar { margin: 0 0 10pt; } a { color: %(navy)s; } }
@@ -176,6 +184,7 @@ b.teal, .teal { color: %(teal)s; }
 
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")
+    make_figures.write_all()
     N = report_numbers.build()
     used = {}
     md = fill((REPO / "report" / "report.md").read_text(encoding="utf-8"), N, used, "report")

@@ -1,0 +1,159 @@
+{
+ "date": "2026-10-26",
+ "reset": "reset-3ca9e931",
+ "sell_run": "75d4ae25c9fd",
+ "negotiation_run": "63eb88cf9061",
+ "injection_run": "808f89078e9c",
+ "runs": {
+  "75d4ae25c9fd": {
+   "run_id": "75d4ae25c9fd",
+   "kind": "seller_flow",
+   "requests": 5,
+   "input_tokens": 1683,
+   "cached_tokens": 2243,
+   "cache_write_tokens": 2240,
+   "output_tokens": 759,
+   "total_tokens": 6925,
+   "cost_usd": 0.00085
+  },
+  "63eb88cf9061": {
+   "run_id": "63eb88cf9061",
+   "kind": "negotiation",
+   "requests": 18,
+   "input_tokens": 2268,
+   "cached_tokens": 14173,
+   "cache_write_tokens": 10393,
+   "output_tokens": 1473,
+   "total_tokens": 28307,
+   "cost_usd": 0.002404
+  }
+ },
+ "deal": {
+  "id": 1,
+  "negotiation_id": 1,
+  "listing_id": 28,
+  "need_id": 13,
+  "price": 122.0,
+  "qty": 6,
+  "status": "approved",
+  "seller_approved_by": "Hartwell Precision Components (demo user)",
+  "seller_approved_at": "2026-10-26T18:20:39+00:00",
+  "buyer_approved_by": "Prairie Packaging (demo user)",
+  "buyer_approved_at": "2026-10-26T18:20:49+00:00",
+  "approved_by": "seller: Hartwell Precision Components (demo user); buyer: Prairie Packaging (demo user)",
+  "decided_at": "2026-10-26T18:20:49+00:00",
+  "created_at": "2026-10-26T18:19:17+00:00"
+ },
+ "negotiation": {
+  "id": 1,
+  "listing_id": 28,
+  "need_id": 13,
+  "seller_id": 1,
+  "buyer_id": 32,
+  "qty": 6,
+  "status": "approved",
+  "max_rounds": 6,
+  "rounds_used": 6,
+  "end_reason": "buyer accepted $122.00",
+  "run_id": "63eb88cf9061",
+  "created_at": "2026-10-26T18:18:59+00:00"
+ },
+ "offers": [
+  {
+   "round": 1,
+   "from_side": "seller",
+   "action": "offer",
+   "price": 240.0,
+   "qty": 6
+  },
+  {
+   "round": 2,
+   "from_side": "buyer",
+   "action": "offer",
+   "price": 100.0,
+   "qty": 6
+  },
+  {
+   "round": 3,
+   "from_side": "seller",
+   "action": "offer",
+   "price": 195.0,
+   "qty": 6
+  },
+  {
+   "round": 4,
+   "from_side": "buyer",
+   "action": "offer",
+   "price": 115.0,
+   "qty": 6
+  },
+  {
+   "round": 5,
+   "from_side": "seller",
+   "action": "offer",
+   "price": 122.0,
+   "qty": 6
+  },
+  {
+   "round": 6,
+   "from_side": "buyer",
+   "action": "accept",
+   "price": 122.0,
+   "qty": 6
+  }
+ ],
+ "need": {
+  "id": 13,
+  "status": "filled",
+  "urgency": "normal",
+  "qty": 6
+ },
+ "listing": {
+  "id": 28,
+  "status": "active",
+  "qty": 6
+ },
+ "seller_private": {
+  "listing_id": 28,
+  "floor_price": 122.0,
+  "set_by": "seller",
+  "reason": "This floor is 35% of the $530 new price for a used, working module and remains well above its $7.84 scrap value."
+ },
+ "buyer_private": {
+  "need_id": 13,
+  "ceiling_price": 131.0,
+  "set_by": "buyer",
+  "reason": null
+ },
+ "seller_flow": {
+  "part": "6ES7321-1BL00-0AA0",
+  "qty": 12,
+  "buyer": "Prairie Packaging",
+  "need_id": 13,
+  "score": 94,
+  "ask": 265.0,
+  "new_price": 530.0,
+  "scrap_per_unit": 7.84,
+  "floor_suggested": 185.5,
+  "floor_confirmed": 122.0,
+  "budget": 131.0,
+  "listing_co2": 74,
+  "deal_co2": 37.2,
+  "deal_total": 732.0,
+  "under_budget": 9.0,
+  "other_buyers": [
+   [
+    "Riverbend Foods",
+    62
+   ],
+   [
+    "Oakridge Dairy Cooperative",
+    56
+   ]
+  ]
+ },
+ "blocked_moves": {
+  "seller": [],
+  "buyer": []
+ }
+}

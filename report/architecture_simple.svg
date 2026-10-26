@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif" font-size="20" role="img" aria-label="How Spare Change works">
+  <defs><marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B6575"/></marker></defs>
+  <rect x="10" y="40" width="150" height="70" rx="10" fill="#fff" stroke="#F97316" stroke-width="3"/><text x="85" y="82" text-anchor="middle" font-weight="700" fill="#0C2340">Seller post</text>
+  <rect x="10" y="130" width="150" height="70" rx="10" fill="#fff" stroke="#2563EB" stroke-width="3"/><text x="85" y="172" text-anchor="middle" font-weight="700" fill="#0C2340">Buyer request</text>
+  <rect x="200" y="60" width="190" height="120" rx="10" fill="#0C2340"/><text x="295" y="112" text-anchor="middle" font-weight="700" fill="#fff">List + safety</text><text x="295" y="140" text-anchor="middle" fill="#C9D2DE" font-size="17">check</text>
+  <rect x="430" y="60" width="190" height="120" rx="10" fill="#0C2340"/><text x="525" y="112" text-anchor="middle" font-weight="700" fill="#fff">Match by</text><text x="525" y="140" text-anchor="middle" fill="#fff" font-weight="700">machines</text>
+  <rect x="660" y="60" width="290" height="120" rx="10" fill="#0C2340"/><text x="805" y="112" text-anchor="middle" font-weight="700" fill="#fff">Agents negotiate</text><text x="805" y="140" text-anchor="middle" fill="#C9D2DE" font-size="17">each sees only its own limit</text>
+  <line x1="160" y1="75" x2="198" y2="105" stroke="#5B6575" stroke-width="2" marker-end="url(#sa)"/><line x1="160" y1="165" x2="198" y2="135" stroke="#5B6575" stroke-width="2" marker-end="url(#sa)"/>
+  <line x1="390" y1="120" x2="428" y2="120" stroke="#5B6575" stroke-width="2" marker-end="url(#sa)"/><line x1="620" y1="120" x2="658" y2="120" stroke="#5B6575" stroke-width="2" marker-end="url(#sa)"/>
+  <rect x="430" y="250" width="230" height="80" rx="10" fill="#FFF7ED" stroke="#F97316" stroke-width="3"/><text x="545" y="285" text-anchor="middle" font-weight="700" fill="#C2410C">① Confirm limit</text><text x="545" y="312" text-anchor="middle" fill="#0F172A" font-size="17">floor / budget</text>
+  <rect x="700" y="250" width="250" height="80" rx="10" fill="#FFF7ED" stroke="#F97316" stroke-width="3"/><text x="825" y="285" text-anchor="middle" font-weight="700" fill="#C2410C">② Both approve</text><text x="825" y="312" text-anchor="middle" fill="#0F172A" font-size="17">deal closes</text>
+  <line x1="580" y1="180" x2="560" y2="248" stroke="#5B6575" stroke-width="2" marker-end="url(#sa)"/><line x1="825" y1="180" x2="825" y2="248" stroke="#5B6575" stroke-width="2" marker-end="url(#sa)"/>
+  <text x="10" y="300" fill="#5B6575" font-size="17">Code checks every step;</text><text x="10" y="324" fill="#5B6575" font-size="17">AI only where judgment is needed.</text>
+  <text x="480" y="385" text-anchor="middle" font-weight="700" fill="#0C2340" font-size="22">Humans set the guardrails. Agents do the work.</text>
+</svg>
