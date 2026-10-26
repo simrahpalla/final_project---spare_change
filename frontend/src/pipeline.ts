@@ -42,7 +42,9 @@ function note(key: string, s: Step): string | undefined {
     case 'prefilter':
       return `${s.candidates} plant${s.candidates === 1 ? '' : 's'}`
     case 'matching':
-      return s.status === 'no_candidates' ? 'no buyers yet' : `${s.ranked?.length ?? 0} ranked`
+      if (s.status === 'no_candidates') return 'no buyers yet'
+      if (s.method === 'rules_fallback') return 'ranked by rules'
+      return `${s.ranked?.length ?? 0} ranked · ${s.method === 'agent_retry' ? 'corrected' : 'checked'}`
     case 'pricing':
       return s.ask ? `$${Math.round(s.ask).toLocaleString('en-US')}` : undefined
     case 'impact':

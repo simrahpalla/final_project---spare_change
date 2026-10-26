@@ -265,3 +265,15 @@ This file records the prompts I used while building my MGT 409 final project, Su
 > Everything looks great, just on the design front. I worry that the whole page is white and it's not intuitive or easy to track what the most important information is. So I'm thinking maybe for the agent activity and cost this run on the side, those maybe can have like a background of beige or gray, so that the stuff on the left is the only stuff that has a white background so that it's more noticeable. And maybe like a few darker borders in some places or something. Can you make a mock-up of just what that would look like and show it to me before making any actual changes?
 
 > Go with Option B (gray sidebar panel + firmer borders on the key cards) and apply it to the app.
+
+> Yes, commit the Option B design update. I'll retake the phase4-sell-result screenshot and send it.
+
+> what screenshot
+
+> here - but didnnt the outputs have 3 buyers before
+
+> Do you think the this change came from adding those 5 companies as demos and that it's only using from those? Or is that not, does that not have anything to do with this?
+
+> okay fix it with your proposed fix
+
+> here you go - and yes commit it

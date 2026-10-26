@@ -191,6 +191,14 @@ export function BuyerMatches({ matching, companies }: { matching: Step; companie
           installed equipment
         </span>
       </div>
+      <div className={`check-note ${matching.method === 'rules_fallback' ? 'fallback' : ''}`}>
+        <Check />
+        {matching.method === 'rules_fallback'
+          ? "Ranked by rules: the AI's answer failed our fact check twice, so these buyers are ranked from plant data alone."
+          : matching.method === 'agent_retry'
+            ? "Fact-checked: the AI's first answer didn't match the plant data, so it was corrected and checked again."
+            : "Fact-checked: every reason below matches that plant's installed equipment and open needs."}
+      </div>
       <div className="matches">
         {matching.ranked.map((m: any, i: number) => (
           <div className="match" key={m.buyer_id}>

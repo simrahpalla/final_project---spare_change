@@ -1,0 +1,212 @@
+{
+  "run_id": "7256df8adb90",
+  "kind": "seller_flow",
+  "subject": "listing:4",
+  "outcome": "listed and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "96416889",
+        "qty": 6,
+        "condition": "new_open_box",
+        "asking_price": 435.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "other_items": [],
+        "confidence": 0.99,
+        "notes": "Boxes were opened for inspection only; items were never installed."
+      }
+    },
+    {
+      "step": "save",
+      "status": "kept",
+      "note": "listing is already 'active'; draft used for checking only"
+    },
+    {
+      "step": "rules",
+      "status": "passed",
+      "rules": [],
+      "reasons": []
+    },
+    {
+      "step": "guard",
+      "status": "allowed",
+      "reasons": []
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "listing",
+      "status": "ready",
+      "listing": {
+        "listing_id": 4,
+        "status": "active",
+        "flag_reason": null,
+        "seller_id": 4,
+        "seller_name": "Blue Ridge Beverage",
+        "location": "Roanoke, VA",
+        "part_number": "96416889",
+        "manufacturer": "Grundfos",
+        "family": "Pump spare",
+        "description": "CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)",
+        "qty": 6,
+        "condition": "new_open_box",
+        "asking_price": 435.0,
+        "new_price": 678.0,
+        "scrap_value": 11.42,
+        "hazmat": false,
+        "hazmat_class": null,
+        "expiry_date": null,
+        "sds_available": null,
+        "fits_platforms": [
+          "Grundfos CR 32"
+        ],
+        "created_at": "2026-10-04T09:54:00"
+      }
+    },
+    {
+      "step": "prefilter",
+      "status": "done",
+      "candidates": 3
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "candidates": 3,
+      "ranked": [
+        {
+          "buyer_id": 23,
+          "need_id": 4,
+          "score": 98,
+          "reason": "Open need #4: urgently needs 3 HQQE seal kits for leaking Grundfos CR 32 pumps; listing is the exact part, 96416889, and quantity 6 covers the need. Downtime cost is $4,000/day; runs 7x CR 32 (12 yrs).",
+          "buyer_name": "Clearwater Bottling"
+        },
+        {
+          "buyer_id": 18,
+          "need_id": null,
+          "score": 62,
+          "reason": "No open need; runs 8x Grundfos CR 32 (7 yrs), a sizable installed base for this pump spare.",
+          "buyer_name": "Sunbelt Bottling"
+        },
+        {
+          "buyer_id": 46,
+          "need_id": null,
+          "score": 49,
+          "reason": "No open need; runs 4x Grundfos CR 32 (6 yrs), making this a potential future spare.",
+          "buyer_name": "Northern Lights Brewing"
+        }
+      ],
+      "method": "agent",
+      "check_errors": [],
+      "saved": 3,
+      "rejected": []
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 435.0,
+      "floor_suggestion": 305.0,
+      "rationale": "At $435, your ask is reasonable for a new-open-box kit: it is about 64% of the $678 new price, within the 60\u201370% condition range, and well above the $11.42 scrap value. There is one open need matched and no active asks or approved deals to benchmark against.",
+      "clamped": false,
+      "new_price": 678.0,
+      "scrap_value": 11.42
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Clearwater Bottling",
+      "subject": "CR 32 HQQE shaft seal kits available \u2014 exact match for need #4",
+      "body": "Hello Clearwater Bottling team,\n\nSpare Change has six new-open-box Grundfos CR 32 HQQE shaft seal kits (part 96416889), never installed and opened for inspection only. Asking price is $435 each. These are an exact match for your need for three HQQE kits for CR 32 pumps.\n\nWould you like to discuss availability or delivery?\n\nBest,\nSpare Change"
+    },
+    {
+      "step": "impact",
+      "status": "done",
+      "listing_id": 4,
+      "part_number": "96416889",
+      "qty": 6,
+      "unit_price": 435.0,
+      "value_recovered": 2610.0,
+      "scrap_value_total": 68.52,
+      "uplift_vs_scrap": 2541.48,
+      "kg_kept_out_of_scrap": 7.2,
+      "est_kg_co2e_avoided": 43.2,
+      "est_hazardous_disposal_avoided": null,
+      "family": "Pump spare",
+      "factor_kg_co2e_per_kg": 6.0,
+      "factor_source": "PLACEHOLDER: replace with sourced value in Phase 10",
+      "placeholder_factors": true,
+      "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2241,
+      "cache_write_tokens": 349,
+      "output_tokens": 86,
+      "total_tokens": 2928,
+      "cost_usd": 0.00013424
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 624,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 73,
+      "total_tokens": 697,
+      "cost_usd": 9.89e-05
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1153,
+      "output_tokens": 297,
+      "total_tokens": 1576,
+      "cost_usd": 0.00030523
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 576,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 196,
+      "total_tokens": 772,
+      "cost_usd": 0.0001556
+    }
+  ],
+  "totals": {
+    "run_id": "7256df8adb90",
+    "kind": "seller_flow",
+    "requests": 5,
+    "input_tokens": 1578,
+    "cached_tokens": 2241,
+    "cache_write_tokens": 1502,
+    "output_tokens": 652,
+    "total_tokens": 5973,
+    "cost_usd": 0.000694
+  },
+  "listing_id": 4,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {},
+    "top_buyer_correct": true,
+    "expected_first_buyer": 23
+  }
+}

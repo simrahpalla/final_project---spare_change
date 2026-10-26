@@ -252,3 +252,9 @@ textarea:focus, .btn:focus-visible, .chip:focus-visible { outline: 2px solid var
   .layout { padding: 0 24px; }
   .rail { min-height: 0; border-left: 0; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 24px; }
 }
+
+/* matching fact-check note */
+.check-note { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+.check-note .icon { color: var(--green); width: 14px; height: 14px; }
+.check-note.fallback { color: var(--navy); }
+.check-note.fallback .icon { color: var(--ink-2); }

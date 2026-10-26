@@ -218,3 +218,29 @@ The React dashboard is served by FastAPI. Its design is in `output/design.md`.
 - **Right rail:** live agent activity (each step done, working, blocked or skipped, with code steps marked "(code)"), the cost of the run and the session against the budget (from `token_usage`), and the session's impact.
 - **Live progress:** `POST /api/seller-flow/start` returns a `run_id`, and the page polls `GET /api/runs/{run_id}`. The broker updates the run's steps and current agent as it goes.
 - **Startup:** the page shows "Starting up… loading marketplace tools" until the shared MCP processes report ready.
+
+## 6. Matching fact-check (found in Phase 4 testing)
+
+**What happened:** in one UI run (`f0c18378e49d`, screenshot `output/screenshots/phase4-matching-error.webp`), the matching agent gave Riverbend Foods the profile of Prairie Packaging: "runs 5x S7-300 (15 yrs); no open need", with a score of 54. It also dropped Prairie, so only 2 of the 3 candidates came back. Riverbend really runs 4× S7-300 (18 yrs) and has the line-down need ($12k/day). The two runs before it, on the same input, were correct. This was 1 wrong answer out of 15 recorded runs.
+
+**Why the existing safeguards missed it:** `record_matches` only checks that a buyer *could* use the part, which Riverbend could. Checking each claim against the right buyer existed only in the stress test.
+
+**Fix (`backend/match_check.py`, plain code):** every answer from the matching agent is checked before it is saved or shown.
+- **Each claim must be true for that buyer:** "4x S7-300 (18 yrs)", "need #1", "$12k/day", "line down", "no open need".
+- **`need_id` must match the buyer's open need.**
+- **Scores follow the prompt's bands:** a buyer with an open need scores 70 or more, and an installed-base buyer scores below 70.
+- **Coverage:** every buyer with an open need is included, and the answer lists min(3, candidates) buyers.
+
+On failure the agent is **retried once** with the exact errors. If it fails again, the broker uses a **rules-only ranking**: open needs by urgency and downtime, then installed base. Its reasons are written from the data, and its outreach email comes from a template. Every check is logged (`match_check_passed` / `match_check_failed`). The UI says "Fact-checked", "Fact-checked: … corrected", or "Ranked by rules".
+
+**Evidence:**
+- `scripts/test_match_check.py` passes **5/5** (`output/match_check_test.json`):
+  - the real bad answer is caught, with 4 specific errors
+  - a correct answer passes
+  - an injected non-candidate (Apex) is caught
+  - **all 19 real answers from the Phase 3 stress test pass (0 false alarms)**
+  - the rules fallback ranks the expected first buyer first for **18/18** labelled listings
+- A scripted run forced both paths end to end:
+  - bad answer, then good: **corrected on retry**, Riverbend [100] first
+  - bad answer twice: **rules fallback**, Riverbend [95] first
+- In 5 live runs afterwards (listing 1 ×3, 12, 4), every answer passed on the first try.

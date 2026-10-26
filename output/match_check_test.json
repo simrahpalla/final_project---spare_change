@@ -1,0 +1,38 @@
+{
+  "passed": 5,
+  "cases": 5,
+  "results": [
+    {
+      "case": "1. the real mixed-up answer (Riverbend given Prairie's facts) is caught",
+      "pass": true,
+      "detail": [
+        "Riverbend Foods: has open need #1, so its score must be 70 or more, not 54",
+        "Riverbend Foods: reason says '5x Siemens S7-300 (15 yrs)' but it runs 4x Siemens S7-300 (18 yrs)",
+        "Riverbend Foods: reason says 'no open need', but it has open need #1 (line down, $12,000/day)",
+        "list 3 buyers (there are 3 candidates), not 2"
+      ]
+    },
+    {
+      "case": "2. a correct answer for the same listing passes",
+      "pass": true,
+      "detail": "no errors"
+    },
+    {
+      "case": "3. an injected non-candidate buyer (Apex Holdings) is caught",
+      "pass": true,
+      "detail": [
+        "buyer #40 is not one of the candidates"
+      ]
+    },
+    {
+      "case": "4. all 19 real answers from the Phase 3 stress test pass (no false alarms)",
+      "pass": true,
+      "detail": "19 answers checked, 0 false alarms"
+    },
+    {
+      "case": "5. rules-only fallback ranks the expected first buyer first for 18 labelled listings",
+      "pass": true,
+      "detail": "18/18 correct"
+    }
+  ]
+}

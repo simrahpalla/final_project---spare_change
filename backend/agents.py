@@ -36,6 +36,7 @@ from pydantic_ai.usage import UsageLimits
 import audit
 import config
 from llm import make_model, usage_breakdown
+from match_check import check_matches, outreach_template, rules_ranking
 from mcp_pool import McpPool, McpUnavailable, RoleConnection
 from models import GuardReview, ListingDraft, MatchResult, NegotiatorTurn, PriceSuggestion
 
@@ -353,18 +354,39 @@ class Exchange:
             state.step("matching", "no_candidates", note="no company runs a compatible platform or needs this part; no model call")
         else:
             cands = found["candidates"]
-            result, _ = await self._run_agent(state, "matching_agent", self.matcher,
-                "Listing:\n" + json.dumps({k: v for k, v in found["listing"].items() if k != "seller_text_untrusted"}, indent=1)
-                + "\n" + wrap("seller_text", text)
-                + f"\nCandidates ({found['candidate_count']} passed the pre-filter; top {len(cands)} shown):\n"
-                + json.dumps(cands, indent=1))
+            prompt = ("Listing:\n" + json.dumps({k: v for k, v in found["listing"].items() if k != "seller_text_untrusted"}, indent=1)
+                      + "\n" + wrap("seller_text", text)
+                      + f"\nCandidates ({found['candidate_count']} passed the pre-filter; top {len(cands)} shown):\n"
+                      + json.dumps(cands, indent=1))
+            # Fact-check the agent's answer in code; retry once with the exact errors; then fall back to rules.
+            result, _ = await self._run_agent(state, "matching_agent", self.matcher, prompt)
+            picked = [m.model_dump() for m in result.matches]
+            errors, method, first_errors = check_matches(picked, cands), "agent", []
+            if errors:
+                first_errors = errors
+                audit.log(state.run_id, "broker", "match_check_failed", subject=state.subject, result=errors)
+                result, _ = await self._run_agent(state, "matching_agent", self.matcher, prompt + (
+                    "\n\nYour previous answer failed a fact check against the candidate data:\n- " + "\n- ".join(errors)
+                    + "\nAnswer again. Use only each candidate's own grounding facts and open_need."))
+                picked = [m.model_dump() for m in result.matches]
+                errors, method = check_matches(picked, cands), "agent_retry"
+            if errors:
+                audit.log(state.run_id, "broker", "match_check_failed", subject=state.subject, result=errors,
+                          stop_reason="rules_fallback")
+                picked, method = rules_ranking(cands), "rules_fallback"
+            else:
+                audit.log(state.run_id, "broker", "match_check_passed", subject=state.subject, result=method)
             matches = await self.call("record_matches", direction="seller_to_buyer", run_id=state.run_id,
-                                      matches=[{"listing_id": listing_id, **m.model_dump()} for m in result.matches])
-            names = {c["buyer_id"]: c["buyer_name"] for c in cands}
-            ranked = [{**m.model_dump(), "buyer_name": names.get(m.buyer_id, "?")} for m in result.matches]
-            outreach = {"to": ranked[0]["buyer_name"], "subject": result.outreach_subject, "body": result.outreach_body} if ranked else None
-            state.step("matching", "done", candidates=found["candidate_count"], ranked=ranked,
-                       saved=len(matches.get("saved", [])), rejected=matches.get("rejected", []))
+                                      matches=[{"listing_id": listing_id, **m} for m in picked])
+            by_id = {c["buyer_id"]: c for c in cands}
+            ranked = [{**m, "buyer_name": by_id[m["buyer_id"]]["buyer_name"]} for m in picked if m["buyer_id"] in by_id]
+            if ranked and method == "rules_fallback":
+                subject, body = outreach_template(listing, ranked[0], by_id[ranked[0]["buyer_id"]])
+                outreach = {"to": ranked[0]["buyer_name"], "subject": subject, "body": body}
+            elif ranked:
+                outreach = {"to": ranked[0]["buyer_name"], "subject": result.outreach_subject, "body": result.outreach_body}
+            state.step("matching", "done", candidates=found["candidate_count"], ranked=ranked, method=method,
+                       check_errors=first_errors, saved=len(matches.get("saved", [])), rejected=matches.get("rejected", []))
 
         # 7. Pricing: facts from code, judgment from the model, bounds enforced in code.
         ref = await self.call("get_price_reference", part_number=listing["part_number"], exclude_listing_id=listing_id)
