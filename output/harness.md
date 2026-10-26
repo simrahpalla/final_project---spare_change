@@ -281,3 +281,9 @@ On failure the agent is **retried once** with the exact errors. If it fails agai
 - `scripts/mcp_smoke.py`: **89/89**, 39/39 tools (adds `send_match_alerts`, including the duplicate re-send, and `get_marketplace_board`).
 
 **Bug found while building this:** adding `listing_id` to the matching agent's output (needed for the reverse direction) let the agent's empty `listing_id` overwrite the real one in the seller flow, so `record_matches` rejected every match as "unknown listing". Caught in the first CLI run, fixed (`{**m, "listing_id": listing_id}`), and now covered by `test_two_sided.py` A1.
+
+**Fixes after the Phase 5 stress test** (`scripts/stress_phase5.py`, now **9/9**; `output/phase5_stress.md`):
+- **Race guard:** after saving, each flow re-runs its pre-filter once and ranks any item that arrived meanwhile by rules (code, no model call), then sends alerts. Of two flows racing, the later re-check always sees both items. A buyer seen first *without* the new need still counts as new (keyed on buyer + need).
+- **Double submit:** `create_need` returns the existing open need when the same buyer posts the same text again, so the seller isn't alerted twice.
+- **Sanity caps:** at most 1,000 units per listing or need; a buyer max above 10× the part's new price is refused as a likely typo (API cap $10M).
+- **Sold / in-negotiation listings** re-run by id now stop with their status instead of being priced again.

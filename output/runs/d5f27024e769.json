@@ -1,0 +1,231 @@
+{
+  "run_id": "d5f27024e769",
+  "kind": "seller_flow",
+  "subject": "listing:28",
+  "outcome": "listed and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "96455084",
+        "qty": 1,
+        "condition": "new_sealed",
+        "asking_price": 600.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "other_items": [],
+        "confidence": 0.98,
+        "notes": ""
+      }
+    },
+    {
+      "step": "save",
+      "status": "created",
+      "listing_id": 28,
+      "expiry_date": null
+    },
+    {
+      "step": "rules",
+      "status": "passed",
+      "rules": [],
+      "reasons": []
+    },
+    {
+      "step": "guard",
+      "status": "allowed",
+      "reasons": []
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "activate",
+      "status": "allowed"
+    },
+    {
+      "step": "listing",
+      "status": "ready",
+      "listing": {
+        "listing_id": 28,
+        "status": "active",
+        "flag_reason": null,
+        "seller_id": 30,
+        "seller_name": "Northwoods Pulp",
+        "location": "Wausau, WI",
+        "part_number": "96455084",
+        "manufacturer": "Grundfos",
+        "family": "Pump spare",
+        "description": "CR 15-3 impeller and chamber stack kit",
+        "qty": 1,
+        "condition": "new_sealed",
+        "asking_price": 600.0,
+        "new_price": 930.0,
+        "scrap_value": 24.67,
+        "hazmat": false,
+        "hazmat_class": null,
+        "expiry_date": null,
+        "sds_available": null,
+        "fits_platforms": [
+          "Grundfos CR 15"
+        ],
+        "created_at": "2026-10-26T05:39:25+00:00"
+      }
+    },
+    {
+      "step": "prefilter",
+      "status": "done",
+      "candidates": 6
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "candidates": 6,
+      "ranked": [
+        {
+          "buyer_id": 39,
+          "listing_id": null,
+          "need_id": 20,
+          "score": 78,
+          "reason": "Open need #20: Grundfos CR 15 pump spare, high urgency, $3,500/day downtime; listing fits the platform by pump-spare family (not an exact part-number match). Runs 5x CR 15 (14 yrs); qty 1 covers the need.",
+          "buyer_name": "Tidewater Dairy"
+        },
+        {
+          "buyer_id": 11,
+          "listing_id": null,
+          "need_id": null,
+          "score": 57,
+          "reason": "Runs 5x Grundfos CR 15 (11 yrs); no open need, but the new kit is a likely future spare for this installed base.",
+          "buyer_name": "Cascade Paper & Board"
+        },
+        {
+          "buyer_id": 16,
+          "listing_id": null,
+          "need_id": null,
+          "score": 54,
+          "reason": "Runs 4x Grundfos CR 15 (12 yrs); no open need, but the new kit is a likely future spare for this installed base.",
+          "buyer_name": "Oakridge Dairy Cooperative"
+        }
+      ],
+      "method": "agent",
+      "check_errors": [],
+      "saved": 3,
+      "rejected": []
+    },
+    {
+      "step": "alerts",
+      "status": "done",
+      "sent": 2,
+      "pairs": 1,
+      "duplicates": 0,
+      "threshold": 70,
+      "companies": [
+        30,
+        39
+      ]
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 700.0,
+      "floor_suggestion": 500.0,
+      "rationale": "For new_sealed condition, the typical range is 70\u201385% of the $930 new price ($651\u2013$790.50); the seller\u2019s $600 ask is below that range, so a $700 ask is reasonable. Scrap value is $24.67, and one open need is matched; there are no current asks or approved deals to further benchmark against.",
+      "clamped": false,
+      "new_price": 930.0,
+      "scrap_value": 24.67
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Tidewater Dairy",
+      "subject": "New Grundfos CR 15-3 pump kit available",
+      "body": "Hello Tidewater Dairy team,\n\nSpare Change has one new, sealed Grundfos part 96455084 CR 15-3 impeller and chamber stack kit available for $600 (new price $930). It fits the Grundfos CR 15 platform and may help address your open pump-spare need. Please note it is an impeller and chamber stack kit, not a shaft seal kit. Would you like to discuss whether it could work for your application?\n\nBest,\nSpare Change"
+    },
+    {
+      "step": "impact",
+      "status": "done",
+      "listing_id": 28,
+      "part_number": "96455084",
+      "qty": 1,
+      "unit_price": 700.0,
+      "value_recovered": 700.0,
+      "scrap_value_total": 24.67,
+      "uplift_vs_scrap": 675.33,
+      "kg_kept_out_of_scrap": 4.0,
+      "est_kg_co2e_avoided": 24.0,
+      "est_hazardous_disposal_avoided": null,
+      "family": "Pump spare",
+      "factor_kg_co2e_per_kg": 6.0,
+      "factor_source": "PLACEHOLDER: replace with sourced value in Phase 10",
+      "placeholder_factors": true,
+      "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+    },
+    {
+      "step": "recheck",
+      "status": "done",
+      "new": 0
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2228,
+      "cache_write_tokens": 323,
+      "output_tokens": 79,
+      "total_tokens": 2882,
+      "cost_usd": 0.00012736
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 609,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 43,
+      "total_tokens": 652,
+      "cost_usd": 8.24e-05
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1704,
+      "output_tokens": 570,
+      "total_tokens": 2400,
+      "cost_usd": 0.0005106
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 568,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 207,
+      "total_tokens": 775,
+      "cost_usd": 0.0001603
+    }
+  ],
+  "totals": {
+    "run_id": "d5f27024e769",
+    "kind": "seller_flow",
+    "requests": 5,
+    "input_tokens": 1555,
+    "cached_tokens": 2228,
+    "cache_write_tokens": 2027,
+    "output_tokens": 899,
+    "total_tokens": 6709,
+    "cost_usd": 0.000881
+  },
+  "listing_id": 28
+}

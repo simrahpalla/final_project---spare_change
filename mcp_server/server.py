@@ -345,12 +345,19 @@ def get_need(need_id: int) -> dict:
 # --------------------------------------------------------------------------- broker: listings and needs
 
 
+MAX_QTY = 1000            # units per listing or need: above this, a person should confirm (Phase 5 stress test)
+MAX_CEILING_X_NEW = 10    # a buyer's max above 10x the new price is almost surely a typo
+
+
 def _validate_fields(conn, part_number, qty, condition, asking_price, sds_available) -> str | None:
     if part_number is not None and not conn.execute(
             "SELECT 1 FROM part_catalog WHERE part_number=?", (part_number,)).fetchone():
         return f"Unknown part number '{part_number}'. Use lookup_part to find the exact catalog number."
     if qty is not None and qty <= 0:
         return "qty must be a positive whole number."
+    if qty is not None and qty > MAX_QTY:
+        return (f"{qty:,} units is more than the {MAX_QTY:,} we accept in one post. Please check the quantity, or contact "
+                "us for bulk orders.")
     if condition is not None and condition not in CONDITIONS:
         return f"condition must be one of: {', '.join(CONDITIONS)}."
     if asking_price is not None and asking_price <= 0:
@@ -471,6 +478,17 @@ def create_need(buyer_id: int, raw_text: str, qty: int, urgency: str, downtime_c
             return _fail(err, "invalid_field")
         if not part_number and not (platform and family):
             return _fail("Give a part_number, or both platform and family.", "invalid_field")
+        if ceiling_price and part_number:
+            new = conn.execute("SELECT new_price FROM part_catalog WHERE part_number=?", (part_number,)).fetchone()[0]
+            if new and ceiling_price > MAX_CEILING_X_NEW * new:
+                return _fail(f"A max of ${ceiling_price:,.0f} is more than {MAX_CEILING_X_NEW}x this part's new price "
+                             f"(${new:,.0f}). Please check the number.", "ceiling_implausible")
+        dup = conn.execute("SELECT id, status FROM needs WHERE buyer_id=? AND raw_text IN (?, ?) AND status IN ('open','matched') "
+                           "ORDER BY id LIMIT 1", (buyer_id, raw_text, _redact_number(raw_text, ceiling_price) if ceiling_price
+                                                   else raw_text)).fetchone()
+        if dup:  # same post sent twice (double click, two tabs): reuse it, so the seller isn't alerted twice
+            return {"ok": True, "need_id": dup["id"], "status": dup["status"], "duplicate_of_existing": True,
+                    "ceiling_recorded": bool(conn.execute("SELECT 1 FROM buyer_private WHERE need_id=?", (dup["id"],)).fetchone())}
         if ceiling_price and _limit_in_message(raw_text, ceiling_price):
             raw_text = _redact_number(raw_text, ceiling_price)  # the public post must never show the private budget
         cur = conn.execute(

@@ -351,6 +351,9 @@ class Exchange:
 
         # 6. Matching: SQL pre-filter in code, then the model scores only those candidates.
         found = await self.call("search_buyers_for_listing", listing_id=listing_id)
+        if found.get("code") == "not_active":  # sold, in negotiation, pending deal or expired: nothing to match or price
+            state.step("prefilter", "skipped", reason=found.get("message"))
+            return self._finish(state, f"stopped: {found.get('message')}", listing_id=listing_id)
         state.step("prefilter", "done", candidates=found.get("candidate_count", 0))
         matches = {"saved": [], "rejected": []}
         outreach = None
@@ -412,8 +415,37 @@ class Exchange:
         # 8. Impact: computed in code from the catalog (weight x placeholder factor), never by the model.
         impact = await self.call("get_impact_estimate", listing_id=listing_id, price=round(ask, 2))
         state.step("impact", "done", **{k: v for k, v in impact.items() if k != "ok"})
-        outcome = "listed and matched" if matches.get("saved") else "listed (no matching buyers yet)"
+        late = await self._recheck_listing(state, listing_id, {(c["buyer_id"], (c.get("open_need") or {}).get("need_id"))
+                                                                for c in found.get("candidates") or []})
+        outcome = "listed and matched" if matches.get("saved") or late else "listed (no matching buyers yet)"
         return self._finish(state, outcome, listing_id=listing_id)
+
+    async def _recheck_listing(self, state: RunState, listing_id: int, seen: set[tuple]) -> int:
+        """Race guard (Phase 5 stress test, check 9): a need saved while this flow was running was not in the first
+        pre-filter. Re-run the pre-filter once, after this listing is saved; rank any NEW buyer with an open need by
+        rules (code, no model call) and alert. Of two flows racing, the later re-check always sees both items."""
+        again = await self.call("search_buyers_for_listing", listing_id=listing_id)
+        new = [c for c in again.get("candidates") or []  # a buyer seen before WITHOUT this need counts as new
+               if c.get("open_need") and (c["buyer_id"], c["open_need"]["need_id"]) not in seen]
+        state.step("recheck", "done", new=len(new))
+        if not new:
+            return 0
+        saved = await self.call("record_matches", direction="seller_to_buyer", run_id=state.run_id,
+                                matches=[{**m, "listing_id": listing_id} for m in rules_ranking(new)])
+        await self._alerts(state)
+        return len(saved.get("saved", []))
+
+    async def _recheck_need(self, state: RunState, need: dict, seen: set[int]) -> int:
+        """Same race guard for a new need: listings activated while this flow ran, ranked by rules, then alerts."""
+        again = await self.call("search_listings_for_need", need_id=need["need_id"])
+        new = [c for c in again.get("listings") or [] if c["listing_id"] not in seen]
+        state.step("recheck", "done", new=len(new))
+        if not new:
+            return 0
+        saved = await self.call("record_matches", direction="buyer_to_seller", run_id=state.run_id, matches=[
+            {k: m[k] for k in ("listing_id", "buyer_id", "need_id", "score", "reason")} for m in rules_ranking_reverse(new, need)])
+        await self._alerts(state)
+        return len(saved.get("saved", []))
 
     async def _alerts(self, state: RunState) -> None:
         """Alerts are decided in code (score >= 70 with an open need, top 3, never twice), not by an agent."""
@@ -494,7 +526,7 @@ class Exchange:
                                     family=None if draft.part_number else draft.family, ceiling_price=max_price)
             if not saved.get("ok"):
                 state.step("save", "refused", result=saved)
-                return self._finish(state, "error: need refused", error=saved.get("message"))
+                return self._finish(state, f"needs_review: {saved.get('message')}", error=saved.get("message"))
             need_id = saved["need_id"]
             state.subject = f"need:{need_id}"
             state.step("save", "created", need_id=need_id, ceiling_recorded=saved.get("ceiling_recorded"))
@@ -510,6 +542,8 @@ class Exchange:
         state.step("prefilter", "done", candidates=found["count"])
         if not cands:
             state.step("matching", "no_candidates", note="no active listing fits this need yet; no model call")
+            if await self._recheck_need(state, need, set()):
+                return self._finish(state, "posted and matched", need_id=need_id)
             return self._finish(state, "posted (no matching surplus yet)", need_id=need_id)
 
         # 4. the SAME matching agent, reverse direction; fact-checked in code, retry once, rules fallback
@@ -546,6 +580,7 @@ class Exchange:
         if ranked and method != "rules_fallback":
             state.step("outreach", "drafted", to=ranked[0]["seller_name"], subject=result.outreach_subject, body=result.outreach_body)
         await self._alerts(state)
+        await self._recheck_need(state, need, {c["listing_id"] for c in cands})
         return self._finish(state, "posted and matched", need_id=need_id)
 
     # ------------------------------------------------------------------ negotiation

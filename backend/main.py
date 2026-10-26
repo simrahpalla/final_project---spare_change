@@ -164,7 +164,7 @@ class NeedFlowIn(BaseModel):
     text: str | None = None
     buyer_id: int | None = None
     need_id: int | None = None
-    max_price: float | None = Field(default=None, ge=0)
+    max_price: float | None = Field(default=None, ge=0, le=10_000_000)
     urgency: Literal["low", "normal", "high", "line_down"] | None = None
     downtime_cost_per_day: float | None = Field(default=None, ge=0)
 

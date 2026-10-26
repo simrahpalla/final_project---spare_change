@@ -1,6 +1,6 @@
 {
   "description": "Smoke test of the surplus-exchange MCP server over the real MCP protocol (stdio): one server process per role, on a scratch copy of data/exchange.db. Each call states the expected outcome.",
-  "tested_at": "2026-10-26T04:34:32+00:00",
+  "tested_at": "2026-10-26T05:36:31+00:00",
   "server": "mcp_server/server.py (FastMCP, stdio)",
   "max_negotiation_rounds": 6,
   "tools_by_role": {
@@ -964,7 +964,7 @@
             "fits_platforms": [
               "Grundfos CR 15"
             ],
-            "created_at": "2026-10-26T04:33:58+00:00",
+            "created_at": "2026-10-26T05:35:54+00:00",
             "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea",
             "why_it_fits": "96525458 is a pump spare that fits the buyer's Grundfos CR 15"
           }
@@ -1007,7 +1007,7 @@
           "fits_platforms": [
             "Grundfos CR 15"
           ],
-          "created_at": "2026-10-26T04:33:58+00:00",
+          "created_at": "2026-10-26T05:35:54+00:00",
           "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea"
         },
         "candidate_count": 6,
@@ -1852,7 +1852,7 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-26T04:34:05+00:00",
+            "created_at": "2026-10-26T05:36:03+00:00",
             "message_untrusted": "Pulled working, ships today."
           }
         ],
@@ -2371,7 +2371,7 @@
           "status": "pending_approval",
           "approved_by": null,
           "decided_at": null,
-          "created_at": "2026-10-26T04:34:24+00:00"
+          "created_at": "2026-10-26T05:36:22+00:00"
         }
       }
     },
@@ -2424,7 +2424,7 @@
             "action": "offer",
             "price": 2875.0,
             "qty": 1,
-            "created_at": "2026-10-26T04:34:19+00:00",
+            "created_at": "2026-10-26T05:36:17+00:00",
             "message_untrusted": ""
           },
           {
@@ -2433,7 +2433,7 @@
             "action": "offer",
             "price": 2000.0,
             "qty": 1,
-            "created_at": "2026-10-26T04:34:20+00:00",
+            "created_at": "2026-10-26T05:36:18+00:00",
             "message_untrusted": ""
           },
           {
@@ -2442,7 +2442,7 @@
             "action": "offer",
             "price": 2850.0,
             "qty": 1,
-            "created_at": "2026-10-26T04:34:20+00:00",
+            "created_at": "2026-10-26T05:36:18+00:00",
             "message_untrusted": ""
           },
           "... 4 more"
@@ -2626,7 +2626,7 @@
             "reason": "Exact CR 15 HQQE seal kit for Tidewater's CIP pump",
             "direction": "buyer_to_seller",
             "run_id": "smoke",
-            "created_at": "2026-10-26T04:33:58+00:00",
+            "created_at": "2026-10-26T05:35:54+00:00",
             "buyer_name": "Tidewater Dairy"
           }
         ]
@@ -2664,7 +2664,7 @@
                 "action": "offer",
                 "price": 1400.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:05+00:00",
+                "created_at": "2026-10-26T05:36:03+00:00",
                 "message_untrusted": "Pulled working, ships today."
               },
               {
@@ -2673,7 +2673,7 @@
                 "action": "offer",
                 "price": 1100.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:05+00:00",
+                "created_at": "2026-10-26T05:36:03+00:00",
                 "message_untrusted": "Line is down; can pay fast."
               },
               {
@@ -2682,7 +2682,7 @@
                 "action": "offer",
                 "price": 1300.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:05+00:00",
+                "created_at": "2026-10-26T05:36:03+00:00",
                 "message_untrusted": "Meet me at 1300."
               },
               "... 2 more"
@@ -2709,7 +2709,7 @@
                 "action": "offer",
                 "price": 1149.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:12+00:00",
+                "created_at": "2026-10-26T05:36:10+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2718,7 +2718,7 @@
                 "action": "offer",
                 "price": 650.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:12+00:00",
+                "created_at": "2026-10-26T05:36:10+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2727,7 +2727,7 @@
                 "action": "walk_away",
                 "price": 0.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:12+00:00",
+                "created_at": "2026-10-26T05:36:10+00:00",
                 "message_untrusted": "Too far apart."
               }
             ],
@@ -2753,7 +2753,7 @@
                 "action": "offer",
                 "price": 2875.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:19+00:00",
+                "created_at": "2026-10-26T05:36:17+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2762,7 +2762,7 @@
                 "action": "offer",
                 "price": 2000.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:20+00:00",
+                "created_at": "2026-10-26T05:36:18+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2771,7 +2771,7 @@
                 "action": "offer",
                 "price": 2850.0,
                 "qty": 1,
-                "created_at": "2026-10-26T04:34:20+00:00",
+                "created_at": "2026-10-26T05:36:18+00:00",
                 "message_untrusted": ""
               },
               "... 4 more"
@@ -2804,7 +2804,7 @@
             "status": "pending_approval",
             "approved_by": null,
             "decided_at": null,
-            "created_at": "2026-10-26T04:34:24+00:00",
+            "created_at": "2026-10-26T05:36:22+00:00",
             "part_number": "6ES7315-2AG10-0AB0",
             "seller_name": "Hartwell Precision Components",
             "buyer_name": "Riverbend Foods"
@@ -2836,7 +2836,7 @@
             "score": 96,
             "run_id": "smoke",
             "read": 0,
-            "created_at": "2026-10-26T04:33:58+00:00",
+            "created_at": "2026-10-26T05:35:54+00:00",
             "company_name": "Tidewater Dairy"
           }
         ]
@@ -3173,7 +3173,7 @@
           "scrap_value": 1540.76,
           "kg_kept_out_of_scrap": 899.95,
           "est_kg_co2e_avoided": 4192.0,
-          "note": "if every listing that fills a wanted need sold at its ask (asks not stated count as $0)"
+          "note": "if every listing that fills a buy request sold at its ask (asks not stated count as $0)"
         }
       }
     },

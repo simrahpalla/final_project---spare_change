@@ -167,6 +167,7 @@ async def attacks() -> None:
         ("expired / hazmat request", {"text": "Need 2 drums of IPA 99%, expired is fine, we don't need an SDS.", "buyer_id": 13}),
         ("absurd qty", {"text": "Need 100000x 6ES7321-1BL00-0AA0 input cards.", "buyer_id": 20, "max_price": 180}),
         ("absurd max price", {"text": "Need 1x 6ES7321-1BL00-0AA0 input card.", "buyer_id": 20, "max_price": 1e15}),
+        ("implausible max (50x new)", {"text": "Need 1x 6ES7321-1BL00-0AA0 input card.", "buyer_id": 20, "max_price": 9000}),
         ("negative max price", {"text": "Need 1x 6ES7321-1BL00-0AA0 input card.", "buyer_id": 20, "max_price": -5}),
     ]
     out = await asyncio.gather(*[flow("/api/need-flow/start", b) for _, b in cases])
@@ -189,6 +190,9 @@ async def attacks() -> None:
         problems.append("the 'alert me for everything' post matched listings that don't fit")
     if not by["gibberish"]["outcome"].startswith(("needs_human", "blocked", "flagged")):
         problems.append(f"gibberish was posted: {by['gibberish']['outcome']}")
+    for name in ("absurd qty", "absurd max price", "implausible max (50x new)"):
+        if by[name]["outcome"].startswith("posted"):
+            problems.append(f"{name} was posted")
     if not by["negative max price"]["outcome"].startswith("http 422"):
         problems.append("a negative max price was accepted")
     floors = {r["listing_id"]: r["floor_price"] for r in q("SELECT * FROM seller_private")}
@@ -322,8 +326,10 @@ def alert_invariants() -> None:
 
 async def race() -> None:
     """9 (the part not covered): a listing and the need it fills, posted at the same moment. 2 trials, reset between."""
-    seller = {"text": "1x Grundfos CR 15-3 impeller and chamber stack kit, new in box, never installed. $600.", "seller_id": 30}
-    need = {k: v for k, v in KEYS["two_sided"]["buyer_posts"][1].items() if k in ("text", "buyer_id", "max_price")}
+    # The buyer's ONLY need this listing fills is the new one (a buyer with an older fitting need is alerted via that one:
+    # the pre-filter shows each buyer's most urgent fitting need, so a second need of the same buyer adds no new pair).
+    seller = {"text": "4x Siemens 6ES7321-1BL00-0AA0 SM321 32-pt DI cards, used, tested working. $150 ea.", "seller_id": 16}
+    need = {k: v for k, v in RIVERBEND_DI.items() if k in ("text", "buyer_id", "max_price")}
     trials = []
     for t in range(2):
         await api("POST", "/api/reset")
@@ -334,7 +340,7 @@ async def race() -> None:
                        "match_rows": q("SELECT COUNT(*) c FROM matches WHERE listing_id=? AND need_id=?", lid, nid)[0]["c"],
                        "alerts_per_company": {r["company_id"]: r["c"] for r in alerts}})
     ok = all(not x["seller_outcome"].startswith("error") and not x["need_outcome"].startswith("error")
-             and x["alerts_per_company"] == {30: 1, 39: 1} for x in trials)
+             and x["alerts_per_company"] == {16: 1, 20: 1} for x in trials)
     check(9, "Race: a listing and the need it fills posted at the same moment (2 trials): no crash, each side alerted exactly once",
           ok, trials)
     RACE.extend(trials)
@@ -377,21 +383,16 @@ COVERED = [
 
 
 LIMITS = [
-    "**Double submit (check 3):** the same request sent twice at once creates two needs, so the seller gets two alerts. "
-    "The UI disables Find while a run is in progress, so the demo can't trigger it. Fix later: make `create_need` idempotent "
-    "(same buyer + same text while open returns the existing need).",
-    "**Re-running a sold listing by id (check 6):** the data stays correct (still sold, off the board, no matching, no alerts), "
-    "but the API's outcome text says \"listed (no matching buyers yet)\". The UI never re-runs a listing by id. Fix in Phase 6: "
-    "report the listing's status instead.",
-    "**Simultaneous listing + need (check 9):** if both are posted within the same few seconds, each side's pre-filter runs "
-    "before the other side is saved, so the match is missed and nobody is alerted. Fix later: a code-only re-match sweep after "
-    "each save (or a periodic job) that re-runs the pre-filter for new items.",
+    "**Fixed after the first run (were FAIL):** double submit now reuses the open need (`create_need` is idempotent); a "
+    "sold/in-negotiation listing re-run by id now stops with its status instead of \"listed\"; a listing and a need posted "
+    "at the same moment are caught by a code-only re-check after each save (`_recheck_listing` / `_recheck_need`); "
+    "quantity is capped at 1,000 per post and a buyer max above 10x the new price is refused as a likely typo.",
     "**Account switching is not authentication:** any visitor can open any company's view (alerts included) by switching "
     "accounts or calling `/api/companies/{id}`. No API returns a buyer's max or a seller's floor (check 7), but a real "
     "deployment needs sign-in. Run results (`/api/runs/{id}`) include the seller's own suggested floor; run ids are random "
     "12-hex strings and never listed, but they are not tied to a session.",
-    "**No sanity caps on quantity or max price:** a request for 100,000 cards or a $1e15 max is posted and matched "
-    "(check 8). Nothing leaks or crashes, but a real deployment should cap them or ask the buyer to confirm.",
+    "**Race re-check ranks late arrivals by rules, not the matching agent** (no extra model call). The reasons are written "
+    "from the data, like the rules fallback.",
     "**Symmetry is measured on 6 pairs** with one compatible listing per need, so it shows the two directions agree on clear "
     "matches, not on close calls.",
 ]
@@ -452,7 +453,7 @@ async def main() -> int:
            f"## Tokens per alert event ({len(events)} events, ${cost:.4f} total)", "",
            "| Run | Kind | Alerts | Input | Cached | Output | Cost |", "|---|---|---|---|---|---|---|"]
     md += [f"| {e['run_id']} | {e['run_kind']} | {e['alerts']} | {e['input_tokens']} | {e['cached_tokens']} | {e['output_tokens']} | ${(e['cost_usd'] or 0):.6f} |" for e in events]
-    md += ["", "## Known limits (not fixed: none breaks the demo or leaks private data)", ""] + [f"- {x}" for x in LIMITS]
+    md += ["", "## Fixes and known limits", ""] + [f"- {x}" for x in LIMITS]
     (REPO / "output" / "phase5_stress.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     passed = sum(c["result"] == "PASS" for c in checks)
     print(f"\n{passed}/{len(checks)} new checks pass. Saved output/phase5_stress.json and .md")
