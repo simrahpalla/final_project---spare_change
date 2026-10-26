@@ -45,8 +45,8 @@
             "listing": 12,
             "need": 12,
             "seller_side_score": 93,
-            "buyer_side_score": 92,
-            "gap": 1
+            "buyer_side_score": 91,
+            "gap": 2
           }
         ],
         "flagged": []
@@ -170,7 +170,7 @@
           "need_outcome": "posted and matched",
           "listing": 28,
           "need": 22,
-          "match_rows": 1,
+          "match_rows": 2,
           "alerts_per_company": {
             "16": 1,
             "20": 1
@@ -191,7 +191,7 @@
     },
     {
       "check": 10,
-      "name": "Reset demo: every table (16) identical to the seed (row counts + content hash), alerts cleared",
+      "name": "Reset demo: every table (17) identical to the seed (row counts + content hash), alerts cleared",
       "result": "PASS",
       "detail": {
         "status": 200,
@@ -267,8 +267,8 @@
       "listing": 12,
       "need": 12,
       "seller_side_score": 93,
-      "buyer_side_score": 92,
-      "gap": 1
+      "buyer_side_score": 91,
+      "gap": 2
     }
   ],
   "attacks": [
@@ -335,7 +335,7 @@
       "need_outcome": "posted and matched",
       "listing": 28,
       "need": 22,
-      "match_rows": 1,
+      "match_rows": 2,
       "alerts_per_company": {
         "16": 1,
         "20": 1
@@ -355,52 +355,7 @@
   ],
   "tokens_per_alert_event": [
     {
-      "run_id": "68961eac83d7",
-      "alerts": 2,
-      "run_kind": "seller_flow",
-      "input_tokens": 1593,
-      "cached_tokens": 1147,
-      "output_tokens": 846,
-      "cost_usd": 0.001012
-    },
-    {
-      "run_id": "7c504e5eac4e",
-      "alerts": 2,
-      "run_kind": "seller_flow",
-      "input_tokens": 1632,
-      "cached_tokens": 1195,
-      "output_tokens": 831,
-      "cost_usd": 0.001057
-    },
-    {
-      "run_id": "8d001a609f64",
-      "alerts": 2,
-      "run_kind": "seller_flow",
-      "input_tokens": 1593,
-      "cached_tokens": 1160,
-      "output_tokens": 698,
-      "cost_usd": 0.000871
-    },
-    {
-      "run_id": "a0ebab33d634",
-      "alerts": 2,
-      "run_kind": "seller_flow",
-      "input_tokens": 1578,
-      "cached_tokens": 2241,
-      "output_tokens": 773,
-      "cost_usd": 0.0008
-    },
-    {
-      "run_id": "b0d3c1a74dd9",
-      "alerts": 4,
-      "run_kind": "seller_flow",
-      "input_tokens": 1710,
-      "cached_tokens": 1164,
-      "output_tokens": 1214,
-      "cost_usd": 0.00149
-    },
-    {
-      "run_id": "bfce11e7e208",
+      "run_id": "2c813ae2f3d6",
       "alerts": 2,
       "run_kind": "seller_flow",
       "input_tokens": 1567,
@@ -409,13 +364,58 @@
       "cost_usd": 0.000741
     },
     {
-      "run_id": "dbff52ea4ca4",
+      "run_id": "317cd0d83001",
       "alerts": 2,
       "run_kind": "need_flow",
       "input_tokens": 2731,
       "cached_tokens": 0,
-      "output_tokens": 594,
-      "cost_usd": 0.000865
+      "output_tokens": 553,
+      "cost_usd": 0.000844
+    },
+    {
+      "run_id": "4d02503ca07f",
+      "alerts": 2,
+      "run_kind": "need_flow",
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 268,
+      "cost_usd": 0.000312
+    },
+    {
+      "run_id": "5cc52b0bef3c",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1593,
+      "cached_tokens": 1160,
+      "output_tokens": 698,
+      "cost_usd": 0.000871
+    },
+    {
+      "run_id": "9d00beb66774",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1578,
+      "cached_tokens": 2241,
+      "output_tokens": 773,
+      "cost_usd": 0.0008
+    },
+    {
+      "run_id": "beb50a54cac3",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1632,
+      "cached_tokens": 1195,
+      "output_tokens": 831,
+      "cost_usd": 0.001057
+    },
+    {
+      "run_id": "ddd0b07cc6a9",
+      "alerts": 4,
+      "run_kind": "seller_flow",
+      "input_tokens": 1710,
+      "cached_tokens": 1164,
+      "output_tokens": 1214,
+      "cost_usd": 0.00149
     }
   ],
   "known_limits": [
@@ -424,5 +424,5 @@
     "**Race re-check ranks late arrivals by rules, not the matching agent** (no extra model call). The reasons are written from the data, like the rules fallback.",
     "**Symmetry is measured on 6 pairs** with one compatible listing per need, so it shows the two directions agree on clear matches, not on close calls."
   ],
-  "seconds": 69
+  "seconds": 62
 }

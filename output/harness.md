@@ -287,3 +287,15 @@ On failure the agent is **retried once** with the exact errors. If it fails agai
 - **Double submit:** `create_need` returns the existing open need when the same buyer posts the same text again, so the seller isn't alerted twice.
 - **Sanity caps:** at most 1,000 units per listing or need; a buyer max above 10× the part's new price is refused as a likely typo (API cap $10M).
 - **Sold / in-negotiation listings** re-run by id now stop with their status instead of being priced again.
+
+## 8. Negotiation in the app (Phase 6)
+
+**Flow:** a company starts a negotiation from a match alert, a Sell/Buy match, or "Ready to start" → reviews **its own** limit (`set_private_limit`, only its own, locked while negotiating) → `open_negotiation` locks the units (free = quantity − units in open negotiations and pending deals; one negotiation per request) → the run waits for one of **3 slots** (shown as *Queued*) → seller and buyer agents alternate, each in its own MCP process bound to that negotiation and able to read only its own limit → code rules on every move (limit, direction, ask, turn, round cap; a final offer can only be accepted or declined) → **deal pending** until **both companies approve their own side** → listing sold (or remaining units back on the market), need filled, related match alerts closed. Either side can reject: nothing is sold, the listing is back on the market. No deal: a plain-English reason and the next-best match.
+
+**What each company sees** (`get_negotiation_for_company`, the only negotiation view the UI uses): public offers and messages, plus its own limit, its own agent's private one-line reasons (`turn_notes`), and its own agent's blocked moves (`refused_calls`). Never the other side's limit, notes or blocked moves; a third company gets 403. `/api/runs/{id}` returns no reasoning for negotiation runs.
+
+**Message safety:** a message with the agent's own limit is refused (the agent rewrites it); every money figure, and either limit as a bare number, is replaced by `[price]` before the message is saved or shown. The same for every message, so a removed number never hints that it was the other side's limit.
+
+**Cost:** about $0.0006 (clear deal, 2 rounds) to $0.003 (6–7 rounds) per negotiation. Per-negotiation cap: $0.05 / 80k tokens (`NEGOTIATION_MAX_COST_USD`, `NEGOTIATION_MAX_TOKENS`), on top of the per-run caps.
+
+**Evidence:** `scripts/test_negotiation.py` → `output/eval_negotiation.json`, `output/phase6_stress.md` (end to end, leak scan of every response and message, oversell and reject, 5 at once with 3 slots, demo samples × 3, message scrub and cost cap). MCP smoke 100/100 (46 tools). Regression after Phase 6: Phase 5 stress 9/9, two-sided 17/17, match check 5/5, Phase 3 concurrency 27/27 (`output/phase6_regression_phase3.json`). Decisions: `output/phase6_decisions.md`.

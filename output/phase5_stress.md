@@ -1,6 +1,6 @@
 # Phase 5 stress test
 
-`scripts/stress_phase5.py`, real backend API on a scratch database, 69 s.
+`scripts/stress_phase5.py`, real backend API on a scratch database, 62 s.
 
 | # | Check | Result | Notes |
 |---|---|---|---|
@@ -11,7 +11,7 @@
 | 7 | Leaks: 113 API responses + 19 alerts scanned for 23 buyer maxes and 27 seller floors; 7 private-term probes | **PASS** |  |
 | 8 | Need-side attacks (8 cases): no crash, injections inert, nothing unsafe or ungrounded matched | **PASS** |  |
 | 9 | Race: a listing and the need it fills posted at the same moment (2 trials): no crash, each side alerted exactly once | **PASS** |  |
-| 10 | Reset demo: every table (16) identical to the seed (row counts + content hash), alerts cleared | **PASS** |  |
+| 10 | Reset demo: every table (17) identical to the seed (row counts + content hash), alerts cleared | **PASS** |  |
 | 11 | Regression: seller flow on 6 good listings (right top buyer) + 3 bad records (blocked) | **PASS** |  |
 | 1 | Reverse matching scored against the answer keys | **PASS (Phase 5 tests)** | scripts/eval_reverse.py: 23/23 top-1 (21 seeded needs + 2 demo posts). Top-3 = top-1 here: every seeded need has one compatible listing. |
 | 4 | Zero candidates: empty state and no LLM call | **PASS (Phase 5 tests)** | eval_reverse (needs 20, 21, Tidewater post: 0 candidates, 0 matching calls) and test_two_sided A13; the Buy page's empty state was checked in the browser. |
@@ -27,7 +27,7 @@
 | 4 | 4 | 96 | 95 | 1 |
 | 7 | 7 | 100 | 98 | 2 |
 | 10 | 10 | 98 | 100 | 2 |
-| 12 | 12 | 93 | 92 | 1 |
+| 12 | 12 | 93 | 91 | 2 |
 
 ## Need-side attacks
 
@@ -44,19 +44,19 @@
 
 Double submit: {"needs_created": 1, "new_alerts_to_Hartwell": 1, "outcomes": ["posted and matched", "posted and matched"]}
 
-Race trials: [{"seller_outcome": "listed and matched", "need_outcome": "posted and matched", "listing": 28, "need": 22, "match_rows": 1, "alerts_per_company": {"16": 1, "20": 1}}, {"seller_outcome": "listed and matched", "need_outcome": "posted and matched", "listing": 28, "need": 22, "match_rows": 2, "alerts_per_company": {"16": 1, "20": 1}}]
+Race trials: [{"seller_outcome": "listed and matched", "need_outcome": "posted and matched", "listing": 28, "need": 22, "match_rows": 2, "alerts_per_company": {"16": 1, "20": 1}}, {"seller_outcome": "listed and matched", "need_outcome": "posted and matched", "listing": 28, "need": 22, "match_rows": 2, "alerts_per_company": {"16": 1, "20": 1}}]
 
-## Tokens per alert event (7 events, $0.0068 total)
+## Tokens per alert event (7 events, $0.0061 total)
 
 | Run | Kind | Alerts | Input | Cached | Output | Cost |
 |---|---|---|---|---|---|---|
-| 68961eac83d7 | seller_flow | 2 | 1593 | 1147 | 846 | $0.001012 |
-| 7c504e5eac4e | seller_flow | 2 | 1632 | 1195 | 831 | $0.001057 |
-| 8d001a609f64 | seller_flow | 2 | 1593 | 1160 | 698 | $0.000871 |
-| a0ebab33d634 | seller_flow | 2 | 1578 | 2241 | 773 | $0.000800 |
-| b0d3c1a74dd9 | seller_flow | 4 | 1710 | 1164 | 1214 | $0.001490 |
-| bfce11e7e208 | seller_flow | 2 | 1567 | 2232 | 709 | $0.000741 |
-| dbff52ea4ca4 | need_flow | 2 | 2731 | 0 | 594 | $0.000865 |
+| 2c813ae2f3d6 | seller_flow | 2 | 1567 | 2232 | 709 | $0.000741 |
+| 317cd0d83001 | need_flow | 2 | 2731 | 0 | 553 | $0.000844 |
+| 4d02503ca07f | need_flow | 2 | 126 | 0 | 268 | $0.000312 |
+| 5cc52b0bef3c | seller_flow | 2 | 1593 | 1160 | 698 | $0.000871 |
+| 9d00beb66774 | seller_flow | 2 | 1578 | 2241 | 773 | $0.000800 |
+| beb50a54cac3 | seller_flow | 2 | 1632 | 1195 | 831 | $0.001057 |
+| ddd0b07cc6a9 | seller_flow | 4 | 1710 | 1164 | 1214 | $0.001490 |
 
 ## Fixes and known limits
 

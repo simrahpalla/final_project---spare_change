@@ -242,11 +242,16 @@ async def leak_scan(b: Backend, section: int) -> None:
         for val in (floor, ceiling):
             if m["message"] and any(re.search(p, m["message"]) for p in _money_forms(val)):
                 leaks.append(f"message in negotiation {m['negotiation_id']} contains a limit: {m['message']!r}")
-    for a in b.q("SELECT message FROM notifications"):
+    for a in b.q("SELECT company_id, listing_id, need_id, message FROM notifications"):
+        # an alert is about one listing-need pair and goes to one company: check the OTHER party's limit of that pair,
+        # unless that exact number was public there (e.g. the agreed price happened to equal the seller's floor)
         for n, floor, ceiling, public in priv:
-            for val in (floor, ceiling):
+            if (n["listing_id"], n["need_id"]) != (a["listing_id"], a["need_id"]):
+                continue
+            hidden = [v for owner, v in ((n["seller_id"], floor), (n["buyer_id"], ceiling)) if owner != a["company_id"]]
+            for val in hidden:
                 if val not in public and any(re.search(p, a["message"]) for p in _money_forms(val)):
-                    leaks.append(f"alert text contains a private limit: {a['message']!r}")
+                    leaks.append(f"alert to company {a['company_id']} contains a private limit: {a['message']!r}")
     third = []
     for n, *_ in priv[:5]:
         outsider = next(c for c in (1, 7, 11, 12, 13, 20, 39, 40) if c not in (n["seller_id"], n["buyer_id"]))

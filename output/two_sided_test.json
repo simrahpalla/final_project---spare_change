@@ -10,7 +10,7 @@
         "ranked": [
           39,
           11,
-          16
+          30
         ]
       }
     },
@@ -38,13 +38,14 @@
           "id": 1,
           "company_id": 39,
           "kind": "new_match",
-          "message": "Prairie Mills Flour listed 96525458 at $330/unit, a match for your need #20 (score 96).",
+          "message": "Prairie Mills Flour listed 96525458 at $330/unit, a match for your need #20 (score 82).",
           "listing_id": 28,
           "need_id": 20,
-          "score": 96,
-          "run_id": "3a492595b86c",
+          "score": 82,
+          "run_id": "c6a658dea813",
           "read": 0,
-          "created_at": "2026-10-26T05:37:16+00:00",
+          "closed_reason": null,
+          "created_at": "2026-10-26T06:33:39+00:00",
           "company_name": "Tidewater Dairy"
         }
       ]
@@ -53,7 +54,7 @@
       "case": "A4. the seller account sees its side of the same match",
       "pass": true,
       "detail": [
-        "Tidewater Dairy needs 96525458 (high): your listing #28 matches its need #20 (score 96)."
+        "Tidewater Dairy needs 96525458 (high): your listing #28 matches its need #20 (score 82)."
       ]
     },
     {
@@ -90,7 +91,7 @@
       "case": "A9. switch to the seller (Hartwell): the new-need alert is visible",
       "pass": true,
       "detail": [
-        "Riverbend Foods needs 6ES7321-1BL00-0AA0 (low): your listing #13 matches its need #22 (score 90)."
+        "Riverbend Foods needs 6ES7321-1BL00-0AA0 (low): your listing #13 matches its need #22 (score 92)."
       ]
     },
     {
@@ -149,7 +150,7 @@
       }
     },
     {
-      "case": "B1. 6 flows at once: no crash, no error (9.9s)",
+      "case": "B1. 6 flows at once: no crash, no error (11.1s)",
       "pass": true,
       "detail": []
     },
@@ -166,7 +167,7 @@
   ],
   "tokens_per_alert_event": [
     {
-      "run_id": "48fa1920b569",
+      "run_id": "824636d4b92f",
       "alerts": 2,
       "companies": "2,21",
       "run_kind": "need_flow",
@@ -178,7 +179,7 @@
       "matching_cost_usd": 0.0003
     },
     {
-      "run_id": "d206d6ef42fc",
+      "run_id": "9cc21e61b547",
       "alerts": 2,
       "companies": "5,24",
       "run_kind": "need_flow",
@@ -190,40 +191,40 @@
       "matching_cost_usd": 0.000297
     },
     {
-      "run_id": "5d5cc6b3c731",
+      "run_id": "3329a8dab195",
       "alerts": 2,
       "companies": "1,20",
       "run_kind": "need_flow",
       "requests": 5,
       "input_tokens": 2731,
       "cached_tokens": 0,
-      "output_tokens": 586,
-      "cost_usd": 0.000861,
-      "matching_cost_usd": 0.000322
+      "output_tokens": 602,
+      "cost_usd": 0.000869,
+      "matching_cost_usd": 0.00033
     },
     {
-      "run_id": "18e721558e4d",
-      "alerts": 2,
-      "companies": "7,39",
-      "run_kind": "seller_flow",
-      "requests": 5,
-      "input_tokens": 1573,
-      "cached_tokens": 2231,
-      "output_tokens": 788,
-      "cost_usd": 0.00083,
-      "matching_cost_usd": 0.000444
-    },
-    {
-      "run_id": "5c5c8c398ba2",
+      "run_id": "7f5de8ece192",
       "alerts": 2,
       "companies": "1,20",
       "run_kind": "seller_flow",
       "requests": 5,
       "input_tokens": 1669,
       "cached_tokens": 1195,
-      "output_tokens": 807,
-      "cost_usd": 0.001049,
-      "matching_cost_usd": 0.000437
+      "output_tokens": 758,
+      "cost_usd": 0.001025,
+      "matching_cost_usd": 0.000415
+    },
+    {
+      "run_id": "522d1b43b73e",
+      "alerts": 2,
+      "companies": "7,39",
+      "run_kind": "seller_flow",
+      "requests": 5,
+      "input_tokens": 1573,
+      "cached_tokens": 2231,
+      "output_tokens": 997,
+      "cost_usd": 0.000935,
+      "matching_cost_usd": 0.000556
     }
   ]
 }

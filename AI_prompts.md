@@ -420,7 +420,12 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 ### What was missing
 
-- (filled in at the checkpoint)
+- **Who approves:** "no deal closes without both human approvals" was turned into one approval per side (each company approves its own side).
+- **Low temperature isn't possible:** `gpt-6-luna` is a reasoning model and ignores `temperature`; consistency was measured with repeat runs instead (15/15).
+- **Where a negotiation starts for seeded listings and needs:** added a "Ready to start" list on the Negotiations tab.
+- **A walk-away sample:** none of the featured accounts had a no-overlap pair, so a 6th demo account (Cascade Paper & Board) was added.
+- **What to do with a message that contains the other side's limit:** blocking it would tell the agent that number, so all money figures are scrubbed from messages instead.
+- All other overnight decisions are in `output/phase6_decisions.md`.
 
 ### Follow-up prompt(s)
 
