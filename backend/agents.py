@@ -36,9 +36,10 @@ from pydantic_ai.usage import UsageLimits
 import audit
 import config
 from llm import make_model, usage_breakdown
-from match_check import check_matches, outreach_template, rules_ranking
+from match_check import (check_matches, check_reverse_matches, outreach_template, rules_ranking,
+                         rules_ranking_reverse)
 from mcp_pool import McpPool, McpUnavailable, RoleConnection
-from models import GuardReview, ListingDraft, MatchResult, NegotiatorTurn, PriceSuggestion
+from models import GuardReview, ListingDraft, MatchResult, NeedDraft, NegotiatorTurn, PriceSuggestion
 
 sys.path.insert(0, str(config.REPO_DIR / "mcp_server"))
 from compliance_rules import injection_hits  # noqa: E402  (pure code, no database access)
@@ -135,6 +136,9 @@ class Exchange:
         m = lambda name: self.overrides.get(name, self.model)  # noqa: E731
         self.listing_agent = Agent(
             m("listing_agent"), name="listing_agent", instructions=_prompt("listing_agent"), output_type=ListingDraft,
+            toolsets=[self.pool["broker"].toolset.filtered(lambda ctx, td: td.name in LISTING_TOOLS)], retries=OUTPUT_RETRIES)
+        self.need_agent = Agent(
+            m("need_agent"), name="need_agent", instructions=_prompt("need_agent"), output_type=NeedDraft,
             toolsets=[self.pool["broker"].toolset.filtered(lambda ctx, td: td.name in LISTING_TOOLS)], retries=OUTPUT_RETRIES)
         self.guard = Agent(m("compliance_guard"), name="compliance_guard", instructions=_prompt("compliance_guard"),
                            output_type=GuardReview, retries=OUTPUT_RETRIES)
@@ -377,7 +381,7 @@ class Exchange:
             else:
                 audit.log(state.run_id, "broker", "match_check_passed", subject=state.subject, result=method)
             matches = await self.call("record_matches", direction="seller_to_buyer", run_id=state.run_id,
-                                      matches=[{"listing_id": listing_id, **m} for m in picked])
+                                      matches=[{**m, "listing_id": listing_id} for m in picked])
             by_id = {c["buyer_id"]: c for c in cands}
             ranked = [{**m, "buyer_name": by_id[m["buyer_id"]]["buyer_name"]} for m in picked if m["buyer_id"] in by_id]
             if ranked and method == "rules_fallback":
@@ -387,6 +391,7 @@ class Exchange:
                 outreach = {"to": ranked[0]["buyer_name"], "subject": result.outreach_subject, "body": result.outreach_body}
             state.step("matching", "done", candidates=found["candidate_count"], ranked=ranked, method=method,
                        check_errors=first_errors, saved=len(matches.get("saved", [])), rejected=matches.get("rejected", []))
+            await self._alerts(state)
 
         # 7. Pricing: facts from code, judgment from the model, bounds enforced in code.
         ref = await self.call("get_price_reference", part_number=listing["part_number"], exclude_listing_id=listing_id)
@@ -409,6 +414,139 @@ class Exchange:
         state.step("impact", "done", **{k: v for k, v in impact.items() if k != "ok"})
         outcome = "listed and matched" if matches.get("saved") else "listed (no matching buyers yet)"
         return self._finish(state, outcome, listing_id=listing_id)
+
+    async def _alerts(self, state: RunState) -> None:
+        """Alerts are decided in code (score >= 70 with an open need, top 3, never twice), not by an agent."""
+        res = await self.call("send_match_alerts", run_id=state.run_id)
+        state.step("alerts", "done", sent=len(res.get("sent", [])), pairs=res.get("pairs_alerted", 0),
+                   duplicates=res.get("skipped_duplicates", 0), threshold=res.get("threshold"),
+                   companies=sorted({a["company_id"] for a in res.get("sent", [])}))
+
+    # ------------------------------------------------------------------ need flow (buyer side)
+
+    async def run_need_flow(self, text: str | None = None, buyer_id: int | None = None, need_id: int | None = None,
+                            max_price: float | None = None, urgency: str | None = None,
+                            downtime_cost_per_day: float | None = None, state: RunState | None = None) -> dict:
+        """A buyer's wanted post -> structured need -> compliance -> the SAME matching agent in reverse -> alerts.
+        Pass need_id to re-match an existing need (skips extraction)."""
+        state = state or RunState(kind="need_flow", subject=f"need:{need_id}" if need_id else f"buyer:{buyer_id}")
+        self._start(state, need_id=need_id, buyer_id=buyer_id)
+        try:
+            await self._check_session_budget(state)
+            return await self._need_flow(state, text, buyer_id, need_id, max_price, urgency, downtime_cost_per_day)
+        except RunLimitReached as e:
+            state.step("limit", "stopped", reason=e.reason, detail=e.detail)
+            return self._finish(state, f"stopped: {e.reason}")
+        except AgentFailed as e:
+            state.step("error", e.kind, agent=e.agent, detail=e.detail)
+            return self._finish(state, f"error: {FRIENDLY_ERROR}")
+        except McpUnavailable as e:
+            state.step("error", "tools_unavailable", detail=str(e))
+            return self._finish(state, f"error: {McpUnavailable.friendly}")
+        except Exception as e:  # noqa: BLE001 - never crash the caller; the audit trail keeps the details
+            audit.log(state.run_id, "broker", "error", subject=state.subject, error=f"{type(e).__name__}: {e}")
+            state.step("error", "unexpected", detail=f"{type(e).__name__}: {e}")
+            return self._finish(state, "error: something went wrong on our side. Nothing was posted. Please try again.")
+
+    async def _need_flow(self, state, text, buyer_id, need_id, max_price, urgency, downtime) -> dict:
+        if need_id is None:
+            buyer = await self.call("get_company_profile", company_id=buyer_id)
+            if not buyer.get("ok"):
+                return self._finish(state, f"error: {buyer.get('message', 'unknown buyer')}")
+            today = (await self.call("get_exchange_date"))["today"]
+            if hits := injection_hits(text):  # 1. code pre-screen: the model never reads the attack
+                state.step("prescreen", "blocked", rule="injection_pattern", patterns=hits)
+                audit.log(state.run_id, "broker", "blocked", subject=state.subject, stop_reason="injection_pattern")
+                return self._finish(state, "blocked: prompt injection (code pre-screen, no model call)")
+            state.step("prescreen", "passed")
+            platforms = [e["platform"] for e in buyer["installed_equipment"]]
+            draft, _ = await self._run_agent(state, "need_agent", self.need_agent,
+                f"Buyer: {buyer['name']} ({buyer['location']}, {buyer['industry']}). Exchange date: {today}.\n"
+                f"Buyer's installed platforms: {json.dumps(platforms)}\n" + wrap("buyer_text", text))
+            d = draft.model_dump()
+            state.step("need_agent", "done", draft=d)
+            if draft.other_items:
+                items = [f"{draft.qty}x {draft.part_number or draft.family or 'item'}"] + draft.other_items
+                return self._finish(state, f"needs_clarification: this post asks for {len(items)} different items "
+                                    f"({'; '.join(items)}). Please post one need per item.", draft=d)
+            platform = draft.platform if draft.platform in platforms else None
+            if draft.part_number and not platform:  # code: pick the buyer platform the part fits
+                comp = await self.call("get_compatibility", part_number=draft.part_number)
+                platform = next((p for p in comp.get("fits_platforms", []) if p in platforms), None)
+            if not draft.part_number and not (platform and draft.family):
+                return self._finish(state, "needs_human: couldn't tell which part or machine this need is for", draft=d)
+
+            # 2. compliance guard (needs can carry injections or off-platform requests too)
+            review, _ = await self._run_agent(state, "compliance_guard", self.guard,
+                "This is a BUYER'S WANTED POST, not a listing. Structured need:\n"
+                + json.dumps({"part_number": draft.part_number, "platform": platform, "family": draft.family,
+                              "qty": draft.qty, "urgency": urgency or draft.urgency}, indent=1)
+                + "\n" + wrap("seller_text", text))
+            state.step("guard", "flagged" if review.decision == "flag" else "allowed", reasons=review.reasons)
+            if review.decision == "flag":
+                state.step("compliance", "flagged", by="compliance_guard", reasons=review.reasons)
+                return self._finish(state, "flagged by compliance guard", draft=d)
+
+            saved = await self.call("create_need", buyer_id=buyer_id, raw_text=text, qty=draft.qty,
+                                    urgency=urgency or draft.urgency,
+                                    downtime_cost_per_day=downtime if downtime is not None else (draft.downtime_cost_per_day or 0),
+                                    part_number=draft.part_number, platform=platform,
+                                    family=None if draft.part_number else draft.family, ceiling_price=max_price)
+            if not saved.get("ok"):
+                state.step("save", "refused", result=saved)
+                return self._finish(state, "error: need refused", error=saved.get("message"))
+            need_id = saved["need_id"]
+            state.subject = f"need:{need_id}"
+            state.step("save", "created", need_id=need_id, ceiling_recorded=saved.get("ceiling_recorded"))
+
+        # 3. same pre-filter code (compatibility), reverse direction; no candidates -> no model call
+        found = await self.call("search_listings_for_need", need_id=need_id)
+        need = found.get("need") or (await self.call("get_need", need_id=need_id))
+        need_public = {k: v for k, v in need.items() if k not in ("buyer_text_untrusted", "ok")}
+        state.step("need", "ready", need=need_public)
+        if not found.get("ok"):
+            return self._finish(state, f"error: {found.get('message')}", need_id=need_id)
+        cands = found["listings"]
+        state.step("prefilter", "done", candidates=found["count"])
+        if not cands:
+            state.step("matching", "no_candidates", note="no active listing fits this need yet; no model call")
+            return self._finish(state, "posted (no matching surplus yet)", need_id=need_id)
+
+        # 4. the SAME matching agent, reverse direction; fact-checked in code, retry once, rules fallback
+        prompt = ("Direction: buyer_to_seller (a new need).\nNeed:\n" + json.dumps(need_public, indent=1)
+                  + "\n" + wrap("buyer_text", need.get("buyer_text_untrusted"))
+                  + f"\nCandidate listings ({found['count']} fit the need):\n"
+                  + json.dumps([{k: v for k, v in c.items() if k != "seller_text_untrusted"} for c in cands], indent=1))
+        result, _ = await self._run_agent(state, "matching_agent", self.matcher, prompt)
+        picked = [m.model_dump() for m in result.matches]
+        errors, method, first_errors = check_reverse_matches(picked, cands, need), "agent", []
+        if errors:
+            first_errors = errors
+            audit.log(state.run_id, "broker", "match_check_failed", subject=state.subject, result=errors)
+            result, _ = await self._run_agent(state, "matching_agent", self.matcher, prompt + (
+                "\n\nYour previous answer failed a fact check against the candidate data:\n- " + "\n- ".join(errors)
+                + "\nAnswer again. Use only each listing's own fields."))
+            picked = [m.model_dump() for m in result.matches]
+            errors, method = check_reverse_matches(picked, cands, need), "agent_retry"
+        if errors:
+            audit.log(state.run_id, "broker", "match_check_failed", subject=state.subject, result=errors, stop_reason="rules_fallback")
+            picked, method = rules_ranking_reverse(cands, need), "rules_fallback"
+        else:
+            audit.log(state.run_id, "broker", "match_check_passed", subject=state.subject, result=method)
+        saved = await self.call("record_matches", direction="buyer_to_seller", run_id=state.run_id, matches=[
+            {"listing_id": m["listing_id"], "buyer_id": need["buyer_id"], "need_id": need["need_id"], "score": m["score"],
+             "reason": m["reason"]} for m in picked])
+        by_id = {c["listing_id"]: c for c in cands}
+        ranked = [{**m, "seller_name": by_id[m["listing_id"]]["seller_name"], "part_number": by_id[m["listing_id"]]["part_number"],
+                   "condition": by_id[m["listing_id"]]["condition"], "asking_price": by_id[m["listing_id"]]["asking_price"],
+                   "qty": by_id[m["listing_id"]]["qty"], "location": by_id[m["listing_id"]]["location"]}
+                  for m in picked if m["listing_id"] in by_id]
+        state.step("matching", "done", direction="buyer_to_seller", candidates=found["count"], ranked=ranked, method=method,
+                   check_errors=first_errors, saved=len(saved.get("saved", [])), rejected=saved.get("rejected", []))
+        if ranked and method != "rules_fallback":
+            state.step("outreach", "drafted", to=ranked[0]["seller_name"], subject=result.outreach_subject, body=result.outreach_body)
+        await self._alerts(state)
+        return self._finish(state, "posted and matched", need_id=need_id)
 
     # ------------------------------------------------------------------ negotiation
 

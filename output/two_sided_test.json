@@ -1,0 +1,229 @@
+{
+  "passed": 17,
+  "cases": 17,
+  "results": [
+    {
+      "case": "A1. seller posts on Sell: listed and matched",
+      "pass": true,
+      "detail": {
+        "outcome": "listed and matched",
+        "ranked": [
+          39,
+          30,
+          11
+        ]
+      }
+    },
+    {
+      "case": "A2. alerts step (code) alerts the buyer and the seller",
+      "pass": true,
+      "detail": {
+        "step": "alerts",
+        "status": "done",
+        "sent": 2,
+        "pairs": 1,
+        "duplicates": 0,
+        "threshold": 70,
+        "companies": [
+          7,
+          39
+        ]
+      }
+    },
+    {
+      "case": "A3. switch to the buyer account: the alert is visible, unread, with its score",
+      "pass": true,
+      "detail": [
+        {
+          "id": 1,
+          "company_id": 39,
+          "kind": "new_match",
+          "message": "Prairie Mills Flour listed 96525458 at $330/unit, a match for your need #20 (score 92).",
+          "listing_id": 28,
+          "need_id": 20,
+          "score": 92,
+          "run_id": "d9630e23bbe4",
+          "read": 0,
+          "created_at": "2026-10-26T04:31:14+00:00",
+          "company_name": "Tidewater Dairy"
+        }
+      ]
+    },
+    {
+      "case": "A4. the seller account sees its side of the same match",
+      "pass": true,
+      "detail": [
+        "Tidewater Dairy needs 96525458 (high): your listing #28 matches its need #20 (score 92)."
+      ]
+    },
+    {
+      "case": "A5. another account (Riverbend) does not see either alert",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "case": "A6. every alert in a company view belongs to that company",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "case": "A7. buyer posts on Wanted: same matching agent in reverse ranks the expected listing first",
+      "pass": true,
+      "detail": {
+        "outcome": "posted and matched",
+        "ranked": [
+          13
+        ]
+      }
+    },
+    {
+      "case": "A8. the max price is stored privately (write-only)",
+      "pass": true,
+      "detail": {
+        "step": "save",
+        "status": "created",
+        "need_id": 22,
+        "ceiling_recorded": true
+      }
+    },
+    {
+      "case": "A9. switch to the seller (Hartwell): the new-need alert is visible",
+      "pass": true,
+      "detail": [
+        "Riverbend Foods needs 6ES7321-1BL00-0AA0 (low): your listing #13 matches its need #22 (score 90)."
+      ]
+    },
+    {
+      "case": "A10. no buyer max price in alerts, company views or the Marketplace board",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "case": "A11. the Marketplace shows the new need and its match badge pair",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "case": "A12. re-running both matchings sends no duplicate alerts",
+      "pass": true,
+      "detail": {
+        "before": 2,
+        "after": 2,
+        "seller_rerun": {
+          "step": "alerts",
+          "status": "done",
+          "sent": 0,
+          "pairs": 1,
+          "duplicates": 2,
+          "threshold": 70,
+          "companies": []
+        },
+        "need_rerun": {
+          "step": "alerts",
+          "status": "done",
+          "sent": 0,
+          "pairs": 1,
+          "duplicates": 2,
+          "threshold": 70,
+          "companies": []
+        }
+      }
+    },
+    {
+      "case": "A13. a need with no surplus: 0 candidates, matching agent skipped (no model call)",
+      "pass": true,
+      "detail": {
+        "outcome": "posted (no matching surplus yet)",
+        "agents": [
+          "need_agent",
+          "compliance_guard"
+        ]
+      }
+    },
+    {
+      "case": "A14. Reset demo restores the seeded state (no alerts, the posted need is gone)",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "alerts": 0
+      }
+    },
+    {
+      "case": "B1. 6 flows at once: no crash, no error (9.4s)",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "case": "B2. every expected alert arrived and is visible in the right account",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "case": "B3. no duplicate alerts under concurrency",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "tokens_per_alert_event": [
+    {
+      "run_id": "442f81da6438",
+      "alerts": 2,
+      "companies": "2,21",
+      "run_kind": "need_flow",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 254,
+      "cost_usd": 0.0003,
+      "matching_cost_usd": 0.0003
+    },
+    {
+      "run_id": "29c81f248c46",
+      "alerts": 2,
+      "companies": "5,24",
+      "run_kind": "need_flow",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 250,
+      "cost_usd": 0.000297,
+      "matching_cost_usd": 0.000297
+    },
+    {
+      "run_id": "36281a75035e",
+      "alerts": 2,
+      "companies": "1,20",
+      "run_kind": "need_flow",
+      "requests": 5,
+      "input_tokens": 2731,
+      "cached_tokens": 0,
+      "output_tokens": 565,
+      "cost_usd": 0.00085,
+      "matching_cost_usd": 0.000311
+    },
+    {
+      "run_id": "7e8e40eeab37",
+      "alerts": 2,
+      "companies": "1,20",
+      "run_kind": "seller_flow",
+      "requests": 5,
+      "input_tokens": 1669,
+      "cached_tokens": 1195,
+      "output_tokens": 818,
+      "cost_usd": 0.001055,
+      "matching_cost_usd": 0.000439
+    },
+    {
+      "run_id": "a60b5c72a564",
+      "alerts": 2,
+      "companies": "7,39",
+      "run_kind": "seller_flow",
+      "requests": 5,
+      "input_tokens": 1573,
+      "cached_tokens": 2231,
+      "output_tokens": 815,
+      "cost_usd": 0.000844,
+      "matching_cost_usd": 0.000481
+    }
+  ]
+}

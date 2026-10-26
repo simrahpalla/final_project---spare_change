@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, errorMessage, type Company, type CompanyProfile, type Health, type RunStatus, type Session } from './api'
 import { ComingSoon } from './components/ComingSoon'
+import { MarketplacePage } from './components/MarketplacePage'
 import { Nav, type Tab } from './components/Nav'
 import { Rail } from './components/Rail'
 import { SellPage } from './components/SellPage'
+import { BuyPage, needFormFor, type NeedForm } from './components/BuyPage'
 import { DEFAULT_ACCOUNT, featured, type Scenario } from './demo'
 
 // Remembers the demo account between visits; works (without remembering) where storage is blocked.
@@ -32,7 +34,11 @@ export default function App() {
   const [accountId, setAccountId] = useState<number>(() => Number(storage.get('sc.account')) || DEFAULT_ACCOUNT)
   const [profile, setProfile] = useState<CompanyProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
-  const [run, setRun] = useState<RunStatus | null>(null)
+  const [run, setRun] = useState<RunStatus | null>(null) // seller flow (Sell tab)
+  const [needRun, setNeedRun] = useState<RunStatus | null>(null) // buyer flow (Buy tab)
+  const [needForm, setNeedForm] = useState<NeedForm>(() => needFormFor(accountId))
+  const [boardVersion, setBoardVersion] = useState(0)
+  const [resetting, setResetting] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   // The paste box starts with the signed-in company's own example post, so a visitor can just click Find buyers.
   const [post, setPost] = useState<string>(() => featured(accountId)?.post ?? '')
@@ -79,13 +85,20 @@ export default function App() {
     refresh()
   }, [refresh])
 
+  const runDone = useCallback(() => {
+    refresh()
+    setBoardVersion((v) => v + 1)
+  }, [refresh])
+
   function switchAccount(id: number, text?: string) {
     storage.set('sc.account', String(id))
     setPost(text ?? featured(id)?.post ?? '')
     if (id === accountId) return
     setAccountId(id)
+    setNeedForm(needFormFor(id))
     setProfile(null)
     setRun(null)
+    setNeedRun(null)
   }
 
   function runScenario(s: Scenario) {
@@ -94,13 +107,19 @@ export default function App() {
   }
 
   async function resetDemo() {
+    setResetting(true)
     try {
       const r = await api.reset()
       setRun(null)
-      setNotice(r.message)
-      refresh()
+      setNeedRun(null)
+      setPost(featured(accountId)?.post ?? '')
+      setNeedForm(needFormFor(accountId))
+      setNotice(`${r.message} Every account starts clean.`)
+      runDone()
     } catch (e) {
       setNotice(errorMessage(e))
+    } finally {
+      setResetting(false)
     }
   }
 
@@ -125,6 +144,7 @@ export default function App() {
         profile={profile}
         onOpenAlerts={openAlerts}
         onReset={resetDemo}
+        resetting={resetting}
       />
       {(offline || !ready) && (
         <div className={`banner ${offline || health?.mcp?.status === 'failed' ? 'bad' : ''}`} role="status">
@@ -151,15 +171,28 @@ export default function App() {
             ready={ready}
             run={run}
             onRun={setRun}
-            onRunDone={refresh}
+            onRunDone={runDone}
             text={post}
             onText={setPost}
             onScenario={runScenario}
           />
+        ) : tab === 'buy' ? (
+          <BuyPage
+            accountId={accountId}
+            profile={profile}
+            ready={ready}
+            run={needRun}
+            onRun={setNeedRun}
+            onRunDone={runDone}
+            form={needForm}
+            onForm={setNeedForm}
+          />
+        ) : tab === 'marketplace' ? (
+          <MarketplacePage ready={ready} accountId={accountId} version={boardVersion} />
         ) : (
           <ComingSoon tab={tab} profile={profile} />
         )}
-        <Rail run={run} session={session} />
+        <Rail run={tab === 'buy' ? needRun : tab === 'sell' ? run : null} need={tab === 'buy'} session={session} />
       </div>
     </div>
   )

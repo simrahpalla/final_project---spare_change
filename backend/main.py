@@ -26,7 +26,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from typing import Literal
+
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
 import audit
@@ -158,6 +160,15 @@ class SellerFlowIn(BaseModel):
     seller_id: int | None = None
 
 
+class NeedFlowIn(BaseModel):
+    text: str | None = None
+    buyer_id: int | None = None
+    need_id: int | None = None
+    max_price: float | None = Field(default=None, ge=0)
+    urgency: Literal["low", "normal", "high", "line_down"] | None = None
+    downtime_cost_per_day: float | None = Field(default=None, ge=0)
+
+
 class NegotiationIn(BaseModel):
     listing_id: int
     need_id: int
@@ -236,6 +247,24 @@ async def seller_flow_start(body: SellerFlowIn) -> dict:
     ex = runtime.require_ready()
     state = RunState(kind="seller_flow", subject=f"listing:{body.listing_id}" if body.listing_id else f"seller:{body.seller_id}")
     return _register(state, ex.run_seller_flow(listing_id=body.listing_id, text=body.text, seller_id=body.seller_id, state=state))
+
+
+@app.post("/api/need-flow/start")
+async def need_flow_start(body: NeedFlowIn) -> dict:
+    """Start the buyer's wanted-post flow (need -> compliance -> reverse matching -> alerts); poll the run_id."""
+    if not body.need_id and not ((body.text or "").strip() and body.buyer_id):
+        raise HTTPException(422, "Describe the part you need first.")
+    ex = runtime.require_ready()
+    state = RunState(kind="need_flow", subject=f"need:{body.need_id}" if body.need_id else f"buyer:{body.buyer_id}")
+    return _register(state, ex.run_need_flow(text=body.text, buyer_id=body.buyer_id, need_id=body.need_id,
+                                             max_price=body.max_price, urgency=body.urgency,
+                                             downtime_cost_per_day=body.downtime_cost_per_day, state=state))
+
+
+@app.get("/api/marketplace")
+async def marketplace() -> dict:
+    """Public board: available listings, wanted needs (never a buyer's max price), match pairs, deal impact."""
+    return await _system("get_marketplace_board")
 
 
 @app.get("/api/runs/{run_id}")

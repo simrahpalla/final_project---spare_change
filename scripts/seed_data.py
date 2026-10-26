@@ -116,7 +116,8 @@ CREATE TABLE listings (
     location TEXT,
     expiry_date TEXT,                 -- chemicals: YYYY-MM-DD (derived from mfg date + shelf life if needed)
     sds_available INTEGER CHECK (sds_available IN (0, 1)),  -- safety data sheet on hand (hazmat only)
-    status TEXT NOT NULL CHECK (status IN ('submitted', 'active', 'flagged', 'pending_deal', 'sold', 'withdrawn')),
+    -- lifecycle: submitted -> active -> in_negotiation -> pending_deal (human approval) -> sold
+    status TEXT NOT NULL CHECK (status IN ('submitted', 'active', 'in_negotiation', 'flagged', 'pending_deal', 'sold', 'withdrawn')),
     flag_reason TEXT,
     created_at TEXT NOT NULL
 );
@@ -207,9 +208,13 @@ CREATE TABLE notifications (
     message TEXT NOT NULL,
     listing_id INTEGER REFERENCES listings(id),
     need_id INTEGER REFERENCES needs(id),
+    score INTEGER,                    -- match score that triggered a new_match alert
+    run_id TEXT,                      -- the run that created it (joins token_usage: tokens per alert event)
     read INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
 );
+-- One new_match alert per company per listing-need pair: re-running a flow never duplicates alerts.
+CREATE UNIQUE INDEX idx_alert_once ON notifications(company_id, kind, listing_id, need_id) WHERE kind = 'new_match';
 
 -- One row per model call: the evidence for the tokenomics section.
 CREATE TABLE token_usage (
@@ -702,7 +707,7 @@ def build(db_path: Path) -> None:
     con = sqlite3.connect(db_path)
     con.executescript(SCHEMA)
     con.execute("INSERT INTO exchange_meta VALUES ('today', ?)", (EXCHANGE_TODAY,))
-    con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v3 (small test dataset, placeholder impact factors)')")
+    con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v4 (small test dataset, placeholder impact factors)')")
     con.execute("INSERT INTO exchange_meta VALUES ('random_seed', ?)", (str(RANDOM_SEED),))
     con.executemany("INSERT INTO companies VALUES (?,?,?,?,?,?)", COMPANIES)
     con.executemany("INSERT INTO installed_equipment (company_id, platform, qty, years_in_use) VALUES (?,?,?,?)", EQUIPMENT)
@@ -778,6 +783,8 @@ def write_answer_keys(db_path: Path) -> None:
         })
     for n in NEEDS:
         keys["needs"].append({"need_id": n["id"], "buyer_id": n["buyer"], "top_listings": NEED_MATCHES[n["id"]],
+                              "expected_first_listing": (NEED_MATCHES[n["id"]] or [None])[0],
+                              "expect_no_candidates": not NEED_MATCHES[n["id"]],
                               "names_only_the_machine": n["part"] is None})
     for nid, lids in NEED_MATCHES.items():
         for lid in lids:
@@ -790,6 +797,30 @@ def write_answer_keys(db_path: Path) -> None:
                 "price_range": [l["floor"], n["ceiling"]] if kind != "walk_away" else None,
             })
     keys["negotiation_pairs"].sort(key=lambda p: (p["listing_id"], p["need_id"]))
+    # Phase 5: the demo accounts' posts, in both directions (scored by scripts/eval_reverse.py and test_two_sided.py).
+    keys["two_sided"] = {
+        "buyer_posts": [  # a buyer posts a NEW need -> reverse matching over active listings
+            {"name": "Riverbend DI cards", "buyer_id": 20, "max_price": 180,
+             "text": "Line 3 packaging PLC keeps dropping inputs. Need 4x S7-300 32-point digital input cards (SM 321) "
+                     "as spares, quick please.",
+             "expected_part": "6ES7321-1BL00-0AA0", "expected_first_listing": 13, "expect_no_candidates": False,
+             "expected_alerts_to": [20, 1]},
+            {"name": "Tidewater impeller kit", "buyer_id": 39, "max_price": 650,
+             "text": "Looking for 1 impeller and chamber stack kit for our Grundfos CR 15-3 CIP pump. Flow is dropping, "
+                     "no rush yet.",
+             "expected_part": "96455084", "expected_first_listing": None, "expect_no_candidates": True,
+             "expected_alerts_to": []},
+        ],
+        "seller_posts": [  # a seller posts a NEW listing -> open needs get alerts
+            {"name": "Prairie CR 15 seal kits", "seller_id": 7,
+             "text": "got 2 grundfos CR15 shaft seal kits HQQE left over, opened box but never installed. 330 ea or best offer",
+             "expected_first_buyer": 39, "expected_alert_need": 20, "expected_alerts_to": [39, 7]},
+            {"name": "Hartwell S7-300 CPUs", "seller_id": 1,
+             "text": "clearing out old S7-300 stuff after line 2 retrofit to 1500s. have 3x CPU 315-2DP (6ES7 315-2AG10), "
+                     "pulled wrking last month, fw 2.6, few scuffs on housing. no MMCs. ~$1425 ea. pickup dayton or we ship",
+             "expected_first_buyer": 20, "expected_alert_need": 1, "expected_alerts_to": [20, 1]},
+        ],
+    }
     ANSWER_KEYS.write_text(json.dumps(keys, indent=2), encoding="utf-8")
 
 

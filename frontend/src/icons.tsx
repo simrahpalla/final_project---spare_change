@@ -79,3 +79,15 @@ export const Dot = (p: { className?: string }) => (
   </Svg>
 )
 export const Spinner = () => <span className="spinner" aria-label="working" />
+export const Tag = (p: { className?: string }) => (
+  <Svg {...p}>
+    <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z" />
+    <circle cx="7.5" cy="7.5" r="1.5" />
+  </Svg>
+)
+export const Search = (p: { className?: string }) => (
+  <Svg {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+  </Svg>
+)

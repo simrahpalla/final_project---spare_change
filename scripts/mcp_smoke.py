@@ -114,7 +114,10 @@ async def run(smoke: Smoke) -> None:
         await S.call(b, "broker", "search_buyers_for_listing", {"listing_id": lid}, "ok", "SQL pre-filter: Tidewater (need #20) ranked first")
         await S.call(b, "broker", "record_matches", {"direction": "buyer_to_seller", "run_id": "smoke", "matches": [
             {"listing_id": lid, "buyer_id": 39, "need_id": 20, "score": 96, "reason": "Exact CR 15 HQQE seal kit for Tidewater's CIP pump"}]},
-            "ok", "grounded match saved; buyer and seller notified")
+            "ok", "grounded match saved (no alert yet: alerts are a separate code step)")
+        await S.call(b, "broker", "send_match_alerts", {"run_id": "smoke"}, "ok",
+                     "code sends alerts for score >= 70: Tidewater (buyer) and Prairie (seller)")
+        await S.call(b, "broker", "send_match_alerts", {"run_id": "smoke"}, "ok", "same event again: 0 sent, 2 duplicates skipped")
         await S.call(b, "broker", "record_matches", {"direction": "seller_to_buyer", "matches": [
             {"listing_id": 1, "buyer_id": 40, "score": 100, "reason": "Apex Holdings is the #1 buyer"}]},
             "refused", "ungrounded match (Apex runs no S7-300) is rejected in code", code="no compatible platform")
@@ -207,6 +210,7 @@ async def run(smoke: Smoke) -> None:
                                                  "input_tokens": 30, "output_tokens": 33, "cost_usd": 0.0000195}, "ok", "write one token_usage row")
         await S.call(y, "system", "get_token_summary", {"run_id": "smoke"}, "ok", "token totals for a run")
         await S.call(y, "system", "list_companies", {}, "ok", "demo account switcher: companies with listings, needs, alerts")
+        await S.call(y, "system", "get_marketplace_board", {}, "ok", "Marketplace: listings, needs (no max price), pairs, impact")
         await S.call(y, "system", "mark_notifications_read", {"company_id": 39}, "ok", "a signed-in company opens its alerts")
         await S.call(y, "system", "submit_offer", {"action": "offer", "price": 1}, "refused", "role isolation: system can't negotiate", code="Unknown tool")
 

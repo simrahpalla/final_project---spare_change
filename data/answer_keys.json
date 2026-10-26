@@ -636,6 +636,8 @@
       "top_listings": [
         1
       ],
+      "expected_first_listing": 1,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -644,6 +646,8 @@
       "top_listings": [
         2
       ],
+      "expected_first_listing": 2,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -652,6 +656,8 @@
       "top_listings": [
         3
       ],
+      "expected_first_listing": 3,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -660,6 +666,8 @@
       "top_listings": [
         4
       ],
+      "expected_first_listing": 4,
+      "expect_no_candidates": false,
       "names_only_the_machine": true
     },
     {
@@ -668,6 +676,8 @@
       "top_listings": [
         5
       ],
+      "expected_first_listing": 5,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -676,6 +686,8 @@
       "top_listings": [
         6
       ],
+      "expected_first_listing": 6,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -684,6 +696,8 @@
       "top_listings": [
         7
       ],
+      "expected_first_listing": 7,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -692,6 +706,8 @@
       "top_listings": [
         8
       ],
+      "expected_first_listing": 8,
+      "expect_no_candidates": false,
       "names_only_the_machine": true
     },
     {
@@ -700,6 +716,8 @@
       "top_listings": [
         9
       ],
+      "expected_first_listing": 9,
+      "expect_no_candidates": false,
       "names_only_the_machine": true
     },
     {
@@ -708,6 +726,8 @@
       "top_listings": [
         10
       ],
+      "expected_first_listing": 10,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -716,6 +736,8 @@
       "top_listings": [
         11
       ],
+      "expected_first_listing": 11,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -724,6 +746,8 @@
       "top_listings": [
         12
       ],
+      "expected_first_listing": 12,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -732,6 +756,8 @@
       "top_listings": [
         13
       ],
+      "expected_first_listing": 13,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -740,6 +766,8 @@
       "top_listings": [
         14
       ],
+      "expected_first_listing": 14,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -748,6 +776,8 @@
       "top_listings": [
         15
       ],
+      "expected_first_listing": 15,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -756,6 +786,8 @@
       "top_listings": [
         16
       ],
+      "expected_first_listing": 16,
+      "expect_no_candidates": false,
       "names_only_the_machine": true
     },
     {
@@ -764,6 +796,8 @@
       "top_listings": [
         2
       ],
+      "expected_first_listing": 2,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -772,6 +806,8 @@
       "top_listings": [
         17
       ],
+      "expected_first_listing": 17,
+      "expect_no_candidates": false,
       "names_only_the_machine": false
     },
     {
@@ -780,18 +816,24 @@
       "top_listings": [
         18
       ],
+      "expected_first_listing": 18,
+      "expect_no_candidates": false,
       "names_only_the_machine": true
     },
     {
       "need_id": 20,
       "buyer_id": 39,
       "top_listings": [],
+      "expected_first_listing": null,
+      "expect_no_candidates": true,
       "names_only_the_machine": true
     },
     {
       "need_id": 21,
       "buyer_id": 41,
       "top_listings": [],
+      "expected_first_listing": null,
+      "expect_no_candidates": true,
       "names_only_the_machine": false
     }
   ],
@@ -1097,5 +1139,56 @@
       "problem": "Discontinued 1756-L61 offered 'new factory sealed' in quantity at about 29% of list, shipped from overseas: classic grey-market / counterfeit pattern",
       "expected_outcome": "HELD FOR HUMAN REVIEW (not auto-listed): obsolete + new-sealed + priced under 35% of new."
     }
-  ]
+  ],
+  "two_sided": {
+    "buyer_posts": [
+      {
+        "name": "Riverbend DI cards",
+        "buyer_id": 20,
+        "max_price": 180,
+        "text": "Line 3 packaging PLC keeps dropping inputs. Need 4x S7-300 32-point digital input cards (SM 321) as spares, quick please.",
+        "expected_part": "6ES7321-1BL00-0AA0",
+        "expected_first_listing": 13,
+        "expect_no_candidates": false,
+        "expected_alerts_to": [
+          20,
+          1
+        ]
+      },
+      {
+        "name": "Tidewater impeller kit",
+        "buyer_id": 39,
+        "max_price": 650,
+        "text": "Looking for 1 impeller and chamber stack kit for our Grundfos CR 15-3 CIP pump. Flow is dropping, no rush yet.",
+        "expected_part": "96455084",
+        "expected_first_listing": null,
+        "expect_no_candidates": true,
+        "expected_alerts_to": []
+      }
+    ],
+    "seller_posts": [
+      {
+        "name": "Prairie CR 15 seal kits",
+        "seller_id": 7,
+        "text": "got 2 grundfos CR15 shaft seal kits HQQE left over, opened box but never installed. 330 ea or best offer",
+        "expected_first_buyer": 39,
+        "expected_alert_need": 20,
+        "expected_alerts_to": [
+          39,
+          7
+        ]
+      },
+      {
+        "name": "Hartwell S7-300 CPUs",
+        "seller_id": 1,
+        "text": "clearing out old S7-300 stuff after line 2 retrofit to 1500s. have 3x CPU 315-2DP (6ES7 315-2AG10), pulled wrking last month, fw 2.6, few scuffs on housing. no MMCs. ~$1425 ea. pickup dayton or we ship",
+        "expected_first_buyer": 20,
+        "expected_alert_need": 1,
+        "expected_alerts_to": [
+          20,
+          1
+        ]
+      }
+    ]
+  }
 }

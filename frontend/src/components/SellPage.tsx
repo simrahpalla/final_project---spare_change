@@ -3,7 +3,8 @@ import { api, errorMessage, type Company, type CompanyProfile, type RunStatus } 
 import { featured, SCENARIOS, type Scenario } from '../demo'
 import { outcomeKind, stepOf, workingText } from '../pipeline'
 import { CompanyStrip } from './CompanyStrip'
-import { BuyerMatches, ImpactStrip, ListingCard, OutcomeCard, OutreachEmail, PriceCards, Skeleton } from './Results'
+import { PageBand } from './PageBand'
+import { AlertsSent, BuyerMatches, ImpactStrip, ListingCard, OutcomeCard, OutreachEmail, PriceCards, Skeleton } from './Results'
 
 export function SellPage(props: {
   accountId: number
@@ -66,6 +67,7 @@ export function SellPage(props: {
   const pricing = stepOf(steps, 'pricing')
   const impact = stepOf(steps, 'impact')
   const outreach = stepOf(steps, 'outreach')
+  const alerts = stepOf(steps, 'alerts')
   const result = run?.result
   const kind = result ? outcomeKind(result.outcome) : null
   const stopped = kind && kind !== 'listed' && kind !== 'no_buyers'
@@ -74,11 +76,10 @@ export function SellPage(props: {
   const prescreenBlocked = stepOf(steps, 'prescreen')?.status === 'blocked'
 
   return (
-    <main className="main">
-      <h1>Sell surplus parts</h1>
-      <p className="lede">
+    <main className="main side-sell">
+      <PageBand side="sell">
         Paste what you have. Agents identify the part, check it's safe to sell, find plants that run it, and suggest a price.
-      </p>
+      </PageBand>
       <CompanyStrip profile={props.profile} role="seller" />
       {tip && <p className="try-line">{tip}</p>}
 
@@ -140,6 +141,7 @@ export function SellPage(props: {
               {matching ? <BuyerMatches matching={matching} companies={props.companies} /> : running && listing && <Skeleton text={workingText(run)} />}
               {pricing ? <PriceCards pricing={pricing} /> : running && matching && <Skeleton text={workingText(run)} />}
               {impact && <ImpactStrip impact={impact} />}
+              {alerts && <AlertsSent alerts={alerts} />}
               {outreach && <OutreachEmail outreach={outreach} />}
             </>
           )}

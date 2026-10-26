@@ -132,3 +132,68 @@ def outreach_template(listing: dict, top: dict, cand: dict) -> tuple[str, str]:
             f"condition: {listing['condition'].replace('_', ' ')}{ask}, located in {listing['location']}. {why}\n\n"
             f"Would you like to discuss it?\n\nSpare Change")
     return subject, body
+
+
+# ------------------------------------------------------------------ reverse direction (a new need -> listings)
+
+CONDITION_RANK = {"new_sealed": 0, "new_open_box": 1, "refurbished": 2, "used_working": 3, "used_untested": 4, "for_parts": 5}
+_PART_TOKEN = re.compile(r"\b(?:[0-9][A-Z0-9]{2,}-[A-Z0-9\-/]+|[A-Z]{2,}[0-9][A-Z0-9\-/]{3,}|[0-9]{8})\b")
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def reverse_reason_errors(reason: str, c: dict, need: dict) -> list[str]:
+    """Claims in a reason about listing `c` that are not true for that listing."""
+    errs, name = [], f"listing #{c['listing_id']}"
+    allowed = {_norm(c["part_number"]), _norm(need.get("part_number") or "")}
+    for tok in _PART_TOKEN.findall(reason):
+        if _norm(tok) not in allowed and not any(_norm(tok) in a or a in _norm(tok) for a in allowed if a):
+            errs.append(f"{name}: reason mentions part {tok}, but the listing is {c['part_number']}")
+    for amt in re.findall(r"\$\s*([\d,]+(?:\.\d+)?)\s*(?:/\s*(?:unit|ea)|per\s+unit|each\b|ea\b)", reason, re.I):
+        v = float(amt.replace(",", ""))
+        if not c.get("asking_price") or abs(c["asking_price"] - v) > 1:
+            errs.append(f"{name}: reason says ${v:,.0f} per unit, but its ask is "
+                        + (f"${c['asking_price']:,.0f}" if c.get("asking_price") else "not stated"))
+    return errs
+
+
+def check_reverse_matches(matches: list[dict], cands: list[dict], need: dict) -> list[str]:
+    by_id = {c["listing_id"]: c for c in cands}
+    errs, seen = [], set()
+    for m in matches:
+        c = by_id.get(m.get("listing_id"))
+        if not c:
+            errs.append(f"listing #{m.get('listing_id')} is not one of the candidate listings")
+            continue
+        if m["listing_id"] in seen:
+            errs.append(f"listing #{m['listing_id']} is listed twice")
+        seen.add(m["listing_id"])
+        if m.get("need_id") != need["need_id"]:
+            errs.append(f"listing #{m['listing_id']}: need_id must be {need['need_id']}, not {m.get('need_id')}")
+        if m["score"] < 70:
+            errs.append(f"listing #{m['listing_id']}: it fills the need, so its score must be 70 or more, not {m['score']}")
+        errs += reverse_reason_errors(m.get("reason", ""), c, need)
+    want = min(3, len(cands))
+    if len(matches) < want:
+        errs.append(f"list {want} listings (there are {len(cands)} candidates), not {len(matches)}")
+    return errs
+
+
+def rules_ranking_reverse(cands: list[dict], need: dict, limit: int = 3) -> list[dict]:
+    """Rank candidate listings by code only: exact part first, then condition, quantity coverage, lower ask."""
+    def key(c):
+        exact = 0 if c["why_it_fits"].startswith("same part") else 1
+        covers = 0 if (c.get("qty") or 0) >= need["qty"] else 1
+        return (exact, CONDITION_RANK.get(c.get("condition"), 9), covers, c.get("asking_price") or 1e9)
+
+    out = []
+    for i, c in enumerate(sorted(cands, key=key)[:limit]):
+        exact = c["why_it_fits"].startswith("same part") or "substitute" in c["why_it_fits"]
+        ask = f" · ${c['asking_price']:,.0f}/unit" if c.get("asking_price") else " · price on request"
+        reason = (f"{'Same part' if c['why_it_fits'].startswith('same part') else 'Fits'} {c['part_number']} · "
+                  f"{(c.get('condition') or '').replace('_', ' ')} · {c.get('qty')} units{ask} · {c.get('location')}")
+        out.append({"listing_id": c["listing_id"], "buyer_id": need["buyer_id"], "need_id": need["need_id"],
+                    "score": max(70, (95 if exact else 82) - 5 * i), "reason": reason})
+    return out

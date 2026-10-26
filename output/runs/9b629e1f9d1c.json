@@ -1,0 +1,100 @@
+{
+  "run_id": "9b629e1f9d1c",
+  "kind": "need_flow",
+  "subject": "need:22",
+  "outcome": "posted (no matching surplus yet)",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "need_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "96455084",
+        "platform": "Grundfos CR 15",
+        "family": "Pump spare",
+        "qty": 1,
+        "urgency": "low",
+        "downtime_cost_per_day": null,
+        "other_items": [],
+        "confidence": 0.99,
+        "notes": "Identified as the CR 15-3 impeller and chamber stack kit."
+      }
+    },
+    {
+      "step": "guard",
+      "status": "allowed",
+      "reasons": []
+    },
+    {
+      "step": "save",
+      "status": "created",
+      "need_id": 22,
+      "ceiling_recorded": true
+    },
+    {
+      "step": "need",
+      "status": "ready",
+      "need": {
+        "need_id": 22,
+        "status": "open",
+        "buyer_id": 39,
+        "buyer_name": "Tidewater Dairy",
+        "buyer_location": "Norfolk, VA",
+        "part_number": "96455084",
+        "platform": "Grundfos CR 15",
+        "family": null,
+        "qty": 1,
+        "urgency": "low",
+        "downtime_cost_per_day": 0.0,
+        "created_at": "2026-10-26T04:14:30+00:00"
+      }
+    },
+    {
+      "step": "prefilter",
+      "status": "done",
+      "candidates": 0
+    },
+    {
+      "step": "matching",
+      "status": "no_candidates",
+      "note": "no active listing fits this need yet; no model call"
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "need_agent",
+      "requests": 3,
+      "input_tokens": 1148,
+      "cached_tokens": 1029,
+      "cache_write_tokens": 1101,
+      "output_tokens": 136,
+      "total_tokens": 3414,
+      "cost_usd": 0.00033072
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 472,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 120,
+      "total_tokens": 592,
+      "cost_usd": 0.0001072
+    }
+  ],
+  "totals": {
+    "run_id": "9b629e1f9d1c",
+    "kind": "need_flow",
+    "requests": 4,
+    "input_tokens": 1620,
+    "cached_tokens": 1029,
+    "cache_write_tokens": 1101,
+    "output_tokens": 256,
+    "total_tokens": 4006,
+    "cost_usd": 0.000438
+  },
+  "need_id": 22
+}

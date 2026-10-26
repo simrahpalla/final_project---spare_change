@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import type { Company, Step } from '../api'
 import { condition, date, kg, money } from '../format'
-import { Ban, Check, Copy, Eye, Help, Info, Leaf, Lock } from '../icons'
+import { Ban, Bell, Check, Copy, Eye, Help, Info, Leaf, Lock } from '../icons'
 import type { OutcomeKind } from '../pipeline'
 
 export function InfoTip({ text }: { text: string }) {
@@ -106,7 +106,20 @@ const FRIENDLY_RULE: Record<string, string> = {
   counterfeit_risk: 'A discontinued part offered new-sealed far below list price is a common counterfeit pattern.',
 }
 
-export function OutcomeCard({ kind, outcome, rules, reasons }: { kind: OutcomeKind; outcome: string; rules?: string[]; reasons?: string[] }) {
+export function OutcomeCard({
+  kind,
+  outcome,
+  rules,
+  reasons,
+  subject = 'listing',
+}: {
+  kind: OutcomeKind
+  outcome: string
+  rules?: string[]
+  reasons?: string[]
+  subject?: 'listing' | 'need'
+}) {
+  const need = subject === 'need'
   const detail = (rules ?? []).map((r) => FRIENDLY_RULE[r]).filter(Boolean)
   if (kind === 'blocked' || kind === 'flagged') {
     return (
@@ -120,7 +133,9 @@ export function OutcomeCard({ kind, outcome, rules, reasons }: { kind: OutcomeKi
             <li key={d}>{d}</li>
           ))}
         </ul>
-        <div className="skipped-line">Matching, pricing and outreach were skipped. Nothing was published.</div>
+        <div className="skipped-line">
+          {need ? 'Matching and alerts were skipped. Nothing was posted.' : 'Matching, pricing and outreach were skipped. Nothing was published.'}
+        </div>
       </section>
     )
   }
@@ -132,13 +147,15 @@ export function OutcomeCard({ kind, outcome, rules, reasons }: { kind: OutcomeKi
     },
     clarify: {
       icon: <Help />,
-      title: 'Post one item per listing',
+      title: need ? 'Post one need per item' : 'Post one item per listing',
       body: outcome.replace(/^needs_clarification:\s*/, '').replace(/^this post/, 'This post'),
     },
     unknown_part: {
       icon: <Help />,
       title: "We couldn't identify the part",
-      body: 'Add the part number or the model (for example "Siemens 6ES7 315-2AG10") and try again. Nothing was published.',
+      body: need
+        ? 'Add the part number, or the machine it goes in plus the kind of part (for example "seal kit for our Grundfos CR 15"). Nothing was posted.'
+        : 'Add the part number or the model (for example "Siemens 6ES7 315-2AG10") and try again. Nothing was published.',
     },
     stopped: {
       icon: <Info />,
@@ -159,7 +176,9 @@ export function OutcomeCard({ kind, outcome, rules, reasons }: { kind: OutcomeKi
         {n.title}
       </div>
       <p>{n.body}</p>
-      {kind !== 'error' && kind !== 'stopped' && <div className="skipped-line">Matching and pricing were skipped.</div>}
+      {kind !== 'error' && kind !== 'stopped' && (
+        <div className="skipped-line">{need ? 'Matching was skipped.' : 'Matching and pricing were skipped.'}</div>
+      )}
     </section>
   )
 }
@@ -313,6 +332,29 @@ export function Skeleton({ text }: { text: string }) {
       <div className="skel w60" />
       <div className="skel w90" />
       <div className="skel w40" />
+    </section>
+  )
+}
+
+// ------------------------------------------------------------------ alerts (sent by code after matching)
+
+export function AlertsSent({ alerts }: { alerts: Step }) {
+  const sent = alerts.sent ?? 0
+  return (
+    <section className="alerts-sent section">
+      <Bell />
+      <span>
+        {sent > 0 ? (
+          <>
+            <b>{sent} alert{sent > 1 ? 's' : ''} sent</b> to the buyer and seller of each match scoring {alerts.threshold}+.
+          </>
+        ) : alerts.duplicates > 0 ? (
+          <>No new alerts: these matches were already alerted ({alerts.duplicates} duplicate{alerts.duplicates > 1 ? 's' : ''} skipped).</>
+        ) : (
+          <>No alerts: no match scored {alerts.threshold} or more.</>
+        )}{' '}
+        <span className="muted">Decided by code, not an AI. Alerts never show a buyer's max price.</span>
+      </span>
     </section>
   )
 }

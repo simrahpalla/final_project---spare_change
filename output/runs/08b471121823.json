@@ -1,0 +1,161 @@
+{
+  "run_id": "08b471121823",
+  "kind": "need_flow",
+  "subject": "need:22",
+  "outcome": "posted and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "need_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "6ES7321-1BL00-0AA0",
+        "platform": "Siemens S7-300",
+        "family": "PLC I/O",
+        "qty": 4,
+        "urgency": "line_down",
+        "downtime_cost_per_day": 8000.0,
+        "other_items": [],
+        "confidence": 0.99,
+        "notes": ""
+      }
+    },
+    {
+      "step": "guard",
+      "status": "allowed",
+      "reasons": []
+    },
+    {
+      "step": "save",
+      "status": "created",
+      "need_id": 22,
+      "ceiling_recorded": true
+    },
+    {
+      "step": "need",
+      "status": "ready",
+      "need": {
+        "need_id": 22,
+        "status": "open",
+        "buyer_id": 20,
+        "buyer_name": "Riverbend Foods",
+        "buyer_location": "Cedar Rapids, IA",
+        "part_number": "6ES7321-1BL00-0AA0",
+        "platform": "Siemens S7-300",
+        "family": null,
+        "qty": 4,
+        "urgency": "line_down",
+        "downtime_cost_per_day": 8000.0,
+        "created_at": "2026-10-26T04:12:33+00:00"
+      }
+    },
+    {
+      "step": "prefilter",
+      "status": "done",
+      "candidates": 1
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "direction": "buyer_to_seller",
+      "candidates": 1,
+      "ranked": [
+        {
+          "buyer_id": null,
+          "listing_id": 13,
+          "need_id": 22,
+          "score": 95,
+          "reason": "Exact part 6ES7321-1BL00-0AA0 \u00b7 used, working \u00b7 12 units cover the 4 needed \u00b7 public ask not stated \u00b7 Dayton, OH",
+          "seller_name": "Hartwell Precision Components",
+          "part_number": "6ES7321-1BL00-0AA0",
+          "condition": "used_working",
+          "asking_price": null,
+          "qty": 12,
+          "location": "Dayton, OH"
+        }
+      ],
+      "method": "agent_retry",
+      "check_errors": [
+        "listing #13: reason says $8,000 per unit, but its ask is not stated"
+      ],
+      "saved": 1,
+      "rejected": []
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Hartwell Precision Components",
+      "subject": "Riverbend Foods inquiry: Siemens 6ES7321-1BL00-0AA0",
+      "body": "Hello Hartwell Precision Components,\n\nRiverbend Foods is looking for 4 Siemens 6ES7321-1BL00-0AA0 S7-300 digital input cards for a line-down situation. Your active listing shows 12 used, working units in Dayton, OH. Are they still available, and could you confirm the price and earliest shipping or pickup?\n\nBest,\nSpare Change"
+    },
+    {
+      "step": "alerts",
+      "status": "done",
+      "sent": 2,
+      "pairs": 1,
+      "duplicates": 0,
+      "threshold": 70,
+      "companies": [
+        1,
+        20
+      ]
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "need_agent",
+      "requests": 3,
+      "input_tokens": 1151,
+      "cached_tokens": 1069,
+      "cache_write_tokens": 1160,
+      "output_tokens": 143,
+      "total_tokens": 3523,
+      "cost_usd": 0.00034229
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 485,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 85,
+      "total_tokens": 570,
+      "cost_usd": 9.1e-05
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1303,
+      "output_tokens": 278,
+      "total_tokens": 1707,
+      "cost_usd": 0.00031448
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1347,
+      "output_tokens": 304,
+      "total_tokens": 1777,
+      "cost_usd": 0.00033298
+    }
+  ],
+  "totals": {
+    "run_id": "08b471121823",
+    "kind": "need_flow",
+    "requests": 6,
+    "input_tokens": 1888,
+    "cached_tokens": 1069,
+    "cache_write_tokens": 3810,
+    "output_tokens": 810,
+    "total_tokens": 7577,
+    "cost_usd": 0.001081
+  },
+  "need_id": 22
+}

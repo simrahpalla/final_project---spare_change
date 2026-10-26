@@ -61,7 +61,11 @@ It prints where the key was found (`repo folder` or `parent folder`), a one-line
 .venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --port 8000     # macOS/Linux: .venv/bin/python -m ...
 ```
 
-Open **http://localhost:8000**. For the first few seconds a banner says **"Starting up… loading marketplace tools"**: the backend starts its tool servers once, in the background, and every request reuses them afterwards. When the banner disappears and **Find buyers** is enabled, click **Find buyers**: the box is already filled in with the demo seller's post. Then try the other examples under **Try:** (each one signs in as the company that would post it), for example **Expired solvent** or **Injection test**, to see the safety checks block a listing. The right rail shows each agent working, the cost of the run, and the impact. Use the **account switcher** in the top bar (a demo stand-in for logging in): five featured demo accounts, sellers and buyers, each with a one-line "what to try", plus all 50 companies under "Show all companies". Each account sees its own posts and alerts. **Reset demo data** in that menu restores the database.
+Open **http://localhost:8000**. For the first few seconds a banner says **"Starting up… loading marketplace tools"**: the backend starts its tool servers once, in the background, and every request reuses them afterwards. When the banner disappears and **Find buyers** is enabled, click **Find buyers**: the box is already filled in with the demo seller's post. Then try the other examples under **Try:** (each one signs in as the company that would post it), for example **Expired solvent** or **Injection test**, to see the safety checks block a listing. The right rail shows each agent working, the cost of the run, and the impact. Use the **account switcher** in the top bar (a demo stand-in for logging in): five featured demo accounts, sellers and buyers, each with a one-line "what to try", plus all 50 companies under "Show all companies". Each account sees its own posts and alerts.
+
+**Two-sided matching (Phase 5).** Buyers post what they need on **Buy**: switch to **Riverbend Foods** or **Tidewater Dairy** (their sample need is pre-filled, with a private max price) and click **Find**. The same compliance guard, SQL pre-filter and matching agent run in reverse, and code sends alerts (score 70+, top 3, never twice) to both sides. To see an alert arrive, run the **Siemens PLC** example as Hartwell on Sell, then switch to Riverbend and open the bell. **Marketplace** shows everything available and wanted side by side, with match badges; click an item to see what it matches. A buyer's max price never appears in alerts, on the Marketplace, or in any seller view. **Reset demo** in the top bar restores the seeded data, so every grader starts clean.
+
+> **Account switching is a demo, not real authentication.** There are no passwords: anyone can pick any company. It shows what each company would see, and the server only ever returns an account's own alerts and private terms, but a real deployment would need sign-in (see Limits in the report).
 
 ---
 
@@ -72,6 +76,12 @@ Open **http://localhost:8000**. For the first few seconds a banner says **"Start
 .venv/Scripts/python.exe backend/run_flow.py --listing 22         # planted prompt injection: blocked before any model call
 .venv/Scripts/python.exe backend/run_flow.py --text "2 grundfos CR15 seal kits HQQE, never installed, 330 ea" --seller 7
 .venv/Scripts/python.exe backend/run_flow.py --negotiate 1 1      # seller agent vs buyer agent -> deal pending human approval
+```
+
+Buyer side (a buy request, matched in reverse):
+
+```bash
+.venv/Scripts/python.exe backend/run_flow.py --need "Need 4x S7-300 32-point digital input cards (SM 321), quick please" --buyer 20 --max 180
 ```
 
 Each run prints every step with its tokens and cost (a full run costs well under $0.01) and is saved to `output/runs/`. Add `--reset` to start from a clean database.

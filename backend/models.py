@@ -27,6 +27,21 @@ class ListingDraft(BaseModel):
     notes: str = Field("", description="One short sentence on anything ambiguous.")
 
 
+class NeedDraft(BaseModel):
+    """Need agent: a buyer's messy wanted post turned into clean fields. The budget is NOT extracted here:
+    the buyer enters it in a private field, and code keeps it out of every public view."""
+
+    part_number: str | None = Field(description="Exact catalog part number if the buyer named or clearly described one; else null.")
+    platform: str | None = Field(description="The buyer's machine it is for, copied exactly from the buyer's installed platforms; null if unclear.")
+    family: str | None = Field(description="Part family from the allowed list (e.g. 'Pump spare', 'Bearing'); null if unclear.")
+    qty: int = Field(ge=1, description="Units needed (default 1 if not stated).")
+    urgency: Literal["line_down", "high", "normal", "low"]
+    downtime_cost_per_day: float | None = Field(None, description="USD per day of downtime if the post states it; else null.")
+    other_items: list[str] = Field(default_factory=list, description="Other DIFFERENT parts asked for in the same post.")
+    confidence: float = Field(ge=0, le=1)
+    notes: str = Field("", description="One short sentence on anything ambiguous.")
+
+
 class GuardReview(BaseModel):
     """Compliance guard (LLM): edge cases the code rules can't see."""
 
@@ -35,8 +50,9 @@ class GuardReview(BaseModel):
 
 
 class ScoredMatch(BaseModel):
-    buyer_id: int
-    need_id: int | None = Field(None, description="The buyer's open need this listing fills, if any.")
+    buyer_id: int | None = Field(None, description="Seller-to-buyer direction: the candidate buyer.")
+    listing_id: int | None = Field(None, description="Buyer-to-seller direction: the candidate listing.")
+    need_id: int | None = Field(None, description="The open need the listing fills, if any.")
     score: int = Field(ge=0, le=100)
     reason: str = Field(description="Specific: name the platform/need, e.g. 'runs 4x S7-300 (18 yrs); line down at $12k/day'.")
 

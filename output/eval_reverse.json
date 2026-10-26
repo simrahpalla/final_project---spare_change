@@ -1,0 +1,597 @@
+{
+  "what": "Reverse matching (need -> listings) with the same matching agent and pre-filter code as the seller side",
+  "passed": 23,
+  "cases": 23,
+  "privacy_leaks": [],
+  "total_cost_usd": 0.007469,
+  "no_candidate_needs": 3,
+  "matching_calls_on_no_candidate_needs": 0,
+  "results": [
+    {
+      "case": "need 1",
+      "expected_first_listing": 1,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "20ec91467701",
+      "need_id": 1,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        1
+      ],
+      "scores": [
+        100
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        1,
+        20
+      ],
+      "requests": 1,
+      "cost_usd": 0.000314
+    },
+    {
+      "case": "need 2",
+      "expected_first_listing": 2,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "bdb543ce4c07",
+      "need_id": 2,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        2
+      ],
+      "scores": [
+        95
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        2,
+        21
+      ],
+      "requests": 1,
+      "cost_usd": 0.0003
+    },
+    {
+      "case": "need 3",
+      "expected_first_listing": 3,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "ec8f32d832cd",
+      "need_id": 3,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        3
+      ],
+      "scores": [
+        100
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        3,
+        22
+      ],
+      "requests": 1,
+      "cost_usd": 0.000303
+    },
+    {
+      "case": "need 4",
+      "expected_first_listing": 4,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "9f01ace6cc8d",
+      "need_id": 4,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        4
+      ],
+      "scores": [
+        96
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        4,
+        23
+      ],
+      "requests": 1,
+      "cost_usd": 0.000346
+    },
+    {
+      "case": "need 5",
+      "expected_first_listing": 5,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "7f556d83212e",
+      "need_id": 5,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        5
+      ],
+      "scores": [
+        92
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        5,
+        24
+      ],
+      "requests": 1,
+      "cost_usd": 0.000297
+    },
+    {
+      "case": "need 6",
+      "expected_first_listing": 6,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "b96dd1626f95",
+      "need_id": 6,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        6
+      ],
+      "scores": [
+        90
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        6,
+        31
+      ],
+      "requests": 1,
+      "cost_usd": 0.000265
+    },
+    {
+      "case": "need 7",
+      "expected_first_listing": 7,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "35ad22d3636d",
+      "need_id": 7,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        7
+      ],
+      "scores": [
+        95
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        7,
+        26
+      ],
+      "requests": 1,
+      "cost_usd": 0.000299
+    },
+    {
+      "case": "need 8",
+      "expected_first_listing": 8,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "1b42b583e36f",
+      "need_id": 8,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        8
+      ],
+      "scores": [
+        98
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        8,
+        27
+      ],
+      "requests": 1,
+      "cost_usd": 0.000338
+    },
+    {
+      "case": "need 9",
+      "expected_first_listing": 9,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "d7d791421d6c",
+      "need_id": 9,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        9
+      ],
+      "scores": [
+        80
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        9,
+        28
+      ],
+      "requests": 1,
+      "cost_usd": 0.000354
+    },
+    {
+      "case": "need 10",
+      "expected_first_listing": 10,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "07754fa59d6d",
+      "need_id": 10,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        10
+      ],
+      "scores": [
+        100
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        10,
+        29
+      ],
+      "requests": 1,
+      "cost_usd": 0.000316
+    },
+    {
+      "case": "need 11",
+      "expected_first_listing": 11,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "184263110ba3",
+      "need_id": 11,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        11
+      ],
+      "scores": [
+        94
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        11,
+        30
+      ],
+      "requests": 1,
+      "cost_usd": 0.000281
+    },
+    {
+      "case": "need 12",
+      "expected_first_listing": 12,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "8819e61730d3",
+      "need_id": 12,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        12
+      ],
+      "scores": [
+        91
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        12,
+        31
+      ],
+      "requests": 1,
+      "cost_usd": 0.000312
+    },
+    {
+      "case": "need 13",
+      "expected_first_listing": 13,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "9f917f1d4c5b",
+      "need_id": 13,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        13
+      ],
+      "scores": [
+        95
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        1,
+        32
+      ],
+      "requests": 1,
+      "cost_usd": 0.000297
+    },
+    {
+      "case": "need 14",
+      "expected_first_listing": 14,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "8a5e3b8f5be3",
+      "need_id": 14,
+      "part": null,
+      "candidates": 1,
+      "method": "agent_retry",
+      "ranked": [
+        14
+      ],
+      "scores": [
+        95
+      ],
+      "matching_calls": 2,
+      "alerts_sent": 2,
+      "alert_companies": [
+        13,
+        33
+      ],
+      "requests": 2,
+      "cost_usd": 0.000622
+    },
+    {
+      "case": "need 15",
+      "expected_first_listing": 15,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "d9e18796fa3d",
+      "need_id": 15,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        15
+      ],
+      "scores": [
+        95
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        13,
+        34
+      ],
+      "requests": 1,
+      "cost_usd": 0.000307
+    },
+    {
+      "case": "need 16",
+      "expected_first_listing": 16,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "dcb7fae7ed82",
+      "need_id": 16,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        16
+      ],
+      "scores": [
+        80
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        14,
+        35
+      ],
+      "requests": 1,
+      "cost_usd": 0.000345
+    },
+    {
+      "case": "need 17",
+      "expected_first_listing": 2,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "90ab8d2319b3",
+      "need_id": 17,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        2
+      ],
+      "scores": [
+        92
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        2,
+        36
+      ],
+      "requests": 1,
+      "cost_usd": 0.000314
+    },
+    {
+      "case": "need 18",
+      "expected_first_listing": 17,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "cad512d09b95",
+      "need_id": 18,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        17
+      ],
+      "scores": [
+        95
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        14,
+        37
+      ],
+      "requests": 1,
+      "cost_usd": 0.000328
+    },
+    {
+      "case": "need 19",
+      "expected_first_listing": 18,
+      "expect_no_candidates": false,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "71c47d9a2eb2",
+      "need_id": 19,
+      "part": null,
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        18
+      ],
+      "scores": [
+        78
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        15,
+        38
+      ],
+      "requests": 1,
+      "cost_usd": 0.000341
+    },
+    {
+      "case": "need 20",
+      "expected_first_listing": null,
+      "expect_no_candidates": true,
+      "pass": true,
+      "outcome": "posted (no matching surplus yet)",
+      "run_id": "c3ac9792f410",
+      "need_id": 20,
+      "part": null,
+      "candidates": 0,
+      "method": null,
+      "ranked": [],
+      "scores": [],
+      "matching_calls": 0,
+      "alerts_sent": 0,
+      "alert_companies": [],
+      "requests": 0,
+      "cost_usd": 0.0
+    },
+    {
+      "case": "need 21",
+      "expected_first_listing": null,
+      "expect_no_candidates": true,
+      "pass": true,
+      "outcome": "posted (no matching surplus yet)",
+      "run_id": "6bae7d2885a2",
+      "need_id": 21,
+      "part": null,
+      "candidates": 0,
+      "method": null,
+      "ranked": [],
+      "scores": [],
+      "matching_calls": 0,
+      "alerts_sent": 0,
+      "alert_companies": [],
+      "requests": 0,
+      "cost_usd": 0.0
+    },
+    {
+      "case": "Riverbend DI cards",
+      "expected_first_listing": 13,
+      "expect_no_candidates": false,
+      "expected_part": "6ES7321-1BL00-0AA0",
+      "expected_alerts_to": [
+        20,
+        1
+      ],
+      "max_price": 180,
+      "pass": true,
+      "outcome": "posted and matched",
+      "run_id": "8e46e2f51f92",
+      "need_id": 22,
+      "part": "6ES7321-1BL00-0AA0",
+      "candidates": 1,
+      "method": "agent",
+      "ranked": [
+        13
+      ],
+      "scores": [
+        92
+      ],
+      "matching_calls": 1,
+      "alerts_sent": 2,
+      "alert_companies": [
+        1,
+        20
+      ],
+      "requests": 5,
+      "cost_usd": 0.000803
+    },
+    {
+      "case": "Tidewater impeller kit",
+      "expected_first_listing": null,
+      "expect_no_candidates": true,
+      "expected_part": "96455084",
+      "expected_alerts_to": [],
+      "max_price": 650,
+      "pass": true,
+      "outcome": "posted (no matching surplus yet)",
+      "run_id": "1915377dd149",
+      "need_id": 23,
+      "part": "96455084",
+      "candidates": 0,
+      "method": null,
+      "ranked": [],
+      "scores": [],
+      "matching_calls": 0,
+      "alerts_sent": 0,
+      "alert_companies": [],
+      "requests": 4,
+      "cost_usd": 0.000387
+    }
+  ]
+}

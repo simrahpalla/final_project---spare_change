@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spare Change: Sell vs Buy, three options</title>
+<style>
+  :root {
+    --navy: #0c2340; --orange: #f97316; --orange-text: #c2410c; --orange-soft: #fff1e7; --orange-line: #fbd5b5;
+    --blue: #2563eb; --blue-text: #1d4ed8; --blue-soft: #eaf1fd; --blue-line: #bfd3f8;
+    --ink: #0f172a; --ink-2: #5b6575; --ink-3: #8a94a6; --line: #d5dce5; --subtle: #f5f7fa; --key: #a9b4c3;
+    --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px; line-height: 1.5; color: var(--ink);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e9edf2; padding: 24px 28px 60px; }
+  .intro { max-width: 1320px; margin: 0 auto 20px; }
+  .intro h1 { margin: 0 0 4px; color: var(--navy); font-size: 22px; }
+  .intro p { margin: 0; color: var(--ink-2); max-width: 900px; }
+  .option { max-width: 1320px; margin: 28px auto 0; }
+  .option-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .option-head h2 { margin: 0; font-size: 17px; color: var(--navy); }
+  .option-head .rec { font-size: 11px; font-weight: 700; color: var(--navy); background: var(--orange); border-radius: 999px; padding: 1px 9px; }
+  .option-head p { margin: 0; color: var(--ink-2); font-size: 13px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .frame { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(12, 35, 64, .12); }
+  .cap { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 6px 2px; }
+
+  /* shared app bits */
+  .nav { height: 46px; background: var(--navy); color: #fff; display: flex; align-items: center; gap: 18px; padding: 0 16px; }
+  .logo { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 14px; white-space: nowrap; }
+  .coin { width: 18px; height: 18px; border-radius: 50%; background: var(--orange); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .tabs { display: flex; height: 100%; }
+  .tab { display: flex; align-items: center; padding: 0 10px; color: #b8c3d4; font-size: 13px; border-bottom: 2px solid transparent; }
+  .tab.on { color: #fff; border-bottom-color: var(--orange); }
+  .who { margin-left: auto; font-size: 12px; color: #b8c3d4; border: 1px solid rgba(255,255,255,.2); border-radius: 7px; padding: 3px 8px; white-space: nowrap; }
+  .body { padding: 18px 20px 20px; }
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: center; gap: 6px; }
+  .tagline { margin: 2px 0 0; font-size: 24px; font-weight: 650; letter-spacing: -.015em; color: var(--navy); line-height: 1.2; }
+  .lede { color: var(--ink-2); margin: 6px 0 12px; font-size: 13px; }
+  .strip { border: 1px solid var(--line); background: var(--subtle); border-radius: 8px; padding: 6px 12px; font-size: 12px; margin-bottom: 12px; }
+  .card { border: 1px solid var(--key); border-radius: 8px; padding: 12px 14px; background: #fff; }
+  .ta { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; height: 58px; font-size: 12.5px; color: var(--ink); }
+  .row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .fields { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 10px; margin-top: 10px; font-size: 11px; }
+  .fld { border: 1px solid var(--line); border-radius: 7px; padding: 5px 8px; color: var(--ink-3); }
+  .fl { font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .chip { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; font-size: 11px; color: var(--ink-2); }
+  .as { margin-left: auto; font-size: 11.5px; color: var(--ink-2); white-space: nowrap; }
+  .btn { border-radius: 8px; padding: 7px 18px; font-weight: 600; font-size: 13px; background: var(--orange); color: var(--navy); white-space: nowrap; }
+  .icon { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- Option A: hero band with a soft gradient per side (one action colour kept) */
+  .A .band { padding: 16px 20px 14px; border-bottom: 1px solid var(--line); }
+  .A .sell .band { background: linear-gradient(100deg, #ffe9d6 0%, #fff6ee 45%, #ffffff 100%); }
+  .A .buy  .band { background: linear-gradient(100deg, #dce8fb 0%, #eff5fe 45%, #ffffff 100%); }
+  .A .sell .eyebrow { color: var(--orange-text); }
+  .A .buy .eyebrow { color: var(--blue-text); }
+  .A .body { padding-top: 14px; }
+
+  /* ---------- Option B: each side gets its own colour (Sell orange, Buy blue) */
+  .B .buy .tab.on { border-bottom-color: var(--blue); }
+  .B .sell .eyebrow { color: var(--orange-text); }
+  .B .buy .eyebrow { color: var(--blue-text); }
+  .B .sell .card { border-top: 3px solid var(--orange); }
+  .B .buy .card { border-top: 3px solid var(--blue); }
+  .B .buy .btn { background: var(--blue); color: #fff; }
+  .B .buy .strip { background: var(--blue-soft); border-color: var(--blue-line); }
+  .B .sell .strip { background: var(--orange-soft); border-color: var(--orange-line); }
+
+  /* ---------- Option C: same palette, a big mode marker (icon tile + side stripe) */
+  .C .head { display: flex; gap: 14px; align-items: center; }
+  .C .tile { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; flex: none; }
+  .C .tile .icon { width: 24px; height: 24px; }
+  .C .sell .tile { background: var(--orange-soft); color: var(--orange-text); border: 1px solid var(--orange-line); }
+  .C .buy .tile { background: var(--navy); color: #fff; }
+  .C .sell .card { box-shadow: inset 4px 0 0 var(--orange); }
+  .C .buy .card { box-shadow: inset 4px 0 0 var(--navy); }
+  .C .tagline { font-size: 22px; }
+
+  .notes { max-width: 1320px; margin: 10px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; font-size: 12.5px; color: var(--ink-2); }
+  .notes b { color: var(--navy); }
+  .taglines { max-width: 1320px; margin: 34px auto 0; background: #fff; border-radius: 10px; padding: 16px 20px; }
+  .taglines h2 { margin: 0 0 8px; font-size: 17px; color: var(--navy); }
+  .taglines table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .taglines td, .taglines th { text-align: left; padding: 7px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+  .taglines th { color: var(--ink-3); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-top: 0; }
+  .taglines .pick { font-weight: 700; color: var(--navy); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="tag" viewBox="0 0 24 24"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+</svg>
+
+<div class="intro">
+  <h1>Sell vs Buy: three ways to tell the tabs apart</h1>
+  <p>Each option shows the top of the Sell tab (Hartwell) next to the Buy tab (Riverbend). In all three, the tagline becomes the big heading and the old heading ("Sell surplus parts") becomes a small label above it. The taglines are compared at the bottom.</p>
+</div>
+
+<!-- ======================================================= A -->
+<section class="option A">
+  <div class="option-head"><h2>A. Tinted header band</h2><span class="rec">Recommended</span>
+    <p>A soft gradient band at the top of each page: warm for Sell, cool blue for Buy. Buttons stay orange on both.</p></div>
+  <div class="pair">
+    <div><p class="cap">Sell tab</p><div class="frame sell">
+      <div class="nav"><span class="logo"><span class="coin">¢</span>Spare Change</span><span class="tabs"><span class="tab on">Sell</span><span class="tab">Buy</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span></span><span class="who">Hartwell Precision · demo</span></div>
+      <div class="band"><div class="eyebrow"><svg class="icon"><use href="#tag"/></svg>Sell surplus parts</div>
+        <p class="tagline">Turn spare parts into spare change.</p>
+        <p class="lede" style="margin-bottom:0">Paste what you have. Agents identify the part, check it's safe to sell, find plants that run it, and suggest a price.</p></div>
+      <div class="body"><div class="strip"><b>Hartwell Precision Components</b> · Dayton, OH · 2 active listings</div>
+        <div class="card"><div class="ta">clearing out old S7-300 stuff after line 2 retrofit to 1500s. have 3x CPU 315-2DP…</div>
+          <div class="row"><span class="chips"><span class="chip">Siemens PLC</span><span class="chip">EN2T substitute</span><span class="chip">Expired solvent</span></span></div>
+          <div class="row"><span class="as">Posting as <b>Hartwell</b></span><span class="btn">Find buyers</span></div></div></div>
+    </div></div>
+    <div><p class="cap">Buy tab</p><div class="frame buy">
+      <div class="nav"><span class="logo"><span class="coin">¢</span>Spare Change</span><span class="tabs"><span class="tab">Sell</span><span class="tab on">Buy</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span></span><span class="who">Riverbend Foods · demo</span></div>
+      <div class="band"><div class="eyebrow"><svg class="icon"><use href="#search"/></svg>Buy parts</div>
+        <p class="tagline">Someone's spare is your fix.</p>
+        <p class="lede" style="margin-bottom:0">Describe the part or the machine it goes in. Agents find surplus that fits and alert you and the seller.</p></div>
+      <div class="body"><div class="strip"><b>Riverbend Foods</b> · Cedar Rapids, IA · 1 open need</div>
+        <div class="card"><div class="ta">Line 3 packaging PLC keeps dropping inputs. Need 4x S7-300 32-point digital input cards…</div>
+          <div class="fields"><div><div class="fl">🔒 Max price (private)</div><div class="fld">$ 180</div></div><div><div class="fl">Urgency</div><div class="fld">Low · Normal · <b style="color:var(--navy)">High</b> · Line down</div></div><div><div class="fl">Downtime / day</div><div class="fld">$ 4,000</div></div></div>
+          <div class="row"><span class="as">Posting as <b>Riverbend</b></span><span class="btn">Find</span></div></div></div>
+    </div></div>
+  </div>
+  <div class="notes"><div><b>Why:</b> you notice the switch the moment the tab changes (the whole top of the page changes temperature), but the action colour still means one thing: orange = do it.</div><div><b>Cost:</b> one new tint (light blue) used only in the Buy band and its label. No new button colour, no change to the status colours.</div></div>
+</section>
+
+<!-- ======================================================= B -->
+<section class="option B">
+  <div class="option-head"><h2>B. A colour per side</h2>
+    <p>Sell stays orange; Buy is blue everywhere: tab underline, label, card edge, company strip and button.</p></div>
+  <div class="pair">
+    <div><p class="cap">Sell tab</p><div class="frame sell">
+      <div class="nav"><span class="logo"><span class="coin">¢</span>Spare Change</span><span class="tabs"><span class="tab on">Sell</span><span class="tab">Buy</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span></span><span class="who">Hartwell Precision · demo</span></div>
+      <div class="body"><div class="eyebrow"><svg class="icon"><use href="#tag"/></svg>Sell surplus parts</div>
+        <p class="tagline">Turn spare parts into spare change.</p>
+        <p class="lede">Paste what you have. Agents identify the part, check it's safe to sell, find plants that run it, and suggest a price.</p>
+        <div class="strip"><b>Hartwell Precision Components</b> · Dayton, OH · 2 active listings</div>
+        <div class="card"><div class="ta">clearing out old S7-300 stuff after line 2 retrofit to 1500s. have 3x CPU 315-2DP…</div>
+          <div class="row"><span class="chips"><span class="chip">Siemens PLC</span><span class="chip">EN2T substitute</span><span class="chip">Expired solvent</span></span></div>
+          <div class="row"><span class="as">Posting as <b>Hartwell</b></span><span class="btn">Find buyers</span></div></div></div>
+    </div></div>
+    <div><p class="cap">Buy tab</p><div class="frame buy">
+      <div class="nav"><span class="logo"><span class="coin">¢</span>Spare Change</span><span class="tabs"><span class="tab">Sell</span><span class="tab on">Buy</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span></span><span class="who">Riverbend Foods · demo</span></div>
+      <div class="body"><div class="eyebrow"><svg class="icon"><use href="#search"/></svg>Buy parts</div>
+        <p class="tagline">Someone's spare is your fix.</p>
+        <p class="lede">Describe the part or the machine it goes in. Agents find surplus that fits and alert you and the seller.</p>
+        <div class="strip"><b>Riverbend Foods</b> · Cedar Rapids, IA · 1 open need</div>
+        <div class="card"><div class="ta">Line 3 packaging PLC keeps dropping inputs. Need 4x S7-300 32-point digital input cards…</div>
+          <div class="fields"><div><div class="fl">🔒 Max price (private)</div><div class="fld">$ 180</div></div><div><div class="fl">Urgency</div><div class="fld">Low · Normal · <b style="color:var(--navy)">High</b> · Line down</div></div><div><div class="fl">Downtime / day</div><div class="fld">$ 4,000</div></div></div>
+          <div class="row"><span class="as">Posting as <b>Riverbend</b></span><span class="btn">Find</span></div></div></div>
+    </div></div>
+  </div>
+  <div class="notes"><div><b>Why:</b> the strongest difference. Each side has its own colour, like two halves of the market.</div><div><b>Cost:</b> breaks the approved "one accent colour" rule. Orange no longer means "the action" on its own, and blue sits close to the navy nav. Match scores and badges on Buy would need a blue version too.</div></div>
+</section>
+
+<!-- ======================================================= C -->
+<section class="option C">
+  <div class="option-head"><h2>C. Same colours, a big mode marker</h2>
+    <p>An icon tile next to the tagline (orange tag for Sell, navy magnifier for Buy) and a matching stripe on the input card.</p></div>
+  <div class="pair">
+    <div><p class="cap">Sell tab</p><div class="frame sell">
+      <div class="nav"><span class="logo"><span class="coin">¢</span>Spare Change</span><span class="tabs"><span class="tab on">Sell</span><span class="tab">Buy</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span></span><span class="who">Hartwell Precision · demo</span></div>
+      <div class="body"><div class="head"><span class="tile"><svg class="icon"><use href="#tag"/></svg></span><div><div class="eyebrow">Sell surplus parts</div><p class="tagline">Turn spare parts into spare change.</p></div></div>
+        <p class="lede">Paste what you have. Agents identify the part, check it's safe to sell, find plants that run it, and suggest a price.</p>
+        <div class="strip"><b>Hartwell Precision Components</b> · Dayton, OH · 2 active listings</div>
+        <div class="card"><div class="ta">clearing out old S7-300 stuff after line 2 retrofit to 1500s. have 3x CPU 315-2DP…</div>
+          <div class="row"><span class="chips"><span class="chip">Siemens PLC</span><span class="chip">EN2T substitute</span><span class="chip">Expired solvent</span></span></div>
+          <div class="row"><span class="as">Posting as <b>Hartwell</b></span><span class="btn">Find buyers</span></div></div></div>
+    </div></div>
+    <div><p class="cap">Buy tab</p><div class="frame buy">
+      <div class="nav"><span class="logo"><span class="coin">¢</span>Spare Change</span><span class="tabs"><span class="tab">Sell</span><span class="tab on">Buy</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span></span><span class="who">Riverbend Foods · demo</span></div>
+      <div class="body"><div class="head"><span class="tile"><svg class="icon"><use href="#search"/></svg></span><div><div class="eyebrow">Buy parts</div><p class="tagline">Someone's spare is your fix.</p></div></div>
+        <p class="lede">Describe the part or the machine it goes in. Agents find surplus that fits and alert you and the seller.</p>
+        <div class="strip"><b>Riverbend Foods</b> · Cedar Rapids, IA · 1 open need</div>
+        <div class="card"><div class="ta">Line 3 packaging PLC keeps dropping inputs. Need 4x S7-300 32-point digital input cards…</div>
+          <div class="fields"><div><div class="fl">🔒 Max price (private)</div><div class="fld">$ 180</div></div><div><div class="fl">Urgency</div><div class="fld">Low · Normal · <b style="color:var(--navy)">High</b> · Line down</div></div><div><div class="fl">Downtime / day</div><div class="fld">$ 4,000</div></div></div>
+          <div class="row"><span class="as">Posting as <b>Riverbend</b></span><span class="btn">Find</span></div></div></div>
+    </div></div>
+  </div>
+  <div class="notes"><div><b>Why:</b> keeps the approved palette exactly as it is. The icon and stripe tell the two pages apart.</div><div><b>Cost:</b> the subtlest of the three. At a glance the pages still look alike, which is the problem you raised.</div></div>
+</section>
+
+<section class="taglines">
+  <h2>Tagline options (shown as the big heading; the old heading becomes the small label)</h2>
+  <table>
+    <tr><th>Page</th><th>Option 1 (used above)</th><th>Option 2</th><th>Option 3</th></tr>
+    <tr><td>Sell</td><td class="pick">Turn spare parts into spare change.</td><td>Spare parts in. Spare change out.</td><td>Your spare is someone's fix.</td></tr>
+    <tr><td>Buy</td><td class="pick">Someone's spare is your fix.</td><td>Find the part. Skip the downtime.</td><td>Your next part is already on someone's shelf.</td></tr>
+  </table>
+  <p style="margin:10px 0 0;font-size:12.5px;color:var(--ink-2)">Option 1 pairs the brand tagline (Sell) with its mirror (Buy): the same idea seen from each side. Option 2 speaks to each side's money: cash for the seller, downtime saved for the buyer.</p>
+</section>
+</body>
+</html>

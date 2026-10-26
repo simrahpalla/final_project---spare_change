@@ -3,10 +3,10 @@ import type { Company, CompanyProfile } from '../api'
 import { FEATURED } from '../demo'
 import { Bell, Check, Chevron } from '../icons'
 
-export type Tab = 'sell' | 'wanted' | 'marketplace' | 'negotiations'
+export type Tab = 'sell' | 'buy' | 'marketplace' | 'negotiations'
 const TABS: { key: Tab; label: string }[] = [
   { key: 'sell', label: 'Sell' },
-  { key: 'wanted', label: 'Wanted' },
+  { key: 'buy', label: 'Buy' },
   { key: 'marketplace', label: 'Marketplace' },
   { key: 'negotiations', label: 'Negotiations' },
 ]
@@ -35,12 +35,7 @@ const initials = (name: string) =>
     .map((w) => w[0])
     .join('')
 
-function AccountSwitcher(props: {
-  companies: Company[]
-  accountId: number
-  onChange: (id: number) => void
-  onReset: () => void
-}) {
+function AccountSwitcher(props: { companies: Company[]; accountId: number; onChange: (id: number) => void }) {
   const [open, setOpen] = useState(false)
   const [showAll, setShowAll] = useState(false)
   const ref = useOutsideClose(open, () => setOpen(false))
@@ -130,15 +125,7 @@ function AccountSwitcher(props: {
               </button>
             )}
           </div>
-          <button
-            className="menu-foot"
-            onClick={() => {
-              setOpen(false)
-              props.onReset()
-            }}
-          >
-            Reset demo data
-          </button>
+          <div className="menu-foot">Demo only: switching accounts is not real sign-in. Use Reset demo to start clean.</div>
         </div>
       )}
     </div>
@@ -169,7 +156,14 @@ function AlertsBell(props: { profile: CompanyProfile | null; onOpen: () => void 
             props.profile.alerts.map((a) => (
               <div key={a.id} className={`alert ${a.read ? '' : 'unread'}`}>
                 <div>{a.message}</div>
-                <div className="muted small">{a.kind.replace('_', ' ')}</div>
+                <div className="alert-actions">
+                  <span className="muted small">{a.kind.replace('_', ' ')}</span>
+                  {a.kind === 'new_match' && (
+                    <button className="btn ghost push" disabled title="Agent negotiation opens in Phase 6">
+                      Start negotiation · coming in Phase 6
+                    </button>
+                  )}
+                </div>
               </div>
             ))
           ) : (
@@ -192,6 +186,7 @@ export function Nav(props: {
   profile: CompanyProfile | null
   onOpenAlerts: () => void
   onReset: () => void
+  resetting: boolean
 }) {
   return (
     <nav className="nav">
@@ -204,7 +199,7 @@ export function Nav(props: {
             key={t.key}
             role="tab"
             aria-selected={props.tab === t.key}
-            className={`tab ${props.tab === t.key ? 'on' : ''}`}
+            className={`tab tab-${t.key} ${props.tab === t.key ? 'on' : ''}`}
             onClick={() => props.onTab(t.key)}
           >
             {t.label}
@@ -212,12 +207,17 @@ export function Nav(props: {
         ))}
       </div>
       <div className="nav-right">
-        <AccountSwitcher
-          companies={props.companies}
-          accountId={props.accountId}
-          onChange={props.onAccount}
-          onReset={props.onReset}
-        />
+        <button
+          className="btn reset"
+          title="Restore the seeded marketplace for every account"
+          disabled={props.resetting}
+          onClick={() => {
+            if (window.confirm('Reset the demo? This restores the original listings, needs and alerts for every account.')) props.onReset()
+          }}
+        >
+          {props.resetting ? 'Resetting…' : 'Reset demo'}
+        </button>
+        <AccountSwitcher companies={props.companies} accountId={props.accountId} onChange={props.onAccount} />
         <AlertsBell profile={props.profile} onOpen={props.onOpenAlerts} />
       </div>
     </nav>

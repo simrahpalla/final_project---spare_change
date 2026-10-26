@@ -213,7 +213,7 @@ Every impact figure comes from the catalog through the MCP tool `get_impact_esti
 
 The React dashboard is served by FastAPI. Its design is in `output/design.md`.
 
-- **Top nav:** logo, Sell / Wanted / Marketplace / Negotiations, the **demo account switcher** (all 50 companies, grouped as sellers, buyers and other plants) and that account's **alerts bell**.
+- **Top nav:** logo, Sell / Buy / Marketplace / Negotiations, the **demo account switcher** (all 50 companies, grouped as sellers, buyers and other plants) and that account's **alerts bell**.
 - **Sell:** the company strip (who you are and the machines you run), a paste box with 3 example chips, then the listing card, red or gray outcome cards, the top 3 buyers with scores and reasons, price cards, the teal impact strip and the outreach email.
 - **Right rail:** live agent activity (each step done, working, blocked or skipped, with code steps marked "(code)"), the cost of the run and the session against the budget (from `token_usage`), and the session's impact.
 - **Live progress:** `POST /api/seller-flow/start` returns a `run_id`, and the page polls `GET /api/runs/{run_id}`. The broker updates the run's steps and current agent as it goes.
@@ -244,3 +244,40 @@ On failure the agent is **retried once** with the exact errors. If it fails agai
   - bad answer, then good: **corrected on retry**, Riverbend [100] first
   - bad answer twice: **rules fallback**, Riverbend [95] first
 - In 5 live runs afterwards (listing 1 ×3, 12, 4), every answer passed on the first try.
+
+## 7. Two-sided matching and alerts (Phase 5)
+
+**One matching logic, both directions.** A buyer's buy request runs the same pipeline as a listing, with the same pieces:
+
+| Step | Seller post (Sell) | Buyer post (Buy) |
+|---|---|---|
+| Pre-screen (code) | injection patterns | same |
+| Extraction (agent) | `listing_agent` → `ListingDraft` | `need_agent` → `NeedDraft` (part, or machine + family; qty; urgency). The max price is **not** extracted: the buyer types it in a separate private field |
+| Compliance | rules + `compliance_guard` | `compliance_guard` (needs can carry injections too) |
+| Save | `create_listing` | `create_need`: ceiling stored write-only in `buyer_private`; if the buyer typed the number into the post, the public text shows `[private]` |
+| SQL pre-filter (code) | `search_buyers_for_listing` | `search_listings_for_need`. Both use `_fill_reason` (same part, listed substitute, or right family for the machine) |
+| **0 candidates** | matching agent skipped | matching agent skipped (**no model call**) |
+| Ranking (agent) | `matching_agent`, "Direction: seller_to_buyer" | the **same** `matching_agent`, "Direction: buyer_to_seller" |
+| Fact check (code) | `check_matches` | `check_reverse_matches`: listing is a candidate, once; need id; score ≥ 70; min(3, n) listed; part numbers and $/unit in the reason are that listing's |
+| Retry / fallback | once, then `rules_ranking` | once, then `rules_ranking_reverse` (exact part, condition, qty coverage, lower ask) |
+| Alerts (code) | `send_match_alerts(run_id)` | same |
+
+**Alerts are code, not an agent** (`send_match_alerts`): from the matches saved by this run, pairs with an open need and a score of **70+**, best **3**, each alerting the **buyer and the seller**. A unique index on `notifications(company_id, kind, listing_id, need_id)` means **one alert per company per pair, ever**, so re-running a flow sends nothing new. Alert text has the part, the public ask, the need number and the score, never a floor or a ceiling. Each alert stores `score` and `run_id`, so its tokens join `token_usage` on `run_id`.
+
+**Status lifecycle:** listings `active → in_negotiation → sold` (a walk-away, round cap or stop returns it to `active`); needs `open → matched` (on its first alert) `→ filled` (Phase 6, on an approved deal). The pre-filters, matching and the Marketplace skip sold, filled, flagged and expired items.
+
+**Privacy:** each demo account's view (`/api/companies/{id}`) holds only its own alerts. The Marketplace board (`get_marketplace_board`) is built from the same public-field functions as every other view, so it has no floor or ceiling. Account switching is a **demo stand-in for sign-in, not authentication** (README).
+
+**Marketplace impact:** no deal is approved until Phase 6, so the board shows the *potential* impact if every listing that fills a buy request sold at its ask (computed in code with the same `get_impact_estimate`), plus the closed-deal totals (0 so far).
+
+**Evidence:**
+- `scripts/eval_reverse.py` → `output/eval_reverse.json`: **23/23 correct** (all 21 seeded needs + the 2 demo buyer posts). The 3 needs that no listing can fill had **0 candidates and made 0 matching-agent calls**. 0 max-price leaks. Total cost **$0.0075**. Honest caveat: every seeded need has exactly one compatible listing, so this checks that reverse matching finds the right fit and stays grounded, not fine ranking among many listings.
+- `scripts/test_two_sided.py` → `output/two_sided_test.json`: **17/17**, through the real backend API on a scratch database:
+  - seller posts → buyer alerted → switch account → alert visible (unread, with score); the seller sees its side; a third account sees neither
+  - buyer posts with a $180 max → seller alerted; the $180 is in no alert, company view, seller-visible step or the Marketplace
+  - re-running both matchings sends **0 new alerts** (duplicates skipped); a need with no surplus makes no matching call; Reset demo restores a clean state
+  - **6 flows at once** (2 seller posts, 2 buyer posts, 2 re-matches): no crash, every expected alert visible in the right account, **no duplicates**
+  - tokens per alert event: **$0.0003** for a re-match of an existing need (1 matching call), **$0.0008–0.0011** for a new post (extraction + guard + matching, plus pricing for listings)
+- `scripts/mcp_smoke.py`: **89/89**, 39/39 tools (adds `send_match_alerts`, including the duplicate re-send, and `get_marketplace_board`).
+
+**Bug found while building this:** adding `listing_id` to the matching agent's output (needed for the reverse direction) let the agent's empty `listing_id` overwrite the real one in the seller flow, so `record_matches` rejected every match as "unknown listing". Caught in the first CLI run, fixed (`{**m, "listing_id": listing_id}`), and now covered by `test_two_sided.py` A1.

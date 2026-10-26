@@ -6520,5 +6520,2268 @@
     "action": "run_end",
     "result": "{\"run_id\": \"2fbdb54fffdf\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1669, \"cached_tokens\": 1195, \"cache_write_tokens\": 3374, \"output_tokens\": 893, \"total_tokens\": 7131, \"cost_usd\": 0.001047}",
     "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:22.767+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 7.7, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:22.787+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 20
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:24.674+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 260
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.273+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Siemens S7-300 32-point digital input card",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.299+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Siemens S7-300 32-point digital input card\", \"count\": 2, \"parts\": [{\"part_number\": \"6ES7321-1BL00-0AA0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC I/O\", \"description\": \"S7-300 SM 321 digital input 32 x 24 V DC\", \"category\": \"spare_part\", \"new_price\": 530.0, \"scrap_value\": 7.84, \"hazmat\":…"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.320+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "6ES7321-1BL00-0AA0"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.347+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"6ES7321-1BL00-0AA0\", \"fits_platforms\": [\"Siemens S7-300\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.367+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.389+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 1151,
+      "cached_tokens": 1069,
+      "output_tokens": 143,
+      "cost_usd": 0.00034229
+    },
+    "result": "{\"part_number\": \"6ES7321-1BL00-0AA0\", \"platform\": \"Siemens S7-300\", \"family\": \"PLC I/O\", \"qty\": 4, \"urgency\": \"line_down\", \"downtime_cost_per_day\": 8000.0, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:31.413+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 320
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:33.496+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:12:33.534+00:00",
+    "run_id": "08b471121823",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 485,
+      "cached_tokens": 0,
+      "output_tokens": 85,
+      "cost_usd": 9.1e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:33.613+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1198
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:36.929+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:12:36.952+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 278,
+      "cost_usd": 0.00031448
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 94, \"reason\": \"Exact part 6ES7321-1BL00-0AA0 for Riverbend\\u2019s S7-300 line-down need; used, working, 12 units cover the 4 needed. Downtime is about $8,000/day. No public asking price listed; Dayton, OH.\"}], \"outreach_subje…"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:36.981+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_failed",
+    "result": "[\"listing #13: reason says $8,000 per unit, but its ask is not stated\"]"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:37.006+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1388
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:12:41.322+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:12:41.347+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 304,
+      "cost_usd": 0.00033298
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 95, \"reason\": \"Exact part 6ES7321-1BL00-0AA0 \\u00b7 used, working \\u00b7 12 units cover the 4 needed \\u00b7 public ask not stated \\u00b7 Dayton, OH\"}], \"outreach_subject\": \"Riverbend Foods inquiry: Siemens 6ES7321-1BL00-0AA0\"…"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:41.372+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent_retry"
+  },
+  {
+    "timestamp": "2026-10-26T04:12:41.429+00:00",
+    "run_id": "08b471121823",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"08b471121823\", \"kind\": \"need_flow\", \"requests\": 6, \"input_tokens\": 1888, \"cached_tokens\": 1069, \"cache_write_tokens\": 3810, \"output_tokens\": 810, \"total_tokens\": 7577, \"cost_usd\": 0.001081}",
+    "stop_reason": "posted and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:19.820+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.9, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:19.837+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 39
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:14:21.578+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 261
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.695+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Grundfos CR 15-3 impeller chamber stack kit",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.717+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Grundfos CR 15-3 impeller chamber stack kit\", \"count\": 2, \"parts\": [{\"part_number\": \"96455084\", \"manufacturer\": \"Grundfos\", \"family\": \"Pump spare\", \"description\": \"CR 15-3 impeller and chamber stack kit\", \"category\": \"spare_part\", \"new_price\": 930.0, \"scrap_value\": 24.67, \"hazmat\": 0, \"h…"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.737+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "96455084"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.761+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"96455084\", \"fits_platforms\": [\"Grundfos CR 15\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.786+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.807+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 1148,
+      "cached_tokens": 1029,
+      "output_tokens": 136,
+      "cost_usd": 0.00033072
+    },
+    "result": "{\"part_number\": \"96455084\", \"platform\": \"Grundfos CR 15\", \"family\": \"Pump spare\", \"qty\": 1, \"urgency\": \"low\", \"downtime_cost_per_day\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Identified as the CR 15-3 impeller and chamber stack kit.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:27.826+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 313
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:14:30.119+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:14:30.151+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "buyer:39",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 472,
+      "cached_tokens": 0,
+      "output_tokens": 120,
+      "cost_usd": 0.0001072
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:30.209+00:00",
+    "run_id": "9b629e1f9d1c",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"9b629e1f9d1c\", \"kind\": \"need_flow\", \"requests\": 4, \"input_tokens\": 1620, \"cached_tokens\": 1029, \"cache_write_tokens\": 1101, \"output_tokens\": 256, \"total_tokens\": 4006, \"cost_usd\": 0.000438}",
+    "stop_reason": "posted (no matching surplus yet)"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:41.004+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 3.1, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:14:41.045+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "seller:7",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 7
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:14:42.871+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 219
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:15:25.350+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Grundfos CR15 shaft seal kit HQQE",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:15:25.384+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Grundfos CR15 shaft seal kit HQQE\", \"count\": 2, \"parts\": [{\"part_number\": \"96416889\", \"manufacturer\": \"Grundfos\", \"family\": \"Pump spare\", \"description\": \"CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)\", \"category\": \"spare_part\", \"new_price\": 678.0, \"scrap_value\": 11.42, \"hazmat\": 0, \"hazmat_c…"
+  },
+  {
+    "timestamp": "2026-10-26T04:15:25.432+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:15:25.477+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2231,
+      "output_tokens": 95,
+      "cost_usd": 0.00013738
+    },
+    "result": "{\"part_number\": \"96525458\", \"qty\": 2, \"condition\": \"new_open_box\", \"asking_price\": 330.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Best offer is noted, but $330 each is the stated asking price.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:15:25.613+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 751
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:15:32.943+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:15:32.983+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 619,
+      "cached_tokens": 0,
+      "output_tokens": 22,
+      "cost_usd": 7.29e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:15:33.113+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2484
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:15:37.246+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:15:37.281+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 496,
+      "cost_usd": 0.00047473
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 39, \"listing_id\": null, \"need_id\": 20, \"score\": 92, \"reason\": \"Open need #20: Grundfos CR 15 shaft seal kit, high urgency; 1 needed and 2 available. Runs 5x CR 15 (14 yrs); downtime cost $3,500/day.\"}, {\"buyer_id\": 30, \"listing_id\": null, \"need_id\": null, \"score\": 58, \"rea…"
+  },
+  {
+    "timestamp": "2026-10-26T04:15:37.336+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:15:37.478+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 350
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:15:39.702+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:15:39.754+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 576,
+      "cached_tokens": 0,
+      "output_tokens": 191,
+      "cost_usd": 0.0001531
+    },
+    "result": "{\"ask\": 330.0, \"floor_suggestion\": 231.0, \"rationale\": \"At $330, the seller\\u2019s ask is reasonable for new-open-box condition: it is about 66% of the $499 new price, within the 60\\u201370% guideline band, and well above the $10.61 scrap value. There are no active asks, approved deals, or matched …"
+  },
+  {
+    "timestamp": "2026-10-26T04:15:39.846+00:00",
+    "run_id": "9334f67269fc",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"9334f67269fc\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1573, \"cached_tokens\": 2231, \"cache_write_tokens\": 2052, \"output_tokens\": 804, \"total_tokens\": 6660, \"cost_usd\": 0.000838}",
+    "stop_reason": "listed (no matching buyers yet)"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:26.252+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 6.4, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:26.291+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "seller:7",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 7
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:16:30.471+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 219
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:16:32.531+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Grundfos CR15 shaft seal kit HQQE",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:16:32.565+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Grundfos CR15 shaft seal kit HQQE\", \"count\": 2, \"parts\": [{\"part_number\": \"96416889\", \"manufacturer\": \"Grundfos\", \"family\": \"Pump spare\", \"description\": \"CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)\", \"category\": \"spare_part\", \"new_price\": 678.0, \"scrap_value\": 11.42, \"hazmat\": 0, \"hazmat_c…"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:32.597+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:16:32.631+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2231,
+      "output_tokens": 95,
+      "cost_usd": 0.00013738
+    },
+    "result": "{\"part_number\": \"96525458\", \"qty\": 2, \"condition\": \"new_open_box\", \"asking_price\": 330.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Best offer is noted, but $330 each is the stated asking price.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:32.707+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 751
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:16:34.371+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:16:34.469+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 619,
+      "cached_tokens": 0,
+      "output_tokens": 75,
+      "cost_usd": 9.94e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:34.661+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2484
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:16:38.957+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:16:38.982+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 454,
+      "cost_usd": 0.00045373
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 39, \"listing_id\": null, \"need_id\": 20, \"score\": 91, \"reason\": \"Open need #20: Grundfos CR 15 pump spare, high urgency at $3,500/day; 1 needed and 2 available. Runs 5x CR 15 (14 yrs).\"}, {\"buyer_id\": 30, \"listing_id\": null, \"need_id\": null, \"score\": 62, \"reason\": \"Runs 6x G…"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:39.006+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:39.080+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 438
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:16:41.612+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:16:41.638+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 608,
+      "cached_tokens": 0,
+      "output_tokens": 207,
+      "cost_usd": 0.0001643
+    },
+    "result": "{\"ask\": 330.0, \"floor_suggestion\": 231.0, \"rationale\": \"At $330, the seller\\u2019s ask is reasonable for new_open_box condition: it is about 66% of the $499 new price, within the 60\\u201370% guideline band, and above the $10.61 scrap value. The matching active ask is also $330, and one open need is…"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:41.680+00:00",
+    "run_id": "3788ca62e820",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"3788ca62e820\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1605, \"cached_tokens\": 2231, \"cache_write_tokens\": 2052, \"output_tokens\": 831, \"total_tokens\": 6719, \"cost_usd\": 0.000855}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:58.894+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 3.4, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:16:58.908+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 29,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:17:01.206+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 219
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:17:02.526+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Grundfos CR15 shaft seal kit HQQE",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:17:02.551+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Grundfos CR15 shaft seal kit HQQE\", \"count\": 2, \"parts\": [{\"part_number\": \"96416889\", \"manufacturer\": \"Grundfos\", \"family\": \"Pump spare\", \"description\": \"CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)\", \"category\": \"spare_part\", \"new_price\": 678.0, \"scrap_value\": 11.42, \"hazmat\": 0, \"hazmat_c…"
+  },
+  {
+    "timestamp": "2026-10-26T04:17:02.570+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:17:02.607+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2231,
+      "output_tokens": 95,
+      "cost_usd": 0.00013738
+    },
+    "result": "{\"part_number\": \"96525458\", \"qty\": 2, \"condition\": \"new_open_box\", \"asking_price\": 330.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Best offer is noted, but $330 each is the stated asking price.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:17:02.658+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 748
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:17:04.689+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:17:04.712+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 619,
+      "cached_tokens": 0,
+      "output_tokens": 64,
+      "cost_usd": 9.39e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:17:04.751+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2487
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:17:10.405+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:17:10.447+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 721,
+      "cost_usd": 0.00058723
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 39, \"listing_id\": null, \"need_id\": 20, \"score\": 82, \"reason\": \"Open need #20: Grundfos CR 15 pump-spare need, high urgency, $3,500/day downtime; runs 5x CR 15 (14 yrs). The 96525458 HQQE shaft seal kit fits this platform and the requested seal-kit family; 2 available cover…"
+  },
+  {
+    "timestamp": "2026-10-26T04:17:10.503+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:17:10.617+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 438
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:17:10.998+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:17:11.021+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 608,
+      "cached_tokens": 0,
+      "output_tokens": 207,
+      "cost_usd": 0.0001643
+    },
+    "result": "{\"ask\": 330.0, \"floor_suggestion\": 231.0, \"rationale\": \"At $330, the seller\\u2019s ask is reasonable for new_open_box condition: it is about 66% of the $499 new price, within the 60\\u201370% guideline band, and above the $10.61 scrap value. The matching active ask is also $330, and one open need is…"
+  },
+  {
+    "timestamp": "2026-10-26T04:17:11.059+00:00",
+    "run_id": "a163d0e97c7d",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"a163d0e97c7d\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1605, \"cached_tokens\": 2231, \"cache_write_tokens\": 2052, \"output_tokens\": 1087, \"total_tokens\": 6975, \"cost_usd\": 0.000983}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:21:27.997+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 3.5, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:21:40.900+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 20
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:21:41.898+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 283
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.534+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Siemens S7-300 SM 321 32-point digital input card",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.587+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Siemens S7-300 SM 321 32-point digital input card\", \"count\": 1, \"parts\": [{\"part_number\": \"6ES7321-1BL00-0AA0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC I/O\", \"description\": \"S7-300 SM 321 digital input 32 x 24 V DC\", \"category\": \"spare_part\", \"new_price\": 530.0, \"scrap_value\": 7.84, \"h…"
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.636+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "6ES7321-1BL00-0AA0"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.687+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"6ES7321-1BL00-0AA0\", \"fits_platforms\": [\"Siemens S7-300\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.735+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.785+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2117,
+      "cached_tokens": 0,
+      "output_tokens": 159,
+      "cost_usd": 0.00042283
+    },
+    "result": "{\"part_number\": \"6ES7321-1BL00-0AA0\", \"platform\": \"Siemens S7-300\", \"family\": \"PLC I/O\", \"qty\": 4, \"urgency\": \"low\", \"downtime_cost_per_day\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Requested as spares, so urgency is low despite the line's input issue.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:22:01.822+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 338
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:22:03.351+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:22:03.377+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 488,
+      "cached_tokens": 0,
+      "output_tokens": 103,
+      "cost_usd": 0.0001003
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:22:03.430+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1216
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:22:05.331+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:22:05.352+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 191,
+      "cost_usd": 0.00027135
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 92, \"reason\": \"Same part 6ES7321-1BL00-0AA0 \\u00b7 used, working \\u00b7 12 units cover the 4 needed \\u00b7 public ask not listed \\u00b7 Dayton, OH\"}], \"outreach_subject\": \"Availability: Siemens S7-300 SM 321 input cards\", \"ou…"
+  },
+  {
+    "timestamp": "2026-10-26T04:22:05.376+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:22:05.435+00:00",
+    "run_id": "2b394584a75a",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"2b394584a75a\", \"kind\": \"need_flow\", \"requests\": 5, \"input_tokens\": 2731, \"cached_tokens\": 0, \"cache_write_tokens\": 2359, \"output_tokens\": 453, \"total_tokens\": 5543, \"cost_usd\": 0.000794}",
+    "stop_reason": "posted and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:01.544+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.9, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:40.646+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "seller:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 1
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:36:41.615+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:36:43.448+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:36:44.015+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 8, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:44.067+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:36:44.120+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1195,
+      "output_tokens": 95,
+      "cost_usd": 0.00035265
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Seller states the CPUs were pulled working; MMCs are not included.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:44.205+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 860
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:36:46.500+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:36:46.528+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 674,
+      "cached_tokens": 0,
+      "output_tokens": 111,
+      "cost_usd": 0.0001229
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:46.591+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2054
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.026+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.056+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 406,
+      "cost_usd": 0.00041473
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"listing_id\": null, \"need_id\": 1, \"score\": 100, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 for Siemens S7-300 line down at $12,000/day; runs 4x S7-300 (18 yrs). Listing has 3 units, covering the 1-unit need.\"}, {\"buyer_id\": 16, \"listing_id\": null, \"need_id\": nul…"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.091+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.165+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 443
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.442+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.466+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 617,
+      "cached_tokens": 0,
+      "output_tokens": 198,
+      "cost_usd": 0.0001607
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 997.5, \"rationale\": \"At 1,425 per unit, the seller\\u2019s ask is reasonable: it is within the used-working range of 40\\u201355% of the 2,966 new price (about 1,186\\u20131,631). The part is obsolete, supporting a position toward the upper end, and the only active …"
+  },
+  {
+    "timestamp": "2026-10-26T04:36:50.512+00:00",
+    "run_id": "ac7b9170be40",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"ac7b9170be40\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1669, \"cached_tokens\": 1195, \"cache_write_tokens\": 3737, \"output_tokens\": 810, \"total_tokens\": 7411, \"cost_usd\": 0.001051}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:25.597+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 20
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:44:25.656+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 283
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.353+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Siemens S7-300 SM 321 32-point digital input card",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.400+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Siemens S7-300 SM 321 32-point digital input card\", \"count\": 1, \"parts\": [{\"part_number\": \"6ES7321-1BL00-0AA0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC I/O\", \"description\": \"S7-300 SM 321 digital input 32 x 24 V DC\", \"category\": \"spare_part\", \"new_price\": 530.0, \"scrap_value\": 7.84, \"h…"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.438+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "6ES7321-1BL00-0AA0"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.478+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"6ES7321-1BL00-0AA0\", \"fits_platforms\": [\"Siemens S7-300\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.509+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.545+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2117,
+      "cached_tokens": 0,
+      "output_tokens": 159,
+      "cost_usd": 0.00042283
+    },
+    "result": "{\"part_number\": \"6ES7321-1BL00-0AA0\", \"platform\": \"Siemens S7-300\", \"family\": \"PLC I/O\", \"qty\": 4, \"urgency\": \"low\", \"downtime_cost_per_day\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Requested as spares, so urgency is low despite the line's input issue.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.573+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 338
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.892+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.921+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 488,
+      "cached_tokens": 0,
+      "output_tokens": 103,
+      "cost_usd": 0.0001003
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:27.985+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1216
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:44:30.257+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:44:30.295+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 234,
+      "cost_usd": 0.00029285
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 91, \"reason\": \"Same part 6ES7321-1BL00-0AA0 (S7-300 SM 321 32-point digital input card) \\u00b7 used, working \\u00b7 12 units cover the 4 needed \\u00b7 no public ask listed \\u00b7 Dayton, OH. High urgency: Line 3 packaging PLC…"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:30.332+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:44:30.406+00:00",
+    "run_id": "f28b7552a16e",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"f28b7552a16e\", \"kind\": \"need_flow\", \"requests\": 5, \"input_tokens\": 2731, \"cached_tokens\": 0, \"cache_write_tokens\": 2359, \"output_tokens\": 496, \"total_tokens\": 5586, \"cost_usd\": 0.000816}",
+    "stop_reason": "posted and matched"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:36.691+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "seller:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 1
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:45:36.754+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:45:37.584+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:45:37.619+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 8, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:37.642+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:45:37.668+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1195,
+      "output_tokens": 95,
+      "cost_usd": 0.00035265
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Seller states the CPUs were pulled working; MMCs are not included.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:37.726+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 860
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:45:41.594+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:45:41.635+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 674,
+      "cached_tokens": 0,
+      "output_tokens": 276,
+      "cost_usd": 0.0002054
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:41.704+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2057
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:45:44.978+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:45:45.004+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 473,
+      "cost_usd": 0.00044823
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"listing_id\": null, \"need_id\": 1, \"score\": 98, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 for a line-down S7-300 packaging line at $12k/day; need is 1, and listing has 3. Runs 4x Siemens S7-300 (18 yrs).\"}, {\"buyer_id\": 32, \"listing_id\": null, \"need_id\": null, \"…"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:45.033+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:45.110+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 531
+    }
+  },
+  {
+    "timestamp": "2026-10-26T04:45:45.477+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T04:45:45.523+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 649,
+      "cached_tokens": 0,
+      "output_tokens": 263,
+      "cost_usd": 0.0001964
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 1000.0, \"rationale\": \"The seller\\u2019s $1,425 ask is reasonable for a used-working unit: it is within the 40\\u201355% condition band of the $2,966 new price ($1,186\\u2013$1,631), and the part is obsolete, supporting a price toward the upper end. Two current used…"
+  },
+  {
+    "timestamp": "2026-10-26T04:45:45.578+00:00",
+    "run_id": "26c392eeaeb5",
+    "subject": "listing:29",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"26c392eeaeb5\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1701, \"cached_tokens\": 1195, \"cache_write_tokens\": 3737, \"output_tokens\": 1107, \"total_tokens\": 7740, \"cost_usd\": 0.001203}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T05:03:35.558+00:00",
+    "run_id": "reset-906d052a",
+    "agent": "system",
+    "depth": 0,
+    "action": "reset",
+    "result": "working copy restored from the original"
+  },
+  {
+    "timestamp": "2026-10-26T05:03:55.189+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "seller:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 1
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:03:55.288+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:03:56.649+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:03:56.710+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 8, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-26T05:03:56.764+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:03:56.825+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1195,
+      "output_tokens": 95,
+      "cost_usd": 0.00035265
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Seller states the CPUs were pulled working; MMCs are not included.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T05:03:56.936+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 860
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:03:59.548+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:03:59.614+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 674,
+      "cached_tokens": 0,
+      "output_tokens": 67,
+      "cost_usd": 0.0001009
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T05:03:59.733+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2054
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:03.330+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:04:03.380+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 480,
+      "cost_usd": 0.00045173
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"listing_id\": null, \"need_id\": 1, \"score\": 100, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 for a line-down Siemens S7-300; $12,000/day downtime. Runs 4x S7-300 (18 yrs); listing has 3 used-working CPUs, covering the 1-unit need.\"}, {\"buyer_id\": 32, \"listing_id\":…"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:03.432+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:03.564+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 443
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:03.908+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:04:03.959+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 617,
+      "cached_tokens": 0,
+      "output_tokens": 198,
+      "cost_usd": 0.0001607
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 997.5, \"rationale\": \"At 1,425 per unit, the seller\\u2019s ask is reasonable: it is within the used-working range of 40\\u201355% of the 2,966 new price (about 1,186\\u20131,631). The part is obsolete, supporting a position toward the upper end, and the only active …"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:04.038+00:00",
+    "run_id": "8676c8cb273c",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"8676c8cb273c\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1669, \"cached_tokens\": 1195, \"cache_write_tokens\": 3737, \"output_tokens\": 840, \"total_tokens\": 7441, \"cost_usd\": 0.001066}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:45.667+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 20
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:45.773+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 283
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:47.326+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Siemens S7-300 SM 321 32-point digital input card",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:47.383+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Siemens S7-300 SM 321 32-point digital input card\", \"count\": 1, \"parts\": [{\"part_number\": \"6ES7321-1BL00-0AA0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC I/O\", \"description\": \"S7-300 SM 321 digital input 32 x 24 V DC\", \"category\": \"spare_part\", \"new_price\": 530.0, \"scrap_value\": 7.84, \"h…"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:47.440+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "6ES7321-1BL00-0AA0"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:47.493+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"6ES7321-1BL00-0AA0\", \"fits_platforms\": [\"Siemens S7-300\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:47.559+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:04:47.631+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2117,
+      "cached_tokens": 0,
+      "output_tokens": 159,
+      "cost_usd": 0.00042283
+    },
+    "result": "{\"part_number\": \"6ES7321-1BL00-0AA0\", \"platform\": \"Siemens S7-300\", \"family\": \"PLC I/O\", \"qty\": 4, \"urgency\": \"low\", \"downtime_cost_per_day\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Requested as spares, so urgency is low despite the line's input issue.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:48.231+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 338
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:48.538+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:04:48.600+00:00",
+    "run_id": "1c911454360f",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 488,
+      "cached_tokens": 0,
+      "output_tokens": 103,
+      "cost_usd": 0.0001003
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:48.709+00:00",
+    "run_id": "1c911454360f",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1216
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:04:52.876+00:00",
+    "run_id": "1c911454360f",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:04:52.928+00:00",
+    "run_id": "1c911454360f",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 303,
+      "cost_usd": 0.00032735
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 92, \"reason\": \"Exact part 6ES7321-1BL00-0AA0 (S7-300 SM 321 32-point digital input) \\u00b7 used, working \\u00b7 12 units cover the 4 needed \\u00b7 no public asking price listed \\u00b7 Dayton, OH. Riverbend Foods has a high-ur…"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:52.984+00:00",
+    "run_id": "1c911454360f",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T05:04:53.077+00:00",
+    "run_id": "1c911454360f",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"1c911454360f\", \"kind\": \"need_flow\", \"requests\": 5, \"input_tokens\": 2731, \"cached_tokens\": 0, \"cache_write_tokens\": 2359, \"output_tokens\": 565, \"total_tokens\": 5655, \"cost_usd\": 0.00085}",
+    "stop_reason": "posted and matched"
   }
 ]

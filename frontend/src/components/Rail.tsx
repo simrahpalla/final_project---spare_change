@@ -4,8 +4,8 @@ import { Ban, Check, Dot, Eye, Leaf, Spinner } from '../icons'
 import { railItems } from '../pipeline'
 import { InfoTip } from './Results'
 
-function AgentActivity({ run }: { run: RunStatus | null }) {
-  const items = railItems(run)
+function AgentActivity({ run, need }: { run: RunStatus | null; need: boolean }) {
+  const items = railItems(run, need)
   return (
     <section className="card rail-card">
       <h3>Agent activity</h3>
@@ -114,10 +114,10 @@ function SessionImpact({ session }: { session: Session | null }) {
   )
 }
 
-export function Rail(props: { run: RunStatus | null; session: Session | null }) {
+export function Rail(props: { run: RunStatus | null; need?: boolean; session: Session | null }) {
   return (
     <aside className="rail">
-      <AgentActivity run={props.run} />
+      <AgentActivity run={props.run} need={!!props.need} />
       <CostMeter run={props.run} session={props.session} />
       <SessionImpact session={props.session} />
     </aside>

@@ -1,4 +1,4 @@
-/* Spare Change: "Workshop" design (output/design.md). One accent (orange); each status colour has one meaning. */
+/* Spare Change: "Workshop" design (output/design.md). One accent per side (orange on Sell, blue on Buy); each status colour has one meaning. */
 :root {
   --navy: #0c2340;
   --orange: #f97316;
@@ -74,9 +74,8 @@ h1, h2, h3 { margin: 0; color: var(--navy); }
 .menu-main { display: flex; flex-direction: column; min-width: 0; }
 .menu-main > span:first-child { font-weight: 500; }
 .menu-check { color: var(--navy); margin-left: auto; }
-.menu-foot { width: 100%; background: none; border: 0; border-top: 1px solid var(--line); padding: 10px 14px; text-align: left;
-  color: var(--ink-2); cursor: pointer; }
-.menu-foot:hover { background: var(--subtle); color: var(--ink); }
+.menu-foot { border-top: 1px solid var(--line); padding: 9px 14px; font-size: 11px;
+  color: var(--ink-3); }
 
 .bell-wrap { position: relative; }
 .bell { position: relative; background: none; border: 0; color: #b8c3d4; display: flex; cursor: pointer; padding: 4px; }
@@ -258,3 +257,90 @@ textarea:focus, .btn:focus-visible, .chip:focus-visible { outline: 2px solid var
 .check-note .icon { color: var(--green); width: 14px; height: 14px; }
 .check-note.fallback { color: var(--navy); }
 .check-note.fallback .icon { color: var(--ink-2); }
+
+/* ---------------------------------------------------------------- Phase 5: Buy, Marketplace, alerts */
+.need-fields { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 16px; margin-top: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field-label { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--navy); }
+.field-label .icon { width: 13px; height: 13px; }
+.field-help { font-size: 11px; color: var(--ink-3); }
+.money-input { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; background: #fff; }
+.money-input > span { color: var(--ink-3); }
+.money-input input { border: 0; outline: 0; font: inherit; padding: 7px 6px; width: 100%; min-width: 0; color: var(--ink); }
+.money-input:focus-within { outline: 2px solid var(--navy); outline-offset: 1px; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg-btn { flex: 1; background: #fff; border: 0; border-left: 1px solid var(--line); padding: 6px 4px; font-size: 12px; color: var(--ink-2);
+  cursor: pointer; white-space: nowrap; }
+.seg-btn:first-child { border-left: 0; }
+.seg-btn:hover { color: var(--ink); background: var(--subtle); }
+.seg-btn.on { background: var(--navy); color: #fff; }
+@media (max-width: 900px) { .need-fields { grid-template-columns: 1fr; } }
+
+.life { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 1px 8px; border: 1px solid var(--line); color: var(--ink-2);
+  background: #fff; white-space: nowrap; width: fit-content; }
+.life.matched { color: var(--navy); border-color: var(--navy); }
+.life.in_negotiation { color: var(--navy); background: var(--subtle); }
+.need-list { margin-top: 8px; }
+.need-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.need-row:first-child { border-top: 0; }
+.small-partno { font-size: 13px; }
+
+.listing-match { grid-template-columns: 52px 1fr auto; }
+.btn.soon { flex-direction: column; gap: 0; font-size: 12px; line-height: 1.25; padding: 5px 10px; }
+.soon-tag { font-size: 10px; font-weight: 500; color: var(--ink-3); }
+.alerts-sent { display: flex; align-items: flex-start; gap: 10px; border: 1px solid var(--line); background: var(--subtle); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; }
+.alerts-sent .icon { color: var(--navy); margin-top: 2px; }
+.alert-actions { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.alert-actions .btn { font-size: 12px; padding: 3px 10px; }
+.btn.reset { background: none; border: 1px solid rgba(255, 255, 255, 0.25); color: #b8c3d4; padding: 5px 10px; font-weight: 500; font-size: 13px; }
+.btn.reset:hover:not(:disabled) { color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+
+.board-impact { align-items: flex-start; margin-top: 0; }
+.board-impact .icon { margin-top: 3px; }
+.board-impact-body { display: grid; gap: 2px; }
+.board { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; align-items: start; }
+@media (max-width: 900px) { .board { grid-template-columns: 1fr; } }
+.board-col { display: grid; gap: 8px; }
+.board-head { display: flex; align-items: baseline; justify-content: space-between; padding: 0 2px 2px; }
+.board-item { display: grid; gap: 2px; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  cursor: pointer; transition: opacity 0.15s, border-color 0.15s; }
+.board-item:hover { border-color: #a9b4c3; }
+.board-item:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
+.board-item.selected { border-color: var(--navy); box-shadow: inset 3px 0 0 var(--navy); }
+.board-item.partner { border-color: var(--orange); background: var(--orange-soft); }
+.board-item.dim { opacity: 0.4; }
+.board-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.board-desc { font-weight: 500; }
+.match-badge { font-size: 11px; font-weight: 700; color: var(--orange-text); background: var(--orange-soft); border: 1px solid var(--orange-line);
+  border-radius: 999px; padding: 0 8px; white-space: nowrap; }
+.no-match { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+.you-tag { font-size: 10px; font-weight: 600; color: var(--navy); border: 1px solid var(--navy); border-radius: 999px; padding: 0 5px; margin-left: 5px; }
+.urgent { color: var(--navy); font-weight: 600; }
+.pair-why { font-size: 12px; color: var(--orange-text); margin-top: 2px; }
+
+/* ---------------------------------------------------------------- Sell vs Buy: a colour per side (design.md §4, option B) */
+/* Sell keeps orange; Buy is blue wherever Sell is orange: tab underline, label, input card edge, company strip, button,
+   match scores. Status colours (green passed, red blocked, teal impact) are the same on both sides. */
+:root { --blue: #2563eb; --blue-hover: #1d4ed8; --blue-text: #1d4ed8; --blue-soft: #eaf1fd; --blue-line: #bfd3f8; }
+.tab-buy.on { border-bottom-color: var(--blue); }
+.band { margin: 0 0 14px; }
+.eyebrow { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.eyebrow .icon { width: 14px; height: 14px; }
+.band-sell .eyebrow { color: var(--orange-text); }
+.band-buy .eyebrow { color: var(--blue-text); }
+h1.tagline { font-size: 26px; font-weight: 650; letter-spacing: -0.015em; line-height: 1.2; margin-top: 4px; }
+.band .lede { margin: 6px 0 0; }
+
+.side-sell .card.input { border-top: 3px solid var(--orange); }
+.side-sell .company-strip { background: var(--orange-soft); border-color: var(--orange-line); }
+
+.side-buy .card.input { border-top: 3px solid var(--blue); }
+.side-buy .company-strip { background: var(--blue-soft); border-color: var(--blue-line); }
+.side-buy .company-strip .icon, .side-buy .strip-counts { color: var(--blue-text); }
+.side-buy .try-line { border-left-color: var(--blue); }
+.side-buy .btn.primary { background: var(--blue); color: #fff; }
+.side-buy .btn.primary:hover:not(:disabled) { background: var(--blue-hover); }
+.side-buy .score { color: var(--blue-text); background: var(--blue-soft); border-color: var(--blue-line); }
+.side-buy .score.top { background: var(--blue); color: #fff; border-color: var(--blue); }
+.side-buy .seg-btn.on { background: var(--blue); }

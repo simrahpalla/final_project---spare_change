@@ -58,6 +58,12 @@ URGENCY_RANK = {"line_down": 0, "high": 1, "normal": 2, "low": 3}
 AGENT_NAMES = {"broker", "listing_agent", "compliance_guard", "matching_agent", "pricing_agent",
                "seller_negotiator", "buyer_negotiator", "seller_agent", "buyer_agent", "system", "assistant"}
 MAX_MESSAGE_CHARS = 400
+# Lifecycle: listings active -> in_negotiation -> pending_deal -> sold; needs open -> matched -> filled.
+# Matching (both directions) considers only these, and never expired chemicals.
+MATCHABLE_LISTINGS = ("active", "in_negotiation")
+MATCHABLE_NEEDS = ("open", "matched")
+ALERT_THRESHOLD = 70   # alert only for matches scored 70+ (an open need the item fills)
+MAX_ALERTS = 3         # top 3 per event
 
 READ_ONLY = {"readOnlyHint": True}
 WRITES = {"readOnlyHint": False, "destructiveHint": False}
@@ -72,6 +78,8 @@ def _enable_wal() -> None:
         conn = sqlite3.connect(DB_PATH, timeout=10)
         try:
             conn.execute("PRAGMA journal_mode=WAL")
+        except sqlite3.OperationalError:
+            pass  # another process holds a lock: it already switched the file to WAL, or the default journal still works
         finally:
             conn.close()
 
@@ -193,7 +201,7 @@ def _fill_reason(conn, listing, need) -> str | None:
 def _buyer_grounding(conn, listing, buyer_id: int) -> list[str]:
     """Code-checked reasons a company could use this listing (empty list = not a plausible buyer)."""
     reasons = []
-    for need in conn.execute("SELECT * FROM needs WHERE buyer_id=? AND status='open'", (buyer_id,)):
+    for need in conn.execute("SELECT * FROM needs WHERE buyer_id=? AND status IN ('open','matched')", (buyer_id,)):
         if why := _fill_reason(conn, listing, need):
             reasons.append(f"open need #{need['id']}: {why}")
     platforms = set(_fits(conn, listing["part_number"])) | {r[0] for r in conn.execute(
@@ -227,6 +235,20 @@ def _negotiation_view(conn, n) -> dict:
         "agreed_price": agreed, "end_reason": n["end_reason"], "offers": offers,
         "final_offer_pending": n["status"] == "open" and n["rounds_used"] >= n["max_rounds"],
     }
+
+
+def _release_listing(conn, listing_id: int) -> None:
+    """A negotiation ended without a deal: the listing goes back to active unless another one is still open."""
+    busy = conn.execute("SELECT 1 FROM negotiations WHERE listing_id=? AND status IN ('open','agreed')", (listing_id,)).fetchone()
+    if not busy:
+        conn.execute("UPDATE listings SET status='active' WHERE id=? AND status='in_negotiation'", (listing_id,))
+
+
+def _redact_number(text: str, value: float) -> str:
+    variants = sorted({f"{value:,.2f}", f"{value:.2f}", f"{value:,.0f}", f"{value:g}", str(int(value))}, key=len, reverse=True)
+    for v in variants:
+        text = re.sub(rf"\$?\s?(?<![\d.,]){re.escape(v)}(?![\d])", "[private]", text)
+    return text
 
 
 def _limit_in_message(message: str, limit: float) -> bool:
@@ -449,6 +471,8 @@ def create_need(buyer_id: int, raw_text: str, qty: int, urgency: str, downtime_c
             return _fail(err, "invalid_field")
         if not part_number and not (platform and family):
             return _fail("Give a part_number, or both platform and family.", "invalid_field")
+        if ceiling_price and _limit_in_message(raw_text, ceiling_price):
+            raw_text = _redact_number(raw_text, ceiling_price)  # the public post must never show the private budget
         cur = conn.execute(
             "INSERT INTO needs (buyer_id, raw_text, part_number, platform, family, qty, urgency, downtime_cost_per_day, "
             "status, created_at) VALUES (?,?,?,?,?,?,?,?, 'open', ?)",
@@ -469,14 +493,15 @@ def search_buyers_for_listing(listing_id: int, limit: int = 10) -> dict:
         r = _listing_row(conn, listing_id)
         if not r:
             return _fail(f"No listing {listing_id}.", "not_found")
-        if r["status"] != "active":
-            return _fail(f"Listing {listing_id} is '{r['status']}'. Only active listings can be matched.", "not_active")
+        if r["status"] not in MATCHABLE_LISTINGS or (r["expiry_date"] and r["expiry_date"] < _today(conn)):
+            return _fail(f"Listing {listing_id} is '{r['status']}'{' and expired' if r['expiry_date'] and r['expiry_date'] < _today(conn) else ''}. "
+                         "Only active listings can be matched.", "not_active")
         cands = []
         for c in conn.execute("SELECT * FROM companies WHERE id != ?", (r["seller_id"],)):
             reasons = _buyer_grounding(conn, r, c["id"])
             if not reasons:
                 continue
-            needs = [n for n in conn.execute("SELECT * FROM needs WHERE buyer_id=? AND status='open'", (c["id"],))
+            needs = [n for n in conn.execute("SELECT * FROM needs WHERE buyer_id=? AND status IN ('open','matched')", (c["id"],))
                      if _fill_reason(conn, r, n)]
             best = min(needs, key=lambda n: (URGENCY_RANK[n["urgency"]], -n["downtime_cost_per_day"])) if needs else None
             cands.append({
@@ -499,7 +524,12 @@ def search_listings_for_need(need_id: int, limit: int = 10) -> dict:
         if not n:
             return _fail(f"No need {need_id}.", "not_found")
         out = []
-        for lid in [r[0] for r in conn.execute("SELECT id FROM listings WHERE status='active'")]:
+        if n["status"] not in MATCHABLE_NEEDS:
+            return _fail(f"Need {need_id} is '{n['status']}'. Only open needs can be matched.", "not_open")
+        today = _today(conn)
+        for lid in [r[0] for r in conn.execute(
+                "SELECT id FROM listings WHERE status IN ('active','in_negotiation') AND (expiry_date IS NULL OR expiry_date >= ?)",
+                (today,))]:
             r = _listing_row(conn, lid)
             if why := _fill_reason(conn, r, n):
                 out.append(_public_listing(conn, r) | {"why_it_fits": why})
@@ -518,7 +548,7 @@ def list_buyer_profiles() -> dict:
                 "platforms": [f"{r['qty']}x {r['platform']}" for r in conn.execute(
                     "SELECT platform, qty FROM installed_equipment WHERE company_id=?", (c["id"],))],
                 "open_needs": [_public_need(_need_row(conn, r[0])) for r in conn.execute(
-                    "SELECT id FROM needs WHERE buyer_id=? AND status='open'", (c["id"],))],
+                    "SELECT id FROM needs WHERE buyer_id=? AND status IN ('open','matched')", (c["id"],))],
             })
         return {"ok": True, "count": len(out), "companies": out}
 
@@ -539,7 +569,7 @@ def record_matches(direction: str, matches: list[dict], run_id: str | None = Non
             problem = None
             if not r:
                 problem = "unknown listing"
-            elif r["status"] != "active":
+            elif r["status"] not in MATCHABLE_LISTINGS:
                 problem = f"listing is '{r['status']}', not active"
             elif not isinstance(score, (int, float)) or not 0 <= score <= 100:
                 problem = "score must be 0-100"
@@ -551,7 +581,7 @@ def record_matches(direction: str, matches: list[dict], run_id: str | None = Non
                 problem = "buyer runs no compatible platform and has no open need this listing fills"
             elif nid is not None:
                 n = conn.execute("SELECT * FROM needs WHERE id=?", (nid,)).fetchone()
-                if not n or n["buyer_id"] != bid or n["status"] != "open" or not _fill_reason(conn, r, n):
+                if not n or n["buyer_id"] != bid or n["status"] not in MATCHABLE_NEEDS or not _fill_reason(conn, r, n):
                     problem = f"need {nid} is not an open need of buyer {bid} that this listing fills"
             if problem:
                 rejected.append({**m, "rejected_because": problem})
@@ -560,11 +590,47 @@ def record_matches(direction: str, matches: list[dict], run_id: str | None = Non
                 "INSERT INTO matches (listing_id, buyer_id, need_id, score, reason, direction, run_id, created_at) "
                 "VALUES (?,?,?,?,?,?,?,?)", (lid, bid, nid, int(score), reason, direction, run_id, _now()))
             saved.append({"match_id": cur.lastrowid, "listing_id": lid, "buyer_id": bid, "need_id": nid, "score": int(score)})
-            _notify(conn, bid, "new_match", f"Listing #{lid} ({r['part_number']}) matches your needs (score {int(score)}).",
-                    listing_id=lid, need_id=nid)
-            _notify(conn, r["seller_id"], "new_match", f"Buyer #{bid} matched to your listing #{lid} (score {int(score)}).",
-                    listing_id=lid, need_id=nid)
     return {"ok": not rejected, "saved": saved, "rejected": rejected}
+
+
+def send_match_alerts(run_id: str) -> dict:
+    """Alerts for one matching event, decided in CODE (no model): from the matches saved by this run, take
+    pairs with an open need scored >= 70, best 3, and notify the buyer and the seller of each. One alert per
+    company per listing-need pair ever, so re-running a flow sends no duplicates. Messages never contain a
+    buyer's ceiling or a seller's floor. Needs that got an alert move from 'open' to 'matched'."""
+    with _db(write=True) as conn:
+        rows = conn.execute(
+            "SELECT m.*, l.part_number, l.seller_id, l.asking_price, n.buyer_id AS need_buyer, n.urgency, "
+            "s.name AS seller_name, b.name AS buyer_name FROM matches m JOIN listings l ON l.id=m.listing_id "
+            "JOIN needs n ON n.id=m.need_id JOIN companies s ON s.id=l.seller_id JOIN companies b ON b.id=n.buyer_id "
+            "WHERE m.run_id=? AND m.need_id IS NOT NULL AND m.score >= ? ORDER BY m.score DESC, m.id",
+            (run_id, ALERT_THRESHOLD)).fetchall()
+        sent, duplicates, pairs = [], 0, []
+        for m in rows:
+            if (m["listing_id"], m["need_id"]) in pairs:
+                continue
+            pairs.append((m["listing_id"], m["need_id"]))
+            if len(pairs) > MAX_ALERTS:
+                break
+            ask = f" at ${m['asking_price']:,.0f}/unit" if m["asking_price"] else ""
+            notes = [
+                (m["need_buyer"], f"{m['seller_name']} listed {m['part_number']}{ask}, a match for your need #{m['need_id']} "
+                                  f"(score {m['score']})."),
+                (m["seller_id"], f"{m['buyer_name']} needs {m['part_number']} ({m['urgency'].replace('_', ' ')}): your "
+                                 f"listing #{m['listing_id']} matches its need #{m['need_id']} (score {m['score']})."),
+            ]
+            for company, msg in notes:
+                cur = conn.execute(
+                    "INSERT OR IGNORE INTO notifications (company_id, kind, message, listing_id, need_id, score, run_id, created_at) "
+                    "VALUES (?, 'new_match', ?, ?, ?, ?, ?, ?)",
+                    (company, msg, m["listing_id"], m["need_id"], m["score"], run_id, _now()))
+                if cur.rowcount:
+                    sent.append({"company_id": company, "listing_id": m["listing_id"], "need_id": m["need_id"], "score": m["score"]})
+                else:
+                    duplicates += 1
+            conn.execute("UPDATE needs SET status='matched' WHERE id=? AND status='open'", (m["need_id"],))
+        return {"ok": True, "run_id": run_id, "threshold": ALERT_THRESHOLD, "max_per_event": MAX_ALERTS,
+                "pairs_alerted": min(len(pairs), MAX_ALERTS), "sent": sent, "skipped_duplicates": duplicates}
 
 
 # --------------------------------------------------------------------------- broker: negotiation + deals
@@ -577,7 +643,7 @@ def open_negotiation(listing_id: int, need_id: int, qty: int | None = None) -> d
         r, n = _listing_row(conn, listing_id), _need_row(conn, need_id)
         if not r or not n:
             return _fail("Unknown listing or need.", "not_found")
-        if r["status"] != "active" or n["status"] != "open":
+        if r["status"] not in MATCHABLE_LISTINGS or n["status"] not in MATCHABLE_NEEDS:
             return _fail(f"Listing is '{r['status']}' and need is '{n['status']}'; both must be active/open.", "wrong_status")
         if not _fill_reason(conn, r, n):
             return _fail(f"Listing {listing_id} can't fill need {need_id}.", "not_compatible")
@@ -594,6 +660,7 @@ def open_negotiation(listing_id: int, need_id: int, qty: int | None = None) -> d
         cur = conn.execute(
             "INSERT INTO negotiations (listing_id, need_id, seller_id, buyer_id, qty, status, max_rounds, created_at) "
             "VALUES (?,?,?,?,?, 'open', ?, ?)", (listing_id, need_id, r["seller_id"], n["buyer_id"], q, MAX_ROUNDS, _now()))
+        conn.execute("UPDATE listings SET status='in_negotiation' WHERE id=? AND status='active'", (listing_id,))
         return {"ok": True, **_negotiation_view(conn, conn.execute("SELECT * FROM negotiations WHERE id=?", (cur.lastrowid,)).fetchone())}
 
 
@@ -705,6 +772,8 @@ def submit_offer(action: str, price: float | None = None, message: str = "") -> 
             conn.execute("INSERT INTO offers (negotiation_id, round, from_side, price, qty, message, action, created_at) "
                          "VALUES (?,?,?,?,?,?,?,?)", (n["id"], rnd, side, final_price or 0, n["qty"], message, final_action, _now()))
             conn.execute("UPDATE negotiations SET status=?, rounds_used=?, end_reason=? WHERE id=?", (status, rnd, reason, n["id"]))
+            if status != "agreed":
+                _release_listing(conn, n["listing_id"])
             return {"ok": True, "negotiation_id": n["id"], "round": rnd, "action": final_action, "status": status,
                     "price": final_price, "end_reason": reason}
 
@@ -772,6 +841,7 @@ def end_negotiation(negotiation_id: int, reason: str) -> dict:
             return _fail(f"Negotiation is '{n['status']}', not open.", "closed")
         conn.execute("UPDATE negotiations SET status='stopped', end_reason=? WHERE id=?",
                      (f"stopped by broker: {reason}"[:300], negotiation_id))
+        _release_listing(conn, n["listing_id"])
         return {"ok": True, "negotiation_id": negotiation_id, "status": "stopped"}
 
 
@@ -799,9 +869,9 @@ def get_company_profile(company_id: int | None = None) -> dict:
             "installed_equipment": [dict(r) for r in conn.execute(
                 "SELECT platform, qty, years_in_use FROM installed_equipment WHERE company_id=? ORDER BY platform", (company_id,))],
             "open_needs": [_public_need(_need_row(conn, r[0])) for r in conn.execute(
-                "SELECT id FROM needs WHERE buyer_id=? AND status='open'", (company_id,))],
+                "SELECT id FROM needs WHERE buyer_id=? AND status IN ('open','matched')", (company_id,))],
             "active_listing_ids": [r[0] for r in conn.execute(
-                "SELECT id FROM listings WHERE seller_id=? AND status='active'", (company_id,))],
+                "SELECT id FROM listings WHERE seller_id=? AND status IN ('active','in_negotiation')", (company_id,))],
         }
 
 
@@ -994,6 +1064,44 @@ def get_impact_estimate(listing_id: int, price: float | None = None, qty: int | 
     }
 
 
+def get_marketplace_board() -> dict:
+    """The Marketplace tab: available surplus and wanted needs (public fields only, never a floor or ceiling),
+    the compatible pairs between them (same code as the matching pre-filter), and the impact summary."""
+    with _db() as conn:
+        today = _today(conn)
+        lids = [r[0] for r in conn.execute(
+            "SELECT id FROM listings WHERE status IN ('active','in_negotiation','pending_deal') "
+            "AND (expiry_date IS NULL OR expiry_date >= ?) ORDER BY id", (today,))]
+        nids = [r[0] for r in conn.execute("SELECT id FROM needs WHERE status IN ('open','matched') ORDER BY id")]
+        listings = {i: _listing_row(conn, i) for i in lids}
+        needs = {i: _need_row(conn, i) for i in nids}
+        pairs = [{"listing_id": l, "need_id": n, "why": why} for l in lids for n in nids
+                 if listings[l]["status"] != "pending_deal" and (why := _fill_reason(conn, listings[l], needs[n]))]
+        approved = conn.execute("SELECT id, listing_id, price, qty FROM deals WHERE status='approved'").fetchall()
+    deal_impacts = [get_impact_estimate(d["listing_id"], price=d["price"], qty=d["qty"]) for d in approved]
+    matched_ids = sorted({x["listing_id"] for x in pairs})
+    potential = [get_impact_estimate(i) for i in matched_ids]  # if every listing with a wanted match sold at its ask
+    with _db() as conn:
+        out_l = [_public_listing(conn, listings[i]) for i in lids]
+    for x in out_l:
+        x.pop("seller_text_untrusted", None)
+    total = lambda k: round(sum(i.get(k) or 0 for i in deal_impacts), 2)  # noqa: E731
+    return {
+        "ok": True, "listings": out_l,
+        "needs": [{k: v for k, v in _public_need(needs[i]).items() if k != "buyer_text_untrusted"} for i in nids],
+        "pairs": pairs,
+        "impact": {"deals": len(approved), "value_recovered": total("value_recovered"), "scrap_value": total("scrap_value_total"),
+                   "kg_kept_out_of_scrap": total("kg_kept_out_of_scrap"), "est_kg_co2e_avoided": total("est_kg_co2e_avoided"),
+                   "method": IMPACT_METHOD, "placeholder_factors": True},
+        "potential": {"listings": len(matched_ids),
+                      "value_recovered": round(sum(i.get("value_recovered") or 0 for i in potential), 2),
+                      "scrap_value": round(sum(i.get("scrap_value_total") or 0 for i in potential), 2),
+                      "kg_kept_out_of_scrap": round(sum(i.get("kg_kept_out_of_scrap") or 0 for i in potential), 2),
+                      "est_kg_co2e_avoided": round(sum(i.get("est_kg_co2e_avoided") or 0 for i in potential), 1),
+                      "note": "if every listing that fills a buy request sold at its ask (asks not stated count as $0)"},
+    }
+
+
 def mark_notifications_read(company_id: int) -> dict:
     """Mark all of a company's alerts as read (when its user opens the bell)."""
     with _db(write=True) as conn:
@@ -1007,8 +1115,8 @@ def list_companies() -> dict:
     with _db() as conn:
         rows = [dict(r) for r in conn.execute(
             """SELECT c.id, c.name, c.type, c.city, c.state, c.industry,
-                      (SELECT COUNT(*) FROM listings l WHERE l.seller_id=c.id AND l.status='active') AS active_listings,
-                      (SELECT COUNT(*) FROM needs n WHERE n.buyer_id=c.id AND n.status='open') AS open_needs,
+                      (SELECT COUNT(*) FROM listings l WHERE l.seller_id=c.id AND l.status IN ('active','in_negotiation')) AS active_listings,
+                      (SELECT COUNT(*) FROM needs n WHERE n.buyer_id=c.id AND n.status IN ('open','matched')) AS open_needs,
                       (SELECT COUNT(*) FROM notifications x WHERE x.company_id=c.id AND x.read=0) AS unread_alerts
                FROM companies c ORDER BY c.id""")]
         return {"count": len(rows), "companies": rows}
@@ -1022,15 +1130,15 @@ VIEWS = [list_listings, list_needs, list_matches, list_negotiations, list_deals,
 ROLE_TOOLS = {
     "broker": COMMON + [create_listing, update_listing_draft, check_listing_rules, activate_listing, flag_listing,
                         create_need, search_buyers_for_listing, search_listings_for_need, list_buyer_profiles,
-                        record_matches, open_negotiation, get_negotiation, end_negotiation, request_deal_approval,
+                        record_matches, send_match_alerts, open_negotiation, get_negotiation, end_negotiation, request_deal_approval,
                         get_company_profile] + VIEWS,
     "seller_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
     "buyer_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
     "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal, list_companies] + VIEWS,
     "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary, get_company_profile,
-               list_companies, mark_notifications_read] + VIEWS,
+               list_companies, mark_notifications_read, get_marketplace_board] + VIEWS,
 }
-WRITE_TOOLS = {create_listing, update_listing_draft, activate_listing, flag_listing, create_need, record_matches,
+WRITE_TOOLS = {create_listing, update_listing_draft, activate_listing, flag_listing, create_need, record_matches, send_match_alerts,
                open_negotiation, end_negotiation, request_deal_approval, submit_offer, walk_away, approve_deal,
                reject_deal, log_tokens, mark_notifications_read}
 

@@ -1,0 +1,248 @@
+{
+  "run_id": "9334f67269fc",
+  "kind": "seller_flow",
+  "subject": "listing:28",
+  "outcome": "listed (no matching buyers yet)",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "96525458",
+        "qty": 2,
+        "condition": "new_open_box",
+        "asking_price": 330.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "other_items": [],
+        "confidence": 0.98,
+        "notes": "Best offer is noted, but $330 each is the stated asking price."
+      }
+    },
+    {
+      "step": "save",
+      "status": "created",
+      "listing_id": 28,
+      "expiry_date": null
+    },
+    {
+      "step": "rules",
+      "status": "passed",
+      "rules": [],
+      "reasons": []
+    },
+    {
+      "step": "guard",
+      "status": "allowed",
+      "reasons": []
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "activate",
+      "status": "allowed"
+    },
+    {
+      "step": "listing",
+      "status": "ready",
+      "listing": {
+        "listing_id": 28,
+        "status": "active",
+        "flag_reason": null,
+        "seller_id": 7,
+        "seller_name": "Prairie Mills Flour",
+        "location": "Salina, KS",
+        "part_number": "96525458",
+        "manufacturer": "Grundfos",
+        "family": "Pump spare",
+        "description": "CR 15 shaft seal kit, HQQE (SiC/SiC/EPDM)",
+        "qty": 2,
+        "condition": "new_open_box",
+        "asking_price": 330.0,
+        "new_price": 499.0,
+        "scrap_value": 10.61,
+        "hazmat": false,
+        "hazmat_class": null,
+        "expiry_date": null,
+        "sds_available": null,
+        "fits_platforms": [
+          "Grundfos CR 15"
+        ],
+        "created_at": "2026-10-26T04:15:25+00:00"
+      }
+    },
+    {
+      "step": "prefilter",
+      "status": "done",
+      "candidates": 6
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "candidates": 6,
+      "ranked": [
+        {
+          "buyer_id": 39,
+          "listing_id": null,
+          "need_id": 20,
+          "score": 92,
+          "reason": "Open need #20: Grundfos CR 15 shaft seal kit, high urgency; 1 needed and 2 available. Runs 5x CR 15 (14 yrs); downtime cost $3,500/day.",
+          "buyer_name": "Tidewater Dairy"
+        },
+        {
+          "buyer_id": 30,
+          "listing_id": null,
+          "need_id": null,
+          "score": 58,
+          "reason": "No open need; installed-base fit for Grundfos CR 15 pump spares. Runs 6x CR 15 (10 yrs).",
+          "buyer_name": "Northwoods Pulp"
+        },
+        {
+          "buyer_id": 11,
+          "listing_id": null,
+          "need_id": null,
+          "score": 56,
+          "reason": "No open need; installed-base fit for Grundfos CR 15 pump spares. Runs 5x CR 15 (11 yrs).",
+          "buyer_name": "Cascade Paper & Board"
+        }
+      ],
+      "method": "agent",
+      "check_errors": [],
+      "saved": 0,
+      "rejected": [
+        {
+          "listing_id": null,
+          "buyer_id": 39,
+          "need_id": 20,
+          "score": 92,
+          "reason": "Open need #20: Grundfos CR 15 shaft seal kit, high urgency; 1 needed and 2 available. Runs 5x CR 15 (14 yrs); downtime cost $3,500/day.",
+          "rejected_because": "unknown listing"
+        },
+        {
+          "listing_id": null,
+          "buyer_id": 30,
+          "need_id": null,
+          "score": 58,
+          "reason": "No open need; installed-base fit for Grundfos CR 15 pump spares. Runs 6x CR 15 (10 yrs).",
+          "rejected_because": "unknown listing"
+        },
+        {
+          "listing_id": null,
+          "buyer_id": 11,
+          "need_id": null,
+          "score": 56,
+          "reason": "No open need; installed-base fit for Grundfos CR 15 pump spares. Runs 5x CR 15 (11 yrs).",
+          "rejected_because": "unknown listing"
+        }
+      ]
+    },
+    {
+      "step": "alerts",
+      "status": "done",
+      "sent": 0,
+      "pairs": 0,
+      "duplicates": 0,
+      "threshold": 70,
+      "companies": []
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 330.0,
+      "floor_suggestion": 231.0,
+      "rationale": "At $330, the seller\u2019s ask is reasonable for new-open-box condition: it is about 66% of the $499 new price, within the 60\u201370% guideline band, and well above the $10.61 scrap value. There are no active asks, approved deals, or matched open needs to indicate stronger demand or support a higher price.",
+      "clamped": false,
+      "new_price": 499.0,
+      "scrap_value": 10.61
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Tidewater Dairy",
+      "subject": "Grundfos CR 15 HQQE shaft seal kits available",
+      "body": "Hello Tidewater Dairy team,\n\nPrairie Mills Flour has two Grundfos CR 15 HQQE shaft seal kits (part 96525458) available, new in opened boxes and never installed, at $330 each. They match your open need for a CR 15 shaft seal kit, with two available for your pump requirements.\n\nWould you like us to connect you with the seller?\n\nBest,\nSpare Change"
+    },
+    {
+      "step": "impact",
+      "status": "done",
+      "listing_id": 28,
+      "part_number": "96525458",
+      "qty": 2,
+      "unit_price": 330.0,
+      "value_recovered": 660.0,
+      "scrap_value_total": 21.22,
+      "uplift_vs_scrap": 638.78,
+      "kg_kept_out_of_scrap": 1.8,
+      "est_kg_co2e_avoided": 10.8,
+      "est_hazardous_disposal_avoided": null,
+      "family": "Pump spare",
+      "factor_kg_co2e_per_kg": 6.0,
+      "factor_source": "PLACEHOLDER: replace with sourced value in Phase 10",
+      "placeholder_factors": true,
+      "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2231,
+      "cache_write_tokens": 339,
+      "output_tokens": 95,
+      "total_tokens": 2917,
+      "cost_usd": 0.00013738
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 619,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 22,
+      "total_tokens": 641,
+      "cost_usd": 7.29e-05
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1713,
+      "output_tokens": 496,
+      "total_tokens": 2335,
+      "cost_usd": 0.00047473
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 576,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 191,
+      "total_tokens": 767,
+      "cost_usd": 0.0001531
+    }
+  ],
+  "totals": {
+    "run_id": "9334f67269fc",
+    "kind": "seller_flow",
+    "requests": 5,
+    "input_tokens": 1573,
+    "cached_tokens": 2231,
+    "cache_write_tokens": 2052,
+    "output_tokens": 804,
+    "total_tokens": 6660,
+    "cost_usd": 0.000838
+  },
+  "listing_id": 28
+}

@@ -3,7 +3,7 @@
 > **Turn spare parts into spare change.**
 > A marketplace for industrial surplus, run by AI agents. A plant pastes a messy description of a part it no longer needs. Agents clean up the listing, check it, find buyers whose machines it fits, price it, and negotiate. A human approves every deal.
 
-**Status: APPROVED** (decisions in §7). **Built in Phase 4:** the nav with the account switcher and alerts, the Sell screen with every state, the right rail, and the impact layer. Wanted, Marketplace and Negotiations show friendly placeholders until Phases 5 and 6. This direction **replaces** the blue-and-yellow style in `AGENTS.md` for this project. The first-screen mockup is `output/design/mockup_sell.html` (screenshot: `output/screenshots/phase4-mockup-sell.png`).
+**Status: APPROVED** (decisions in §7). **Built in Phase 4:** the nav with the account switcher and alerts, the Sell screen with every state, the right rail, and the impact layer. Buy, Marketplace and Negotiations show friendly placeholders until Phases 5 and 6. This direction **replaces** the blue-and-yellow style in `AGENTS.md` for this project. The first-screen mockup is `output/design/mockup_sell.html` (screenshot: `output/screenshots/phase4-mockup-sell.png`).
 
 ---
 
@@ -24,12 +24,13 @@ A clean B2B operations tool that a plant manager or procurement lead finds credi
 - Sans-serif: **Inter** (bundled with the app, not loaded from a CDN, so it works offline for graders), falling back to the system UI font. **Monospace only for part numbers** (`ui-monospace, "SF Mono", Consolas`).
 - Numbers use tabular figures (`font-variant-numeric: tabular-nums`) so prices and tokens line up.
 
-### Color tokens: one accent, each status has one meaning
+### Color tokens: one accent per side, each status has one meaning
 
 | Token | Hex | Used for | Never used for |
 |---|---|---|---|
 | `navy` | `#0C2340` | Top nav, headings, structure, primary-button text | — |
-| `orange` | `#F97316` | **The one accent:** primary button fill, match-score chips, the suggested-price card's top bar, the logo | Status, decoration, body text |
+| `blue` | `#2563EB` | **The Buy side's accent** (added in Phase 5): the same jobs orange does on Sell, used only on the Buy tab | Status, decoration, body text |
+| `orange` | `#F97316` | **The brand accent, and the Sell side's:** primary button fill, match-score chips, the suggested-price card's top bar, the logo | Status, decoration, body text |
 | `orange-text` | `#C2410C` | Orange *text* on white (score numbers, the suggested price figure) | Fills |
 | `green` / `green-bg` | `#3B6D11` / `#EAF3DE` | **Only** "Compliance passed" and "Deal approved" | Anything else |
 | `red` / `red-bg` | `#B91C1C` / `#FEF2F2` | **Only** "Blocked" | Errors (errors are neutral, see §6) |
@@ -68,7 +69,7 @@ A clean B2B operations tool that a plant manager or procurement lead finds credi
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│ (¢) Spare Change    Sell   Wanted   Marketplace   Negotiations                     🔔 3      │  navy, 56 px, sticky
+│ (¢) Spare Change    Sell   Buy      Marketplace   Negotiations                     🔔 3      │  navy, 56 px, sticky
 ├───────────────────────────────────────────────────────────────┬──────────────────────────────┤
 │ MAIN (fills the space left of the rail)                       │ RIGHT RAIL (fixed 340 px)    │
 │                                                               │ ┌──────────────────────────┐ │
@@ -114,7 +115,7 @@ There are no logins, so the nav has an account switcher that works like signing 
                                          └───────────────────────────────────────────┘
 ```
 
-- Choosing a company sets **who you are on every tab**. You post listings as that company (Sell), post needs as it (Wanted), see its alerts in the bell, and negotiate on its side.
+- Choosing a company sets **who you are on every tab**. You post listings as that company (Sell), post needs as it (Buy), see its alerts in the bell, and negotiate on its side.
 - **A company strip** under the page title shows the account as a real customer would see it: name, location, industry, the machines it runs ("runs 6× Siemens S7-1500, 2× hydraulic press"), active listings and open needs. Seeing the installed equipment explains *why* the agents match the way they do.
 - **Private numbers follow the account.** A floor or ceiling is shown only when the signed-in company owns it, with a lock icon and "only you see this". Switching from the seller (Hartwell) to the buyer (Riverbend) makes the floor disappear and the ceiling appear. This makes the privacy design visible in a demo.
 - The bell shows **that company's** notifications (new matches, deals awaiting approval).
@@ -125,7 +126,7 @@ There are no logins, so the nav has an account switcher that works like signing 
   | Hartwell Precision Components (default) | Seller | Its S7-300 CPU post | Happy path: Riverbend Foods ranked first (line down) |
   | Summit Automation Surplus | Seller · distributor | Its 1756-EN2T post | Substitute match: the buyer asked for the discontinued ENBT |
   | Redwood Coatings | Seller | An expired IPA solvent post | Blocked by the expiry rule before any matching |
-  | Riverbend Foods | Buyer · line down | Empty box + hint | Its own alerts and ceiling (Wanted in Phase 5) |
+  | Riverbend Foods | Buyer · line down | Empty box + hint | Its own alerts and ceiling (Buy tab, Phase 5) |
   | Tidewater Dairy | Buyer | Empty box + hint | Gets an alert when someone lists a CR 15 seal kit |
 
 - **The paste box opens with the signed-in company's own post**, so a first-time visitor (or grader) can just click **Find buyers**. Buyers open with an empty box and a hint.
@@ -184,7 +185,7 @@ OUTREACH EMAIL to Riverbend Foods                                               
 - **No buyers:** an empty state. "No plant on Spare Change runs a Mitsubishi MELSEC-Q yet. Your listing is live, and you'll get an alert when a matching need is posted."
 - **Loading:** the result area shows a skeleton per section, named for the working agent: "Listing agent reading your post…", "Matching agent finding buyers…", "Pricing agent checking new and scrap prices…".
 
-### 4.2 Wanted (Phase 5)
+### 4.2 Buy (Phase 5; first called Wanted)
 
 Mirrors Sell for buyers:
 - **Inputs:** "Post what you need" box, buying-as selector, urgency chips (Line down / High / Normal / Low), downtime cost per day, and a private max price ("only you see this").
@@ -199,7 +200,7 @@ Mirrors Sell for buyers:
 ```
 🍃 Across all approved deals: $X recovered vs $Y scrap · Z kg kept out of scrap · est. N kg CO2e avoided   (teal summary row)
 
-Available surplus (21)                         │  Wanted (21)
+For sale (21)                                  │  To buy (21)
 ┌ 6ES7315-2AG10-0AB0 · S7-300 CPU · qty 3 ┐    │  ┌ Riverbend Foods · S7-300 CPU · line down ┐
 │ Hartwell · $1,425 · used, working        │◀━━━▶│ $12k/day · need #1            [2 matches] │
 └──────────────────────────── [3 buyers] ──┘    │  └──────────────────────────────────────────┘
@@ -208,6 +209,15 @@ Available surplus (21)                         │  Wanted (21)
 - Two columns of compact cards. Each card carries an orange match-count chip.
 - Hovering or clicking a card highlights its matches in the other column. No drawn lines, which get messy.
 - Filter chips at the top: All / Has matches / Line down / Chemicals.
+
+**As built (Phase 5):**
+- **Buy:** post box pre-filled with the demo buyer's sample need; three fields under it: private max price (lock icon, "only you see this"), urgency as a segmented control (navy when selected; leave it empty and the agent reads it from the post), and downtime cost per day. Results: need card (with lifecycle pill Open / Matched and the private max shown only here), "Surplus that fits" with a disabled **Start negotiation · Phase 6** button per row, and a gray "N alerts sent" line. Seller accounts get a hint pointing to the buyer demo accounts. Before a run, the page lists the account's open needs.
+- **Marketplace:** teal impact summary on top (potential impact of listings that fill a buy request, plus closed deals, 0 until Phase 6); two columns, For sale | To buy; orange match-count badge per card; click a card to outline it in navy, tint its matches orange (with the code's "fits" reason), and dim the rest. "you" tag on the signed-in account's own items. Filter chips were left out: with ~20 items per column they weren't needed.
+- **Alerts bell:** each new-match alert has a disabled "Start negotiation · coming in Phase 6" button.
+- **Reset demo:** a visible outlined button in the nav (with a confirm), not hidden in the account menu.
+- Lifecycle pills use gray and navy only: green stays reserved for passed/approved and red for blocked.
+
+**Sell vs Buy: a colour per side (Phase 5 follow-up; mockup `output/design/mockup_buy_sell.html`, option B chosen):** the two pages looked identical, so **Sell stays orange and Buy is blue (#2563EB)**. Buy's colour shows up wherever Sell's orange does: the tab underline, the small page label, the 3 px top edge of the input card, the tinted company strip, the primary button (white text on blue) and the match scores. The **tagline is the page heading** on both: Sell "Turn spare parts into spare change.", Buy "Spare yourself the downtime." The page's job ("Sell surplus parts" / "Buy parts") is a small uppercase label with an icon (tag / magnifier) above it. Status colours don't change: green passed, red blocked, teal impact. **This amends the "one accent colour" rule:** the accent is now per side (orange on Sell, blue on Buy). The Marketplace, the nav and the logo stay orange and navy. Option A (a tinted header band) was built first and then replaced at the user's request; option C (an icon marker) was too subtle.
 
 ### 4.4 Negotiations (Phase 6)
 

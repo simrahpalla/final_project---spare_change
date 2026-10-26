@@ -277,3 +277,36 @@ This file records the prompts I used while building my MGT 409 final project, Su
 > okay fix it with your proposed fix
 
 > here you go - and yes commit it
+
+## Phase 5 — Two-Sided Matching
+
+### Initial prompt
+
+> yes start it - here are some additional instructions for it:
+> Phase 5: two-sided matching. Build on the demo accounts I added.
+>
+> - Buyers can post a need. It goes through the same pipeline as listings: extraction to a structured need, the compliance guard (needs text can contain injection too), then the SAME matching agent in reverse with the same SQL pre-filter. One matching logic, both directions, same scoring.
+> - Alerts are triggered by code, not an agent: new listing → check open needs; new need → check active listings. Alert only above a score threshold, max top 3 per event, no duplicates on rerun. If the pre-filter returns 0 candidates, skip the LLM call entirely.
+> - Privacy: a buyer's max price never appears in alerts, the Marketplace board, or seller views. Each demo account sees only its own alerts and private terms. Note in the README and limits that account switching is a demo, not real auth.
+> - Status lifecycle: listings active → in negotiation → sold; needs open → matched → filled. Matching ignores sold, filled or expired items.
+> - Each alert gets a "Start negotiation" button, marked "coming in Phase 6" for now.
+> - Make sure at least 2 demo accounts are buyers whose open needs match the sample seller test cases, and add a buyer-side sample test case to each buyer account.
+> - Add a "Reset demo" button that restores the seeded state via the existing reset route, so every grader starts clean.
+> - Marketplace tab: impact summary on top, two columns (available | wanted) with match badges.
+> - Tests: add expected reverse matches to data/answer_keys.json and score them. Add an end-to-end test of the two-account flow (seller lists → buyer alerted → switch account → alert visible), and run it with concurrent requests too.
+> - Log tokens per alert event.
+
+### What was missing
+
+- **The alert threshold value:** set to 70, the score band the matching agent already uses for "has an open need this listing fills".
+- **What happens if a buyer types the max price into the post text:** the server redacts it to `[private]` before saving, since the post text is public.
+- **What the Marketplace impact shows before any deal is approved** (deals come in Phase 6): the potential impact of the listings that fill a wanted need, plus closed deals (0 so far).
+- **Whether the Phase 4 seller screen should show the alerts it sent:** it does (the same "N alerts sent" line as Wanted).
+
+### Follow-up prompt(s)
+
+> A few, before I take the screenshots, a few small changes. I want the new tab to, instead of it saying wanted, I want it to say buy. So like one tab is sell, the other tab is buy. And I want that to be carried forward wherever else wanted is there that it might be replaced with buy. Secondly, in the wanted page, let's say for like Riverbend, once you write whatever you want, the button says find surplus, change that to just find. Third change is that I want a tagline on the sell and the buy pages. And I want there to be some design differences. Right now, the sell and the buy pages look exactly the same. You don't even realize you moved to a different tab. So I don't know if we want to overall add another color where like there's one color that goes with on the sell page and another that goes on the buy page, or if it's some other type of variation, some gradient maybe, I don't know. So for that, before making the change, suggest and demo something for me. And the tagline, think about where we might want to add that. Maybe write, maybe like instead of writing sell surplus, I don't know, think about where that might fit the tagline. So for example, on the sell side, the tagline would be spare parts for spare change versus, you know, something like that for the buy side also.
+
+> go with option A, and for the taglines, keep the tagline for sell, which is turn spare parts into spare change, and for the buy side, make it spare yourself the downtime.
+
+> I changed my mind. I want you to update the design to option number 2 that you had given me in the mockup. Sorry, option number B that you had given me in the mockup.
