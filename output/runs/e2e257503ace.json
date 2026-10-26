@@ -1,0 +1,145 @@
+{
+  "run_id": "e2e257503ace",
+  "kind": "seller_flow",
+  "subject": "listing:4",
+  "outcome": "listed and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "96416889",
+        "qty": 6,
+        "condition": "new_open_box",
+        "asking_price": 435.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "confidence": 0.99,
+        "notes": "Boxes were opened for inspection only; never installed."
+      }
+    },
+    {
+      "step": "save",
+      "status": "kept",
+      "note": "listing is already 'active'; draft used for checking only"
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "candidates": 3,
+      "ranked": [
+        {
+          "buyer_id": 23,
+          "need_id": 4,
+          "score": 93,
+          "reason": "Open need #4: 3 Grundfos CR 32 pump spares; their buyer text specifies HQQE seal kits for two leaking pumps, with high urgency and $4,000/day downtime cost. Runs 7x CR 32 (12 yrs).",
+          "buyer_name": "Clearwater Bottling"
+        },
+        {
+          "buyer_id": 18,
+          "need_id": null,
+          "score": 57,
+          "reason": "Runs 8x Grundfos CR 32 (7 yrs); no open need listed.",
+          "buyer_name": "Sunbelt Bottling"
+        },
+        {
+          "buyer_id": 46,
+          "need_id": null,
+          "score": 43,
+          "reason": "Runs 4x Grundfos CR 32 (6 yrs); no open need listed.",
+          "buyer_name": "Northern Lights Brewing"
+        }
+      ],
+      "saved": 3,
+      "rejected": []
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 435.0,
+      "floor_suggestion": 305.0,
+      "rationale": "For new-open-box condition, the typical range is 60\u201370% of the $678 new price ($406.80\u2013$474.60), so the seller\u2019s $435 ask is reasonable and matches the current ask for this part. The $11.42 scrap value is a lower bound, and one open need matched suggests some demand.",
+      "clamped": false,
+      "new_price": 678.0,
+      "scrap_value": 11.42
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Clearwater Bottling",
+      "subject": "CR 32 HQQE shaft seal kits available \u2014 qty 6",
+      "body": "Hello Clearwater Bottling,\n\nSurplus Exchange has six Grundfos CR 32 shaft seal kits (HQQE, SiC/SiC/EPDM), part 96416889, available in new open-box condition. Asking price is $435 each. These match the HQQE seal kits you need for your CR 32 pumps.\n\nPlease let us know if you\u2019d like to discuss quantity or arrange a purchase.\n\nBest,\nSurplus Exchange"
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 1263,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1157,
+      "output_tokens": 79,
+      "total_tokens": 2499,
+      "cost_usd": 0.00031043
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 625,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 61,
+      "total_tokens": 686,
+      "cost_usd": 9.3e-05
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1154,
+      "output_tokens": 279,
+      "total_tokens": 1559,
+      "cost_usd": 0.00029635
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 609,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 200,
+      "total_tokens": 809,
+      "cost_usd": 0.0001609
+    }
+  ],
+  "totals": {
+    "run_id": "e2e257503ace",
+    "kind": "seller_flow",
+    "requests": 5,
+    "input_tokens": 2623,
+    "cached_tokens": 0,
+    "cache_write_tokens": 2311,
+    "output_tokens": 619,
+    "total_tokens": 5553,
+    "cost_usd": 0.000861
+  },
+  "listing_id": 4,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {},
+    "top_buyer_correct": true,
+    "expected_first_buyer": 23
+  }
+}

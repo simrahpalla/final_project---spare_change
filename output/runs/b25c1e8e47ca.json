@@ -1,0 +1,87 @@
+{
+  "run_id": "b25c1e8e47ca",
+  "kind": "seller_flow",
+  "subject": "listing:26",
+  "outcome": "blocked: Chemical is past its expiry date.",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "HYPO-125-55G",
+        "qty": 5,
+        "condition": "new_sealed",
+        "asking_price": 95.0,
+        "expiry_date": null,
+        "manufacture_date": "2026-03-15",
+        "sds_available": 1,
+        "confidence": 0.99,
+        "notes": ""
+      }
+    },
+    {
+      "step": "save",
+      "status": "updated draft",
+      "result": {
+        "ok": true,
+        "listing_id": 26,
+        "expiry_date": "2026-09-15"
+      }
+    },
+    {
+      "step": "compliance",
+      "status": "blocked",
+      "rules": [
+        "expired"
+      ],
+      "reasons": [
+        "Chemical is past its expiry date."
+      ],
+      "result": {
+        "ok": false,
+        "code": "compliance_blocked",
+        "listing_id": 26,
+        "status": "blocked",
+        "rules": [
+          "expired"
+        ],
+        "reasons": [
+          "Chemical is past its expiry date."
+        ]
+      }
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 1261,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1172,
+      "output_tokens": 98,
+      "total_tokens": 2531,
+      "cost_usd": 0.0003216
+    }
+  ],
+  "totals": {
+    "run_id": "b25c1e8e47ca",
+    "kind": "seller_flow",
+    "requests": 2,
+    "input_tokens": 1261,
+    "cached_tokens": 0,
+    "cache_write_tokens": 1172,
+    "output_tokens": 98,
+    "total_tokens": 2531,
+    "cost_usd": 0.000322
+  },
+  "listing_id": 26,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {},
+    "expected_outcome": "BLOCKED (flagged) once the listing agent derives expiry = mfg date + shelf life."
+  }
+}

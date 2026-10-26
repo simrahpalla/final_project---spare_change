@@ -1,0 +1,145 @@
+{
+  "run_id": "80e9bcb0e93e",
+  "kind": "seller_flow",
+  "subject": "listing:1",
+  "outcome": "listed and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "6ES7315-2AG10-0AB0",
+        "qty": 3,
+        "condition": "used_working",
+        "asking_price": 1425.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "confidence": 0.99,
+        "notes": "Seller reports the CPUs were working when pulled last month; MMCs are not included."
+      }
+    },
+    {
+      "step": "save",
+      "status": "kept",
+      "note": "listing is already 'active'; draft used for checking only"
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "candidates": 3,
+      "ranked": [
+        {
+          "buyer_id": 20,
+          "need_id": 1,
+          "score": 100,
+          "reason": "Open need #1: exact 6ES7315-2AG10-0AB0 for a line-down Siemens S7-300; $12k/day downtime. Runs 4x S7-300 (18 yrs); need is 1 and listing has 3.",
+          "buyer_name": "Riverbend Foods"
+        },
+        {
+          "buyer_id": 16,
+          "need_id": null,
+          "score": 58,
+          "reason": "No open need; runs 3x Siemens S7-300 (16 yrs), making these working CPUs a likely future spare.",
+          "buyer_name": "Oakridge Dairy Cooperative"
+        },
+        {
+          "buyer_id": 32,
+          "need_id": null,
+          "score": 56,
+          "reason": "No open need; runs 5x Siemens S7-300 (15 yrs), making these working CPUs a likely future spare.",
+          "buyer_name": "Prairie Packaging"
+        }
+      ],
+      "saved": 3,
+      "rejected": []
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 1425.0,
+      "floor_suggestion": 1000.0,
+      "rationale": "At 48% of the $2,966 new price, the seller\u2019s $1,425 ask is within the used-working range of $1,186\u2013$1,631 and is reasonable for this obsolete part, which can command the upper end of its band. The same-condition active ask is also $1,425 and one open need is matched; the $45.64 scrap value is only a fallback, so a private floor of $1,000 is defensible.",
+      "clamped": false,
+      "new_price": 2966.0,
+      "scrap_value": 45.64
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Riverbend Foods",
+      "subject": "Working Siemens S7-300 CPU 315-2 DP available \u2014 line-down need",
+      "body": "Hello Riverbend Foods,\n\nSurplus Exchange has three used-working Siemens SIMATIC S7-300 CPU 315-2 DP units (6ES7315-2AG10-0AB0) available at $1,425 each. They were pulled working last month and have minor housing scuffs; MMCs are not included. This is the exact CPU in your open S7-300 line-down need. We can coordinate shipment from Dayton, OH.\n\nWould you like to reserve one?\n\nBest,\nSurplus Exchange"
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1047,
+      "cache_write_tokens": 1212,
+      "output_tokens": 102,
+      "total_tokens": 2613,
+      "cost_usd": 0.00023817
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 671,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 91,
+      "total_tokens": 762,
+      "cost_usd": 0.0001126
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 1227,
+      "cache_write_tokens": 0,
+      "output_tokens": 316,
+      "total_tokens": 1669,
+      "cost_usd": 0.00018287
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 618,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 273,
+      "total_tokens": 891,
+      "cost_usd": 0.0001983
+    }
+  ],
+  "totals": {
+    "run_id": "80e9bcb0e93e",
+    "kind": "seller_flow",
+    "requests": 5,
+    "input_tokens": 1667,
+    "cached_tokens": 2274,
+    "cache_write_tokens": 1212,
+    "output_tokens": 782,
+    "total_tokens": 5935,
+    "cost_usd": 0.000732
+  },
+  "listing_id": 1,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {},
+    "top_buyer_correct": true,
+    "expected_first_buyer": 20
+  }
+}

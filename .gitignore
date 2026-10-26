@@ -26,3 +26,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.zip
+
+# SQLite WAL side files of the working copy (merged back into exchange_new.db when connections close)
+data/*.db-wal
+data/*.db-shm

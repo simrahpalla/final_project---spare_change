@@ -1,0 +1,71 @@
+{
+  "run_id": "9221c17be665",
+  "kind": "seller_flow",
+  "subject": "listing:26",
+  "outcome": "needs_human: part not identified",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": null,
+        "qty": 5,
+        "condition": "new_sealed",
+        "asking_price": 95.0,
+        "expiry_date": null,
+        "manufacture_date": "2026-03-15",
+        "sds_available": 1,
+        "confidence": 0.35,
+        "notes": "No matching catalog part was found for sodium hypochlorite 12.5%."
+      }
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 3,
+      "input_tokens": 1387,
+      "cached_tokens": 1076,
+      "cache_write_tokens": 1129,
+      "output_tokens": 187,
+      "total_tokens": 3779,
+      "cost_usd": 0.00038409
+    }
+  ],
+  "totals": {
+    "run_id": "9221c17be665",
+    "kind": "seller_flow",
+    "requests": 3,
+    "input_tokens": 1387,
+    "cached_tokens": 1076,
+    "cache_write_tokens": 1129,
+    "output_tokens": 187,
+    "total_tokens": 3779,
+    "cost_usd": 0.000384
+  },
+  "draft": {
+    "part_number": null,
+    "qty": 5,
+    "condition": "new_sealed",
+    "asking_price": 95.0,
+    "expiry_date": null,
+    "manufacture_date": "2026-03-15",
+    "sds_available": 1,
+    "confidence": 0.35,
+    "notes": "No matching catalog part was found for sodium hypochlorite 12.5%."
+  },
+  "answer_key_check": {
+    "listing_fields": "5/6 correct",
+    "field_misses": {
+      "part_number": {
+        "got": null,
+        "expected": "HYPO-125-55G"
+      }
+    },
+    "expected_outcome": "BLOCKED (flagged) once the listing agent derives expiry = mfg date + shelf life."
+  }
+}

@@ -8,8 +8,29 @@ export default function App() {
   const [checking, setChecking] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Poll health until the marketplace tools (MCP servers) finish starting, then stop polling.
   useEffect(() => {
-    api.health().then(setHealth).catch(() => setOffline(true))
+    let stop = false
+    let timer: number | undefined
+    const tick = () =>
+      api
+        .health()
+        .then((h) => {
+          if (stop) return
+          setHealth(h)
+          setOffline(false)
+          if (h.mcp?.status === 'starting') timer = window.setTimeout(tick, 1500)
+        })
+        .catch(() => {
+          if (stop) return
+          setOffline(true)
+          timer = window.setTimeout(tick, 3000)
+        })
+    tick()
+    return () => {
+      stop = true
+      window.clearTimeout(timer)
+    }
   }, [])
 
   async function runCheck() {
@@ -28,9 +49,13 @@ export default function App() {
     ? { cls: 'pill bad', text: 'Backend offline' }
     : !health
       ? { cls: 'pill', text: 'Connecting…' }
-      : health.key_found
-        ? { cls: 'pill good', text: `${health.model} · key from ${health.key_source}` }
-        : { cls: 'pill bad', text: 'PORTKEY_API_KEY not found' }
+      : !health.key_found
+        ? { cls: 'pill bad', text: 'PORTKEY_API_KEY not found' }
+        : health.mcp?.status === 'starting'
+          ? { cls: 'pill', text: 'Starting up… loading marketplace tools' }
+          : health.mcp?.status === 'failed'
+            ? { cls: 'pill bad', text: `Tools failed to start: ${health.mcp.error ?? 'unknown error'}` }
+            : { cls: 'pill good', text: `${health.model} · key from ${health.key_source} · tools ready` }
 
   return (
     <div className="page">

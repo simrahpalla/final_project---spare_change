@@ -1,0 +1,146 @@
+{
+  "run_id": "444791e73207",
+  "kind": "seller_flow",
+  "subject": "listing:12",
+  "outcome": "listed and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "1756-EN2T",
+        "qty": 3,
+        "condition": "used_working",
+        "asking_price": 1095.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "other_items": [],
+        "confidence": 0.99,
+        "notes": "Tested and reported working."
+      }
+    },
+    {
+      "step": "save",
+      "status": "kept",
+      "note": "listing is already 'active'; draft used for checking only"
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "matching",
+      "status": "done",
+      "candidates": 3,
+      "ranked": [
+        {
+          "buyer_id": 31,
+          "need_id": 12,
+          "score": 92,
+          "reason": "Open need #12: 2x 1756-ENBT for ControlLogix 5560, high urgency at $3,000/day; the listed 1756-EN2T is a direct replacement. Runs 3x ControlLogix 5560 (13 yrs).",
+          "buyer_name": "Ironclad Castings"
+        },
+        {
+          "buyer_id": 21,
+          "need_id": null,
+          "score": 61,
+          "reason": "No open need listed; runs 6x Allen-Bradley ControlLogix 5560 (15 yrs), a compatible installed base for these network bridge modules.",
+          "buyer_name": "Millstone Paperboard"
+        },
+        {
+          "buyer_id": 36,
+          "need_id": null,
+          "score": 59,
+          "reason": "No open need listed; runs 5x Allen-Bradley ControlLogix 5560 (16 yrs), a compatible installed base for these network bridge modules.",
+          "buyer_name": "Shenandoah Poultry"
+        }
+      ],
+      "saved": 3,
+      "rejected": []
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 1095.0,
+      "floor_suggestion": 766.5,
+      "rationale": "The seller\u2019s $1,095 ask is reasonable for a used-working unit: the condition-based range is $962\u2013$1,322.75 (40\u201355% of the $2,405 new price), well above the $19.33 scrap value. One open need is matched, but there are no comparable active asks or approved deals to support a higher price; a private floor of $766.50 is 30% below the ask.",
+      "clamped": false,
+      "new_price": 2405.0,
+      "scrap_value": 19.33
+    },
+    {
+      "step": "outreach",
+      "status": "drafted",
+      "to": "Ironclad Castings",
+      "subject": "1756-EN2T EtherNet/IP modules for your ControlLogix 5560 need",
+      "body": "Hello Ironclad Castings,\n\nWe have three tested, working Allen-Bradley 1756-EN2T ControlLogix EtherNet/IP bridge modules available at $1,095 each. This is a direct replacement for the 1756-ENBT in your open need for two modules, and is compatible with your ControlLogix 5560 racks. Current firmware.\n\nWould you like to discuss availability or shipping?\n\nRegards,\nSurplus Exchange"
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2231,
+      "cache_write_tokens": 651,
+      "output_tokens": 84,
+      "total_tokens": 3218,
+      "cost_usd": 0.00017088
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 637,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 22,
+      "total_tokens": 659,
+      "cost_usd": 7.47e-05
+    },
+    {
+      "agent": "matching_agent",
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1207,
+      "output_tokens": 456,
+      "total_tokens": 1789,
+      "cost_usd": 0.00039148
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 580,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 237,
+      "total_tokens": 817,
+      "cost_usd": 0.0001765
+    }
+  ],
+  "totals": {
+    "run_id": "444791e73207",
+    "kind": "seller_flow",
+    "requests": 5,
+    "input_tokens": 1595,
+    "cached_tokens": 2231,
+    "cache_write_tokens": 1858,
+    "output_tokens": 799,
+    "total_tokens": 6483,
+    "cost_usd": 0.000814
+  },
+  "listing_id": 12,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {},
+    "top_buyer_correct": true,
+    "expected_first_buyer": 31
+  }
+}

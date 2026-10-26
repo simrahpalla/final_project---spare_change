@@ -1,0 +1,87 @@
+{
+  "run_id": "aa2dea92b1a0",
+  "kind": "seller_flow",
+  "subject": "listing:27",
+  "outcome": "needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk.",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "1756-L61",
+        "qty": 5,
+        "condition": "new_sealed",
+        "asking_price": 1950.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "confidence": 0.99,
+        "notes": "Ships from an overseas warehouse in 2\u20133 weeks."
+      }
+    },
+    {
+      "step": "save",
+      "status": "updated draft",
+      "result": {
+        "ok": true,
+        "listing_id": 27,
+        "expiry_date": null
+      }
+    },
+    {
+      "step": "compliance",
+      "status": "needs_review",
+      "rules": [
+        "counterfeit_risk"
+      ],
+      "reasons": [
+        "Discontinued part offered new-sealed far below list: counterfeit / grey-market risk."
+      ],
+      "result": {
+        "ok": false,
+        "code": "compliance_needs_review",
+        "listing_id": 27,
+        "status": "needs_review",
+        "rules": [
+          "counterfeit_risk"
+        ],
+        "reasons": [
+          "Discontinued part offered new-sealed far below list: counterfeit / grey-market risk."
+        ]
+      }
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 1255,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1152,
+      "output_tokens": 84,
+      "total_tokens": 2491,
+      "cost_usd": 0.0003115
+    }
+  ],
+  "totals": {
+    "run_id": "aa2dea92b1a0",
+    "kind": "seller_flow",
+    "requests": 2,
+    "input_tokens": 1255,
+    "cached_tokens": 0,
+    "cache_write_tokens": 1152,
+    "output_tokens": 84,
+    "total_tokens": 2491,
+    "cost_usd": 0.000311
+  },
+  "listing_id": 27,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {},
+    "expected_outcome": "HELD FOR HUMAN REVIEW (not auto-listed): obsolete + new-sealed + priced under 35% of new."
+  }
+}

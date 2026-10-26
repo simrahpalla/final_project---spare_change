@@ -24,6 +24,7 @@ Rules enforced in code here, not in prompts:
 Run (stdio):  .venv\\Scripts\\python.exe mcp_server\\server.py
 """
 
+import json
 import os
 import re
 import sqlite3
@@ -32,7 +33,9 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
+
 from fastmcp import FastMCP
+from fastmcp.server.middleware import Middleware, MiddlewareContext
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compliance_rules import expiry_from_manufacture, rules_fired, verdict  # noqa: E402
@@ -62,18 +65,32 @@ WRITES = {"readOnlyHint": False, "destructiveHint": False}
 mcp = FastMCP("surplus-exchange")
 
 
+def _enable_wal() -> None:
+    """Write-ahead logging on the WORKING copy only (the original is never opened): concurrent readers and a
+    writer don't block each other. The -wal/-shm side files are git-ignored and removed on reset."""
+    if DB_PATH.exists():
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        try:
+            conn.execute("PRAGMA journal_mode=WAL")
+        finally:
+            conn.close()
+
+
+_enable_wal()
+
+
 # --------------------------------------------------------------------------- helpers
 
 
 @contextmanager
 def _db(write: bool = False):
-    """Open the working copy. Reads use mode=ro; writes run in one IMMEDIATE transaction."""
+    """Open the working copy (WAL mode: readers never block the writer). Reads are query_only; writes run in
+    one IMMEDIATE transaction. timeout=10 is SQLite's busy timeout: wait, don't fail, if the file is locked."""
     if not DB_PATH.exists():
         raise FileNotFoundError(f"Working database not found at {DB_PATH}. Run scripts/reset_db.py first.")
-    if write:
-        conn = sqlite3.connect(DB_PATH, timeout=10, isolation_level=None)
-    else:
-        conn = sqlite3.connect(f"file:{DB_PATH.as_posix()}?mode=ro", uri=True, timeout=10)
+    conn = sqlite3.connect(DB_PATH, timeout=10, isolation_level=None if write else "")
+    if not write:
+        conn.execute("PRAGMA query_only = ON")  # read connections cannot write (WAL-safe stand-in for mode=ro)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     try:
@@ -208,6 +225,7 @@ def _negotiation_view(conn, n) -> dict:
         "seller_id": n["seller_id"], "buyer_id": n["buyer_id"], "qty": n["qty"], "status": n["status"],
         "rounds_used": n["rounds_used"], "max_rounds": n["max_rounds"], "next_to_move": next_side,
         "agreed_price": agreed, "end_reason": n["end_reason"], "offers": offers,
+        "final_offer_pending": n["status"] == "open" and n["rounds_used"] >= n["max_rounds"],
     }
 
 
@@ -230,13 +248,23 @@ def lookup_part(query: str, limit: int = 8) -> dict:
     manufacturer, family or description. Returns new price, scrap value, hazmat, shelf life and the
     platforms each part fits. Use it to turn a seller's messy text into an exact catalog part number."""
     q = _norm(query)
-    words = [w for w in re.split(r"\W+", query.lower()) if len(w) > 1]
+    stop = {"for", "the", "and", "with", "new", "used", "qty", "ea", "each", "of", "in", "x"}
+    words = [w for w in re.split(r"[^a-z0-9.]+", query.lower()) if len(w) > 1 and w not in stop]
     with _db() as conn:
         parts = [dict(r) for r in conn.execute("SELECT * FROM part_catalog")]
         exact = [p for p in parts if _norm(p["part_number"]) == q]
         partial = [p for p in parts if q and len(q) >= 4 and q in _norm(p["part_number"]) and p not in exact]
-        text = [p for p in parts if p not in exact and p not in partial and words and all(
-            w in f"{p['part_number']} {p['manufacturer']} {p['family']} {p['description']}".lower() for w in words)]
+        # word search: rank by how many query words appear (prefixes count: "hypo" finds "hypochlorite")
+        scored = []
+        for p in parts:
+            if p in exact or p in partial:
+                continue
+            hay = f"{p['part_number']} {p['manufacturer']} {p['family']} {p['description']}".lower()
+            n = sum(w in hay for w in words)
+            if n:
+                scored.append((n, p))
+        best = max((n for n, _ in scored), default=0)
+        text = [p for n, p in sorted(scored, key=lambda x: -x[0]) if n >= max(1, best - 1)]
         hits = (exact + partial + text)[:max(1, min(limit, 20))]
         for p in hits:
             p["fits_platforms"] = _fits(conn, p["part_number"])
@@ -257,16 +285,17 @@ def get_compatibility(part_number: str) -> dict:
                 "can_substitute_for": subs_for, "can_be_replaced_by": replaced_by}
 
 
-def get_price_reference(part_number: str) -> dict:
-    """Price facts for a part: new (list) price, scrap value, current asks on active listings and
-    approved deal prices. Use these numbers for pricing; do not invent market prices."""
+def get_price_reference(part_number: str, exclude_listing_id: int | None = None) -> dict:
+    """Price facts for a part: new (list) price, scrap value, current asks on OTHER active listings
+    (pass exclude_listing_id for the listing being priced) and approved deal prices. Use these numbers for
+    pricing; do not invent market prices."""
     with _db() as conn:
         p = conn.execute("SELECT * FROM part_catalog WHERE part_number=?", (part_number,)).fetchone()
         if not p:
             return _fail(f"Unknown part number {part_number}. Use lookup_part first.", "unknown_part")
         asks = [dict(r) for r in conn.execute(
             "SELECT id AS listing_id, condition, asking_price FROM listings WHERE part_number=? AND status='active' "
-            "AND asking_price IS NOT NULL", (part_number,))]
+            "AND asking_price IS NOT NULL AND id != ?", (part_number, exclude_listing_id or 0))]
         deals = [dict(r) for r in conn.execute(
             "SELECT d.price, d.qty, d.decided_at FROM deals d JOIN listings l ON l.id=d.listing_id "
             "WHERE l.part_number=? AND d.status='approved'", (part_number,))]
@@ -657,10 +686,10 @@ def submit_offer(action: str, price: float | None = None, message: str = "") -> 
         expected = "seller" if not offers else ("buyer" if offers[-1]["from_side"] == "seller" else "seller")
         if side != expected:
             return _fail(f"It is the {expected}'s turn.", "not_your_turn")
-        if n["rounds_used"] >= n["max_rounds"]:
-            conn.execute("UPDATE negotiations SET status='round_cap', end_reason=? WHERE id=?",
-                         (f"round cap of {n['max_rounds']} reached", n["id"]))
-            return _fail("Round cap reached. The negotiation is over.", "round_cap")
+        at_cap = n["rounds_used"] >= n["max_rounds"]
+        if at_cap and action == "offer":  # the last offer may only be accepted or declined, never countered
+            return _fail(f"The round cap ({n['max_rounds']} offers) is reached: you may only accept the final offer "
+                         "or walk away.", "round_cap")
         limit = _my_limit(conn, n)
         if limit is None:
             return _fail("Your private limit is missing.", "missing_private_limit")
@@ -680,6 +709,9 @@ def submit_offer(action: str, price: float | None = None, message: str = "") -> 
                     "price": final_price, "end_reason": reason}
 
         if action == "walk_away":
+            if at_cap:
+                return close("round_cap", f"round cap of {n['max_rounds']} reached; {side} declined the final offer",
+                             "walk_away", None)
             return close("walked_away", f"{side} walked away", "walk_away", None)
 
         if action == "accept":
@@ -713,12 +745,64 @@ def submit_offer(action: str, price: float | None = None, message: str = "") -> 
 
         conn.execute("INSERT INTO offers (negotiation_id, round, from_side, price, qty, message, action, created_at) "
                      "VALUES (?,?,?,?,?,?, 'offer', ?)", (n["id"], rnd, side, price, n["qty"], message, _now()))
-        status, reason = "open", None
-        if rnd >= n["max_rounds"]:
-            status, reason = "round_cap", f"round cap of {n['max_rounds']} reached without agreement"
-        conn.execute("UPDATE negotiations SET rounds_used=?, status=?, end_reason=? WHERE id=?", (rnd, status, reason, n["id"]))
+        # Reaching the cap does not close the negotiation yet: the other side gets one last move,
+        # and may only accept this final offer or decline it (walk_away -> status round_cap).
+        reason = (f"round cap of {n['max_rounds']} reached: final offer, the other side may only accept or decline"
+                  if rnd >= n["max_rounds"] else None)
+        conn.execute("UPDATE negotiations SET rounds_used=?, end_reason=? WHERE id=?", (rnd, reason, n["id"]))
         return {"ok": True, "negotiation_id": n["id"], "round": rnd, "action": "offer", "price": price,
-                "status": status, "rounds_left": n["max_rounds"] - rnd, "end_reason": reason}
+                "status": "open", "rounds_left": max(n["max_rounds"] - rnd, 0), "final_offer": rnd >= n["max_rounds"],
+                "end_reason": reason}
+
+
+def walk_away(reason: str = "") -> dict:
+    """End YOUR negotiation without a deal, e.g. when the other side's offers can't meet your limit.
+    Allowed on your turn. `reason` is shown to the other side, so it must not contain your limit."""
+    return submit_offer("walk_away", None, reason)
+
+
+def end_negotiation(negotiation_id: int, reason: str) -> dict:
+    """BROKER safety stop: close an open negotiation that is stuck (e.g. an agent keeps failing to make a
+    valid move). Status becomes 'stopped'; no deal is created."""
+    with _db(write=True) as conn:
+        n = conn.execute("SELECT * FROM negotiations WHERE id=?", (negotiation_id,)).fetchone()
+        if not n:
+            return _fail(f"No negotiation {negotiation_id}.", "not_found")
+        if n["status"] != "open":
+            return _fail(f"Negotiation is '{n['status']}', not open.", "closed")
+        conn.execute("UPDATE negotiations SET status='stopped', end_reason=? WHERE id=?",
+                     (f"stopped by broker: {reason}"[:300], negotiation_id))
+        return {"ok": True, "negotiation_id": negotiation_id, "status": "stopped"}
+
+
+def get_company_profile(company_id: int | None = None) -> dict:
+    """A company's profile: location, industry, installed equipment (platform, qty, years in use), open
+    needs and active listings, so match reasons can be specific ("runs 4x Siemens S7-300, 18 yrs").
+    Negotiators may read only their OWN company (the default)."""
+    with _db() as conn:
+        if ROLE in ("seller_agent", "buyer_agent"):
+            if not BOUND_NEGOTIATION:
+                return _fail("This negotiator process is not bound to a negotiation.", "not_bound")
+            n = conn.execute("SELECT seller_id, buyer_id FROM negotiations WHERE id=?", (BOUND_NEGOTIATION,)).fetchone()
+            own = n["seller_id"] if ROLE == "seller_agent" else n["buyer_id"]
+            if company_id not in (None, own):
+                return _fail("You can only read your own company's profile.", "not_your_company")
+            company_id = own
+        if company_id is None:
+            return _fail("company_id is required.", "invalid_field")
+        c = conn.execute("SELECT * FROM companies WHERE id=?", (company_id,)).fetchone()
+        if not c:
+            return _fail(f"No company {company_id}.", "not_found")
+        return {
+            "ok": True, "company_id": c["id"], "name": c["name"], "type": c["type"],
+            "location": f"{c['city']}, {c['state']}", "industry": c["industry"],
+            "installed_equipment": [dict(r) for r in conn.execute(
+                "SELECT platform, qty, years_in_use FROM installed_equipment WHERE company_id=? ORDER BY platform", (company_id,))],
+            "open_needs": [_public_need(_need_row(conn, r[0])) for r in conn.execute(
+                "SELECT id FROM needs WHERE buyer_id=? AND status='open'", (company_id,))],
+            "active_listing_ids": [r[0] for r in conn.execute(
+                "SELECT id FROM listings WHERE seller_id=? AND status='active'", (company_id,))],
+        }
 
 
 # --------------------------------------------------------------------------- human approver
@@ -873,17 +957,60 @@ VIEWS = [list_listings, list_needs, list_matches, list_negotiations, list_deals,
 ROLE_TOOLS = {
     "broker": COMMON + [create_listing, update_listing_draft, check_listing_rules, activate_listing, flag_listing,
                         create_need, search_buyers_for_listing, search_listings_for_need, list_buyer_profiles,
-                        record_matches, open_negotiation, get_negotiation, request_deal_approval] + VIEWS,
-    "seller_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer],
-    "buyer_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer],
+                        record_matches, open_negotiation, get_negotiation, end_negotiation, request_deal_approval,
+                        get_company_profile] + VIEWS,
+    "seller_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
+    "buyer_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
     "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal] + VIEWS,
-    "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary] + VIEWS,
+    "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary, get_company_profile] + VIEWS,
 }
 WRITE_TOOLS = {create_listing, update_listing_draft, activate_listing, flag_listing, create_need, record_matches,
-               open_negotiation, request_deal_approval, submit_offer, approve_deal, reject_deal, log_tokens}
+               open_negotiation, end_negotiation, request_deal_approval, submit_offer, walk_away, approve_deal,
+               reject_deal, log_tokens}
 
 for _fn in ROLE_TOOLS[ROLE]:
     mcp.tool(annotations=WRITES if _fn in WRITE_TOOLS else READ_ONLY)(_fn)
+
+
+# --------------------------------------------------------------------------- refused-call log
+
+REFUSED_SCHEMA = """CREATE TABLE IF NOT EXISTS refused_calls (
+    id INTEGER PRIMARY KEY, at TEXT NOT NULL, role TEXT NOT NULL, negotiation_id INTEGER,
+    tool TEXT NOT NULL, code TEXT NOT NULL, message TEXT, args TEXT)"""
+
+
+def _log_refusal(tool: str, code: str, message: str, args: dict | None) -> None:
+    """Write every refused call to refused_calls in the working copy. Never raises."""
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        try:
+            conn.execute(REFUSED_SCHEMA)
+            conn.execute("INSERT INTO refused_calls (at, role, negotiation_id, tool, code, message, args) VALUES (?,?,?,?,?,?,?)",
+                         (_now(), ROLE, BOUND_NEGOTIATION, tool, code, (message or "")[:300], json.dumps(args or {})[:500]))
+            conn.commit()
+        finally:
+            conn.close()
+    except Exception as e:  # noqa: BLE001 - logging must never break a tool call
+        print(f"[surplus-exchange] could not log refused call: {e}", file=sys.stderr)
+
+
+class RefusalLog(Middleware):
+    """Logs (1) calls to tools that don't exist in this role and (2) calls the tools refused in code
+    (ok: false, e.g. outside_your_limit, compliance_blocked)."""
+
+    async def on_call_tool(self, context: MiddlewareContext, call_next):
+        name, args = context.message.name, context.message.arguments
+        if name not in {f.__name__ for f in ROLE_TOOLS[ROLE]}:
+            _log_refusal(name, "not_in_role", f"'{name}' is not available to role '{ROLE}'", args)
+        result = await call_next(context)
+        data = getattr(result, "structured_content", None)
+        data = data.get("result", data) if isinstance(data, dict) else None
+        if isinstance(data, dict) and data.get("ok") is False:
+            _log_refusal(name, str(data.get("code", "refused")), data.get("message", ""), args)
+        return result
+
+
+mcp.add_middleware(RefusalLog())
 
 if __name__ == "__main__":
     mcp.run(show_banner=False)

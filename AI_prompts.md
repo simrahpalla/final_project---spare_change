@@ -100,7 +100,139 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 ### What was missing
 
-- Nothing — completed with the initial prompt.
+- It didn't say the smoke test would be slow on my machine (about 15 server processes start one after another), so the first run looked stuck.
+- It didn't list a few tools I wanted. They were added in Phase 3: a dedicated `walk_away`, `end_negotiation` and `get_company_profile`.
+
+### Follow-up prompt(s)
+
+> i tried to run it but it didnt work
+
+> here - is this fine
+
+## Phase 3 — The Agents
+
+### Initial prompt
+
+> yes start phase 3 but during it, can you also add these few tools that I feel we are missing and test them too
+>
+> *(attached table)* `get_negotiation_state` (seller_agent, buyer_agent): negotiators need the offer history, round number and status, hiding the other side's limit · `walk_away` (or `end_negotiation`) (seller_agent, buyer_agent): `submit_offer` is the only way to act, so an agent can't decline · `save_matches` (broker): matching results must reach the `matches` table · `get_listing` / `get_buyer_profile` (broker, negotiators own side only): specific match reasons ("runs 4 S7-300 lines")
+
+### What was missing
+
+- It didn't account for tools that already existed under other names (`get_negotiation` = `get_negotiation_state`, `record_matches` = `save_matches`), so only the missing ones were added: `walk_away`, `end_negotiation` and `get_company_profile`.
+- It didn't ask for a broad test of the agents. The happy-path sample was small, so a stress test followed.
+
+### Follow-up prompt(s)
+
+> Try again
+
+> here 0 is this fine? if so, save them. wait to commit phase 3 till i say so
+
+> Phase 3 works on the happy path, but the sample is small. Before Phase 4, I want to pressure test the agents. Don't change agent designs until you've reported results to me.
+>
+> Write scripts/stress_phase3.py and save the results to output/phase3_stress.json and a readable output/phase3_stress.md. Include:
+>
+> 1. Coverage: run EVERY listing through the seller flow. Score extracted fields and top-1/top-3 matches against data/answer_keys.json. List each failure with the reason.
+> 2. Messy inputs: typos, no part number, two items in one paste, gibberish, empty input, a very long paste. The app should ask for clarification or report low confidence, never crash or confidently make things up.
+> 3. Made-up facts: a part number not in the catalog should come back as unknown, not invented specs. Check every match reason against the DB and flag any claim that isn't true in the data.
+> 4. Bad records: injection, expired chemical, hazmat with no SDS, overpriced. Confirm they're blocked at compliance and that matching and pricing never run (check the audit trail). Confirm obvious cases are blocked by code with no model call.
+> 5. Negotiation variance: run each negotiation pair 3 times. Report outcome consistency, rounds, and final prices, and confirm offers only move one way and never break a limit.
+> 6. Leak check: scan every negotiation message for the other side's private floor or ceiling. Include a buyer message trying to extract the seller's floor.
+> 7. Caps: rerun with MAX_NEGOTIATION_ROUNDS=2 and MAX_MODEL_REQUESTS=3. It should stop gracefully with a logged reason.
+> 8. Permissions: try calling tools outside each agent's role, including approve_deal. Should be refused and logged.
+> 9. Failures: simulate a model timeout and malformed output. Should retry once, then return a friendly error.
+> 10. Record tokens and cost per test so we can spot expensive outliers.
+>
+> Give me a PASS/FAIL table with a proposed fix for each FAIL, then stop. Log this prompt in AI_prompts.md.
+
+> do we need the full stress test? can we just do it for a few of each type without messing up the quality
+
+> hows the progress
+
+> fix all 6 - but is there anything we can do to fix that extra finding about the 5 seconds and it being slow on the onedrive? is that something that will get sorted when we publish to github
+
+> The 30s timeout is fine for startup, but I don't want it to be the main fix. Please do the process reuse now, not in Phase 4:
+> - Start the MCP server once at backend startup (FastAPI lifespan) with one persistent connection per role. All runs reuse it. Keep the 30s timeout only for that first startup, and show a "Starting up…" state in the UI until it's ready.
+> - Per-call timeout of about 15s with one automatic reconnect, then a friendly error. Log every reconnect in the audit trail.
+> - Make concurrent calls safe: a lock or small queue on the shared connection, and SQLite in WAL mode.
+> - Rerun the concurrency test (2 at once and 6 at once, same as before) and report crash counts before vs. after in output/phase3_stress.md.
+> Log this prompt in AI_prompts.md.
+>
+> before you do it - does this seem like a reasonable fix?
+
+> Yes, do the process reuse with your four adjustments: negotiator processes per negotiation (reused across its turns), a lock only around connection use/reconnect, WAL on the working copy only with -wal/-shm ignored, and the concurrency test run through the backend API. Log my prompt.
+
+> in the meantime - can I give you some instructions on design to include in phase 4 - we wont start phase 4 yet but just want you to get more familiar with my design vision
+
+## Phase 4 — Design Direction (Spare Change)
+
+### Initial prompt
+
+> Phase 4: before building any frontend, set the design direction and write it to output/design.md. Don't code screens until I approve it.
+>
+> use the design guidelines here as the direction overriding and replacing any design features that were in the agents.md
+>
+> BRAND
+> - Name: Spare Change. Tagline: "Turn spare parts into spare change."
+> - Logo: a small orange circle with a white "¢" next to the "Spare Change" wordmark.
+> - Update the name everywhere: CLAUDE.md, README, page titles, design.md.
+>
+> STYLE (Workshop direction)
+> - Clean B2B operations tool that feels credible to a plant manager or procurement lead, like Stripe's dashboard or Linear, with the spec density of McMaster-Carr for part details.
+> - White background, generous spacing, thin borders (#D5DCE5), 8px corners, no gradients or heavy shadows. Clean sans-serif (Inter or the system font), with monospace only for part numbers.
+> - Colors:
+>   - Navy #0C2340: top nav and structure
+>   - Safety orange #F97316: the ONE accent, for primary buttons, match scores and suggested price
+>   - Green #3B6D11 on #EAF3DE: only "compliance passed" / "deal approved"
+>   - Red: only "blocked"
+>   - Teal #0F766E on #E6F4F1 with a leaf icon: only sustainability/impact numbers, so impact never gets confused with status
+>   - Everything else in grays
+>
+> LAYOUT
+> - Top nav: logo and wordmark, tabs Sell | Wanted | Marketplace | Negotiations, and an alerts bell.
+> - Main content on the left. A fixed right rail with:
+>   1. Live agent activity (each agent step with a check mark, a spinner, or "blocked")
+>   2. Cost meter (tokens, $ for this run, % cached, session budget bar)
+>   3. Impact this session (teal): $ recovered vs. scrap value, kg kept out of scrap, est. kg CO2e avoided
+>
+> SUSTAINABILITY LAYER (keep it subtle, not a green theme)
+> - On every listing result, show a teal impact strip: "Recovers $X vs. $Y scrap · Z kg kept out of scrap · est. N kg CO2e avoided".
+> - For near-expiry chemicals, also show "hazardous waste disposal avoided: est. $X".
+> - On the deal card after approval: "This deal recovered $X and avoided est. N kg CO2e."
+> - Add a small impact summary at the top of the Marketplace tab: total value recovered, kg diverted, CO2e avoided across all deals.
+> - Numbers must come from data, never be made up by the LLM. Calculate them in code from the catalog:
+>   - Add weight_kg to part_catalog, and a carbon_factors table: part family, kg CO2e per kg (or per unit), source, notes.
+>   - Use clearly labeled placeholder factors for now. I'll replace them with researched, sourced values in Phase 10.
+>   - Label every CO2 figure "est." with an info tooltip explaining the method: avoided manufacturing emissions of a new part, minus nothing else for now.
+>   - Document the method in design.md and harness.md.
+>
+> SCREENS (sketch all four in design.md so Phases 5 and 6 fit the same structure)
+> 1. Sell: a one-line explanation of the app at the top, a paste box, "Try:" example chips (Siemens PLC, expired solvent, injection test), and a "Find buyers" button. Then:
+>    - listing card (part number in monospace, specs, compliance badge)
+>    - top 3 buyer matches, each with a score and a one-line reason
+>    - price cards (new / suggested ask / scrap)
+>    - impact strip
+>    - drafted outreach email with a copy button
+> 2. Wanted: buyer posts a need, sees matched listings.
+> 3. Marketplace: impact summary on top, then two columns (available surplus | wanted) with match badges.
+> 4. Negotiations: chat bubbles (seller left, buyer right), price-by-round line chart, round counter, and a deal card with Approve / Reject plus its impact line.
+>
+> UX RULES
+> - A first-time user understands the page in 10 seconds.
+> - Loading states name the agent that's working ("Matching agent finding buyers…"), not a generic spinner.
+> - Blocked listings show a clear red card explaining why, and skip the downstream steps visually.
+> - Friendly empty states and errors, never raw error text.
+> - Sentence case and consistent spacing everywhere.
+> - Must look good at laptop width (1280–1440px), since screenshots go in the report and slides.
+>
+> Show me design.md and a first-screen mockup, then stop for my feedback. Log this prompt in AI_prompts.md.
+>
+> you dont need to do any of the updates to files yet if its better to commit phase 3 first but if there are things you can do now, do them
+
+### What was missing
+
+- It didn't account for contrast: white text on #F97316 is 2.8:1, below the 4.5:1 accessibility minimum, so the button text colour had to be decided.
+- It didn't give colours for states other than passed, approved and blocked ("held for review", "needs clarification"), or for the two lines of the price chart.
 
 ### Follow-up prompt(s)
 

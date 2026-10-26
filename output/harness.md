@@ -9,7 +9,7 @@ Surplus Exchange is a marketplace for industrial surplus that AI agents run. A p
 
 A human approves every deal. All agents call `gpt-6-luna` through Portkey. An **MCP server** is the only path to the database, a **FastAPI** backend runs the agents, and a **React** dashboard shows everything.
 
-*This file grows phase by phase. Sections for agents (Phase 3) and safety (Phase 8) are added as they are built.*
+*This file grows phase by phase. The safety section (Phase 8) is added when it is built.*
 
 ---
 
@@ -114,11 +114,11 @@ The first run on the original Phase 1 data passed **3/11**. That report is saved
 
 | Role | Tools | Can | Cannot |
 |---|---|---|---|
-| `broker` | 25 | Build and correct listings and needs, run the compliance rules, activate or flag, search both directions, record matches, open negotiations, request approval | Read any private limit, make offers, approve deals |
-| `seller_agent` | 9 | Read **its own** floor, see **its own** negotiation, make offers | See the buyer's ceiling or any other negotiation, approve |
-| `buyer_agent` | 9 | Read **its own** ceiling and downtime cost, see its own negotiation, make offers | See the seller's floor, approve |
+| `broker` | 27 | Build and correct listings and needs, run the compliance rules, activate or flag, search both directions, read company profiles, record matches, open negotiations, stop a stuck one, request approval | Read any private limit, make offers, approve deals |
+| `seller_agent` | 11 | Read **its own** floor and company profile, see **its own** negotiation, make offers, walk away | See the buyer's ceiling or any other negotiation, approve |
+| `buyer_agent` | 11 | Read **its own** ceiling, downtime cost and company profile, see its own negotiation, make offers, walk away | See the seller's floor, approve |
 | `human_approver` | 15 | Approve or reject deals (human names only), plus dashboard views | Negotiate |
-| `system` | 16 | Log tokens, token summaries, dashboard views | Negotiate, approve, change listings |
+| `system` | 17 | Log tokens, token summaries, dashboard views | Negotiate, approve, change listings |
 
 **Rules enforced in code:**
 - **Compliance:** rules are shared with the data report through `mcp_server/compliance_rules.py`. `activate_listing` re-runs them and flags a listing that trips one.
@@ -126,9 +126,65 @@ The first run on the original Phase 1 data passed **3/11**. That report is saved
 - **Negotiation (`submit_offer`):** strict turns; no offer outside your own limit; the seller never raises and the buyer never lowers; the round cap is enforced; no message may contain your own limit; crossing offers close the deal.
 - **Approval:** only `approve_deal` closes a deal, it exists only for `human_approver`, and it refuses agent-like names.
 
-**Evidence:** `scripts/mcp_smoke.py` makes 72 real stdio calls across all 5 roles on a scratch copy of the DB. It calls all 31 tools, and every refusal must return its exact error code. Result: **72/72 as expected** (`output/mcp_smoke.json`). It includes one negotiation of each kind:
+**Evidence:** `scripts/mcp_smoke.py` makes 80 real stdio calls across all 5 roles on a scratch copy of the DB. It calls all 34 tools, and every refusal must return its exact error code. Result: **80/80 as expected** (`output/mcp_smoke.json`). It includes one negotiation of each kind:
 - **Deal:** agreed at $1,250, then approved by a human.
 - **Walk-away.**
 - **Round cap:** stopped after 6 offers.
 
 It also includes all six planted bad listings being blocked or held for review.
+
+---
+
+## 3. Agents (Phase 3)
+
+All agents run on **`gpt-6-luna` via Portkey**: the only model allowed on the course key, and the cheapest of the three course models ($0.10 input / $0.01 cached / $0.50 output per 1M tokens). The work is extraction, scoring and short negotiation turns, so a small model is enough. Each agent returns a **typed Pydantic output** (`backend/models.py`), and each has its own prompt file in `backend/prompts/`.
+
+**The broker is plain Python, not an LLM** (`backend/agents.py`). It runs every event through fixed steps and uses code wherever code is enough. The model is called only where judgment is needed:
+
+```
+seller text ──► [code] injection pre-screen ──blocked──► flagged (0 tokens)
+             └► listing_agent (LLM + lookup_part) ──► save listing (server validates part number, derives expiry)
+             └► [code] compliance rules ──blocked/review──► flagged (no further model calls)
+             └► compliance_guard (LLM, edge cases) ──flag──► flagged
+             └► [code] activate ──► [code] SQL buyer pre-filter (top 10, grounded) ──none──► "no buyers" (no model call)
+             └► matching_agent (LLM scores ≤10 candidates) ──► [code] record_matches rejects ungrounded buyers
+             └► pricing_agent (LLM, facts from code) ──► [code] clamp ask to [scrap, new], floor ≤ ask
+             └► outreach email to the top buyer (from matching_agent)
+
+negotiation ──► [code] open ──► seller_negotiator ⇄ buyer_negotiator  (each in its OWN MCP process, own limit only)
+             └► [code] submit_offer rules ──► agreed → request_deal_approval → HUMAN Approve
+                                          └► walk_away / round_cap / broker end_negotiation (2 failed turns)
+```
+
+| Agent | Input → output | Tools | Notes |
+|---|---|---|---|
+| `listing_agent` | Seller text (wrapped in `<seller_text>`) → `ListingDraft` | `lookup_part`, `get_compatibility` | Never invents a part number or a price. Gives `manufacture_date` and lets the server compute the expiry |
+| `compliance_guard` | Structured listing + wrapped text → `GuardReview` | none (data in prompt) | Runs only after the code rules pass. Handles edge cases only |
+| `matching_agent` | Listing + pre-filtered candidates → `MatchResult` (≤3 + outreach) | none | Can only rank candidates that code already grounded |
+| `pricing_agent` | Price facts from code → `PriceSuggestion` | none | The ask and floor are clamped in code |
+| `seller_negotiator` | Public negotiation state → one move | `get_my_private_terms`, `submit_offer`, `walk_away` | Its process is bound to one negotiation and sees only the floor |
+| `buyer_negotiator` | Public negotiation state → one move | same | Sees only the ceiling and downtime cost. Concedes faster when the line is down |
+
+**Caps and evidence:**
+- Every agent call is capped at 8 requests and 10 tool calls.
+- Every run is capped by `MAX_MODEL_REQUESTS` (30) and `MAX_TOKENS_PER_RUN` (150k). A run won't start once the session has spent `SESSION_BUDGET_USD`.
+- Every call writes a `token_usage` row (input, cached, cache-write and output tokens, plus cost) and audit entries for each tool call and result.
+- Every run is saved to `output/runs/<run_id>.json`.
+
+### Real runs (`backend/run_flow.py`)
+
+| Run | Result | Answer key | Requests | Cost |
+|---|---|---|---|---|
+| Listing 1: S7-300 CPU | Allowed → Riverbend Foods #1 (line down, $12k/day) → ask $1,425 / floor $1,000 → outreach email | 6/6 fields, top buyer ✓ | 5 | $0.00073 |
+| Listing 12: 1756-EN2T | Ironclad Castings #1 through **ENBT → EN2T substitute** | 6/6, top buyer ✓ | 5 | $0.00095 |
+| Listing 4: CR 32 seal kit | Clearwater #1. Its need names only "CR 32 pumps" | 6/6, top buyer ✓ | 5 | $0.00086 |
+| Listing 19: Mitsubishi CPU | Allowed, **no buyers → no matching model call** | 6/6 | 4 | $0.00060 |
+| Listing 22: prompt injection | **Blocked by the code pre-screen, 0 model calls** | ✓ | 0 | $0 |
+| Listing 26: bleach, mfd date only | Agent read `mfd 03/15/2026`, server derived expiry 2026-09-15, **blocked** | 6/6 ✓ | 2 | $0.00032 |
+| Listing 27: "new sealed" L61 | **Held for human review** (counterfeit risk) | 6/6 ✓ | 2 | $0.00031 |
+| New text (seller 7, CR 15 kits) | Created listing #28 → Tidewater #1 (open need #20) | — | 5 | $0.00102 |
+| Negotiation listing 1 / need 1 | Seller $1,400 → line-down buyer **accepts** → deal pending human approval | deal ✓ | 6 | $0.00086 |
+| Negotiation listing 3 / need 3 | 6 offers, the buyer stays under its $715 ceiling → **buyer walks away** | walk away ✓ | 19 | $0.00290 |
+| Negotiation listing 5 / need 5 | $2,875 / $2,200 / $2,600 / $2,300 → seller accepts **$2,300** (inside the $2,210–$2,340 range) | deal ✓ | 15 | $0.00240 |
+
+**A bug found and fixed while testing:** the first run of listing 26 stopped at "part not identified". `lookup_part` required *every* word of the query to match, so "sodium hypo … bleach" found nothing. The word search now ranks parts by how many words match. The rerun found the part and blocked the expired drums. Both runs are kept in `output/runs/`.

@@ -16,6 +16,7 @@ import asyncio
 import json
 import os
 import shutil
+import sqlite3
 import stat
 import sys
 import tempfile
@@ -82,11 +83,11 @@ async def run(smoke: Smoke) -> None:
 
     # ---- tools per role (role isolation is by registration: absent tools can't be called)
     for role in ("broker", "seller_agent", "buyer_agent", "human_approver", "system"):
-        async with Client(S.transport(role, 1 if role.endswith("_agent") else None)) as c:
+        async with Client(init_timeout=30, transport=S.transport(role, 1 if role.endswith("_agent") else None)) as c:
             S.tools_by_role[role] = sorted(t.name for t in await c.list_tools())
 
     # ---- broker: reads
-    async with Client(S.transport("broker")) as b:
+    async with Client(init_timeout=30, transport=S.transport("broker")) as b:
         await S.call(b, "broker", "get_exchange_date", {}, "ok", "exchange 'today' comes from the DB, not the clock")
         await S.call(b, "broker", "lookup_part", {"query": "6ES7 315-2AG10"}, "ok", "messy part number -> exact catalog part")
         await S.call(b, "broker", "lookup_part", {"query": "CR 15 seal"}, "ok", "word search finds the CR 15 seal kit")
@@ -94,6 +95,7 @@ async def run(smoke: Smoke) -> None:
         await S.call(b, "broker", "get_price_reference", {"part_number": "1756-L61"}, "ok", "new price, scrap value, current asks")
         await S.call(b, "broker", "get_listing", {"listing_id": 1}, "ok", "public listing: no floor price in it")
         await S.call(b, "broker", "get_need", {"need_id": 1}, "ok", "public need: no ceiling price in it")
+        await S.call(b, "broker", "get_company_profile", {"company_id": 20}, "ok", "buyer profile: runs 4x Siemens S7-300 (18 yrs)")
 
         # ---- broker: a new listing end to end (fills the open CR 15 need #20 -> two-sided alert)
         new = await S.call(b, "broker", "create_listing", {
@@ -137,11 +139,16 @@ async def run(smoke: Smoke) -> None:
         n2 = (await S.call(b, "broker", "open_negotiation", {"listing_id": 3, "need_id": 3}, "ok", "listing 3 / need 3 (no overlap)"))["negotiation_id"]
         n3 = (await S.call(b, "broker", "open_negotiation", {"listing_id": 5, "need_id": 5}, "ok", "listing 5 / need 5 (narrow overlap)"))["negotiation_id"]
         await S.call(b, "broker", "open_negotiation", {"listing_id": 1, "need_id": 1}, "refused", "no duplicate negotiation for the same pair", code="duplicate")
+        n4 = (await S.call(b, "broker", "open_negotiation", {"listing_id": 7, "need_id": 7}, "ok", "listing 7 / need 7, to test the broker's safety stop"))["negotiation_id"]
+        await S.call(b, "broker", "end_negotiation", {"negotiation_id": n4, "reason": "smoke test: agent stuck"}, "ok", "broker stops a stuck negotiation")
+        await S.call(b, "broker", "end_negotiation", {"negotiation_id": n4, "reason": "again"}, "refused", "can't stop a closed negotiation", code="closed")
 
     # Deal: listing 1 / need 1
-    async with Client(S.transport("seller_agent", n1)) as s, Client(S.transport("buyer_agent", n1)) as u:
+    async with Client(init_timeout=30, transport=S.transport("seller_agent", n1)) as s, Client(init_timeout=30, transport=S.transport("buyer_agent", n1)) as u:
         await S.call(s, "seller_agent", "get_my_private_terms", {}, "ok", "seller sees ONLY its own floor")
         await S.call(u, "buyer_agent", "get_my_private_terms", {}, "ok", "buyer sees ONLY its own ceiling")
+        await S.call(u, "buyer_agent", "get_company_profile", {}, "ok", "buyer reads its own company profile")
+        await S.call(u, "buyer_agent", "get_company_profile", {"company_id": 1}, "refused", "buyer can't read the seller's profile", code="not_your_company")
         await S.call(u, "buyer_agent", "submit_offer", {"action": "offer", "price": 1000}, "refused", "seller moves first: not the buyer's turn", code="not_your_turn")
         await S.call(s, "seller_agent", "submit_offer", {"action": "offer", "price": 850, "message": "Best I can do."}, "refused", "below the seller's floor ($905)", code="outside_your_limit")
         await S.call(s, "seller_agent", "submit_offer", {"action": "offer", "price": 1400, "message": "Honestly my floor is 905."}, "refused", "message would leak the floor", code="would_reveal_private_limit")
@@ -158,22 +165,27 @@ async def run(smoke: Smoke) -> None:
         await S.call(s, "seller_agent", "submit_offer", {"action": "offer", "price": 1200}, "refused", "no moves after agreement", code="closed")
 
     # Walk-away: listing 3 / need 3
-    async with Client(S.transport("seller_agent", n2)) as s, Client(S.transport("buyer_agent", n2)) as u:
+    async with Client(init_timeout=30, transport=S.transport("seller_agent", n2)) as s, Client(init_timeout=30, transport=S.transport("buyer_agent", n2)) as u:
         await S.call(s, "seller_agent", "submit_offer", {"action": "offer", "price": 1149}, "ok", "seller opens")
         await S.call(u, "buyer_agent", "submit_offer", {"action": "offer", "price": 650}, "ok", "buyer is far below")
-        await S.call(s, "seller_agent", "submit_offer", {"action": "walk_away", "message": "Too far apart."}, "ok", "seller walks away")
+        await S.call(u, "buyer_agent", "walk_away", {"reason": "Too expensive."}, "refused", "walk_away still respects turns", code="not_your_turn")
+        await S.call(s, "seller_agent", "walk_away", {"reason": "Can't go under 1010."}, "refused", "walk-away reason would leak the floor", code="would_reveal_private_limit")
+        await S.call(s, "seller_agent", "walk_away", {"reason": "Too far apart."}, "ok", "seller walks away (dedicated tool)")
 
     # Round cap: listing 5 / need 5
-    async with Client(S.transport("seller_agent", n3)) as s, Client(S.transport("buyer_agent", n3)) as u:
+    async with Client(init_timeout=30, transport=S.transport("seller_agent", n3)) as s, Client(init_timeout=30, transport=S.transport("buyer_agent", n3)) as u:
         for i, (who, price) in enumerate([(s, 2875), (u, 2000), (s, 2850), (u, 2030), (s, 2825), (u, 2060)]):
             role = "seller_agent" if who is s else "buyer_agent"
             last = i == 5
             await S.call(who, role, "submit_offer", {"action": "offer", "price": price}, "ok",
                          "6th offer hits the round cap" if last else f"offer {i + 1} of {MAX_ROUNDS}")
-        await S.call(s, "seller_agent", "submit_offer", {"action": "offer", "price": 2800}, "refused", "round cap: negotiation is closed", code="closed")
+        await S.call(s, "seller_agent", "submit_offer", {"action": "offer", "price": 2800}, "refused",
+                     "round cap: the final offer can't be countered", code="round_cap")
+        await S.call(s, "seller_agent", "walk_away", {"reason": "Can't do 2,060."}, "ok", "seller declines the final offer -> status round_cap")
+        await S.call(s, "seller_agent", "submit_offer", {"action": "accept"}, "refused", "no moves after the cap closes", code="closed")
 
     # ---- deal approval: broker requests, only a human approves
-    async with Client(S.transport("broker")) as b:
+    async with Client(init_timeout=30, transport=S.transport("broker")) as b:
         deal = await S.call(b, "broker", "request_deal_approval", {"negotiation_id": n1}, "ok", "agreed -> pending human approval")
         await S.call(b, "broker", "request_deal_approval", {"negotiation_id": n2}, "refused", "a walked-away negotiation can't become a deal", code="wrong_status")
         await S.call(b, "broker", "get_negotiation", {"negotiation_id": n3}, "ok", "round-cap negotiation shows status round_cap")
@@ -182,13 +194,13 @@ async def run(smoke: Smoke) -> None:
                            ("list_notifications", {"company_id": 39})]:
             await S.call(b, "broker", tool, args, "ok", "dashboard view")
     deal_id = deal["deal"]["id"]
-    async with Client(S.transport("human_approver")) as h:
+    async with Client(init_timeout=30, transport=S.transport("human_approver")) as h:
         await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "seller_negotiator"}, "refused", "agent names can't approve", code="invalid_approver")
         await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "Simrah Palla", "note": "smoke test"}, "ok", "a human approves: deal closes")
         await S.call(h, "human_approver", "reject_deal", {"deal_id": deal_id, "approver": "Simrah Palla"}, "refused", "an approved deal can't be rejected afterwards", code="not_pending")
 
     # ---- system: token logging
-    async with Client(S.transport("system")) as y:
+    async with Client(init_timeout=30, transport=S.transport("system")) as y:
         await S.call(y, "system", "log_tokens", {"run_id": "smoke", "run_kind": "check", "agent": "smoke_test", "model": "gpt-6-luna",
                                                  "input_tokens": 30, "output_tokens": 33, "cost_usd": 0.0000195}, "ok", "write one token_usage row")
         await S.call(y, "system", "get_token_summary", {"run_id": "smoke"}, "ok", "token totals for a run")
@@ -203,6 +215,10 @@ def main() -> int:
         os.chmod(db, stat.S_IWRITE | stat.S_IREAD)
         smoke = Smoke(db)
         asyncio.run(run(smoke))
+        con = sqlite3.connect(db)
+        smoke.refused_logged = [dict(zip(("role", "tool", "code"), r)) for r in con.execute(
+            "SELECT role, tool, code FROM refused_calls ORDER BY id")]
+        con.close()
 
     all_tools = sorted({t for tools in smoke.tools_by_role.values() for t in tools})
     called = {c["tool"] for c in smoke.calls if c["tool"] in all_tools}
@@ -215,6 +231,9 @@ def main() -> int:
         "max_negotiation_rounds": MAX_ROUNDS,
         "tools_by_role": smoke.tools_by_role,
         "access_matrix": {t: [r for r, tools in smoke.tools_by_role.items() if t in tools] for t in all_tools},
+        "refused_calls_logged_by_server": {"count": len(smoke.refused_logged),
+                                           "expected": sum(c["expect"] == "refused" for c in smoke.calls),
+                                           "rows": smoke.refused_logged},
         "summary": {"calls": len(smoke.calls), "passed": passed, "failed": len(smoke.calls) - passed,
                     "tools_registered": len(all_tools), "tools_called": len(called),
                     "tools_never_called": sorted(set(all_tools) - called)},
@@ -224,7 +243,9 @@ def main() -> int:
     s = result["summary"]
     print(f"\n{s['passed']}/{s['calls']} calls behaved as expected; {s['tools_called']}/{s['tools_registered']} tools called "
           f"{'(all)' if not s['tools_never_called'] else 'missing: ' + ', '.join(s['tools_never_called'])}. Saved {OUT.relative_to(REPO)}")
-    return 0 if s["failed"] == 0 and not s["tools_never_called"] else 1
+    rl = result["refused_calls_logged_by_server"]
+    print(f"Server logged {rl['count']}/{rl['expected']} refused calls in refused_calls.")
+    return 0 if s["failed"] == 0 and not s["tools_never_called"] and rl["count"] == rl["expected"] else 1
 
 
 if __name__ == "__main__":

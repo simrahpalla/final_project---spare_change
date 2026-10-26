@@ -1,0 +1,640 @@
+{
+  "generated_at": "2026-10-26T01:41:45+00:00",
+  "before": [
+    {
+      "setup": "process-per-run, 5 s startup timeout",
+      "concurrency": 6,
+      "jobs": 13,
+      "crashes": 12,
+      "source": "first stress attempt: 12/13 'Client failed to connect: Failed to initialize'"
+    },
+    {
+      "setup": "process-per-run, 5 s startup timeout",
+      "concurrency": 2,
+      "jobs": 59,
+      "crashes": 3,
+      "source": "stress run before fixes: 3/59 'MCPError: Connection closed' (output/phase3_stress_before_fixes.md)"
+    }
+  ],
+  "runs": [
+    {
+      "setup": "shared MCP processes via backend API (30 s first start, 15 s per call, 1 reconnect)",
+      "concurrency": 2,
+      "jobs": 27,
+      "ok": 27,
+      "crashes": 0,
+      "friendly_errors": 0,
+      "wall_seconds": 44.9,
+      "median_job_seconds": 1.8,
+      "cost_usd": 0.0211,
+      "crash_details": [],
+      "startup_seconds": 7.2,
+      "mcp_startup_seconds": 2.1,
+      "reconnects": 0,
+      "unavailable": 0,
+      "refused_table": true,
+      "jobs_detail": [
+        {
+          "job": "listing 2",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 3.5,
+          "cost_usd": 0.000935
+        },
+        {
+          "job": "listing 4",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 3.6,
+          "cost_usd": 0.000688
+        },
+        {
+          "job": "listing 6",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.7,
+          "cost_usd": 0.000806
+        },
+        {
+          "job": "listing 7",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.6,
+          "cost_usd": 0.00075
+        },
+        {
+          "job": "listing 8",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.2,
+          "cost_usd": 0.000647
+        },
+        {
+          "job": "listing 9",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.8,
+          "cost_usd": 0.000799
+        },
+        {
+          "job": "listing 10",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.2,
+          "cost_usd": 0.00072
+        },
+        {
+          "job": "listing 12",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.8,
+          "cost_usd": 0.000814
+        },
+        {
+          "job": "listing 13",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.7,
+          "cost_usd": 0.000737
+        },
+        {
+          "job": "listing 14",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.8,
+          "cost_usd": 0.000723
+        },
+        {
+          "job": "listing 15",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 2.0,
+          "cost_usd": 0.000729
+        },
+        {
+          "job": "listing 16",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 2.1,
+          "cost_usd": 0.000785
+        },
+        {
+          "job": "listing 17",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.9,
+          "cost_usd": 0.000707
+        },
+        {
+          "job": "listing 18",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.8,
+          "cost_usd": 0.000801
+        },
+        {
+          "job": "listing 19",
+          "result": "ok",
+          "outcome": "listed (no matching buyers yet)",
+          "seconds": 1.5,
+          "cost_usd": 0.00041
+        },
+        {
+          "job": "listing 20",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.9,
+          "cost_usd": 0.000662
+        },
+        {
+          "job": "listing 21",
+          "result": "ok",
+          "outcome": "listed (no matching buyers yet)",
+          "seconds": 1.4,
+          "cost_usd": 0.000475
+        },
+        {
+          "job": "listing 22",
+          "result": "ok",
+          "outcome": "blocked: prompt injection (code pre-screen, no model call)",
+          "seconds": 0.1,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 23",
+          "result": "ok",
+          "outcome": "blocked: Chemical is past its expiry date.",
+          "seconds": 0.1,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 24",
+          "result": "ok",
+          "outcome": "blocked: Hazardous material listed without a safety data sheet (SDS).",
+          "seconds": 0.1,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 25",
+          "result": "ok",
+          "outcome": "blocked: Asking price is more than 3x the new price.",
+          "seconds": 0.1,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 26",
+          "result": "ok",
+          "outcome": "blocked: Chemical is past its expiry date.",
+          "seconds": 0.2,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 27",
+          "result": "ok",
+          "outcome": "needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk.",
+          "seconds": 0.2,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "negotiate 1/1",
+          "result": "ok",
+          "outcome": "agreed",
+          "seconds": 8.0,
+          "cost_usd": 0.000844
+        },
+        {
+          "job": "negotiate 3/3",
+          "result": "ok",
+          "outcome": "round_cap",
+          "seconds": 14.2,
+          "cost_usd": 0.003314
+        },
+        {
+          "job": "negotiate 5/5",
+          "result": "ok",
+          "outcome": "agreed",
+          "seconds": 11.1,
+          "cost_usd": 0.00209
+        },
+        {
+          "job": "negotiate 11/11",
+          "result": "ok",
+          "outcome": "walked_away",
+          "seconds": 14.0,
+          "cost_usd": 0.0027
+        }
+      ]
+    },
+    {
+      "setup": "shared MCP processes via backend API (30 s first start, 15 s per call, 1 reconnect)",
+      "concurrency": 6,
+      "jobs": 27,
+      "ok": 27,
+      "crashes": 0,
+      "friendly_errors": 0,
+      "wall_seconds": 20.3,
+      "median_job_seconds": 2.0,
+      "cost_usd": 0.0211,
+      "crash_details": [],
+      "startup_seconds": 7.7,
+      "mcp_startup_seconds": 2.2,
+      "reconnects": 0,
+      "unavailable": 0,
+      "refused_table": true,
+      "jobs_detail": [
+        {
+          "job": "listing 2",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 5.1,
+          "cost_usd": 0.000935
+        },
+        {
+          "job": "listing 4",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 4.0,
+          "cost_usd": 0.000688
+        },
+        {
+          "job": "listing 6",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 5.0,
+          "cost_usd": 0.000806
+        },
+        {
+          "job": "listing 7",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 3.7,
+          "cost_usd": 0.00075
+        },
+        {
+          "job": "listing 8",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 3.8,
+          "cost_usd": 0.000647
+        },
+        {
+          "job": "listing 9",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 3.4,
+          "cost_usd": 0.000799
+        },
+        {
+          "job": "listing 10",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.8,
+          "cost_usd": 0.00072
+        },
+        {
+          "job": "listing 12",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 2.5,
+          "cost_usd": 0.000814
+        },
+        {
+          "job": "listing 13",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 3.1,
+          "cost_usd": 0.000737
+        },
+        {
+          "job": "listing 14",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.4,
+          "cost_usd": 0.000723
+        },
+        {
+          "job": "listing 15",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 2.4,
+          "cost_usd": 0.000729
+        },
+        {
+          "job": "listing 16",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 2.0,
+          "cost_usd": 0.000785
+        },
+        {
+          "job": "listing 17",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.5,
+          "cost_usd": 0.000707
+        },
+        {
+          "job": "listing 18",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.7,
+          "cost_usd": 0.000801
+        },
+        {
+          "job": "listing 19",
+          "result": "ok",
+          "outcome": "listed (no matching buyers yet)",
+          "seconds": 1.3,
+          "cost_usd": 0.00041
+        },
+        {
+          "job": "listing 20",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 1.8,
+          "cost_usd": 0.000662
+        },
+        {
+          "job": "listing 21",
+          "result": "ok",
+          "outcome": "listed (no matching buyers yet)",
+          "seconds": 1.4,
+          "cost_usd": 0.000475
+        },
+        {
+          "job": "listing 22",
+          "result": "ok",
+          "outcome": "blocked: prompt injection (code pre-screen, no model call)",
+          "seconds": 0.3,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 23",
+          "result": "ok",
+          "outcome": "blocked: Chemical is past its expiry date.",
+          "seconds": 0.3,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 24",
+          "result": "ok",
+          "outcome": "blocked: Hazardous material listed without a safety data sheet (SDS).",
+          "seconds": 0.2,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 25",
+          "result": "ok",
+          "outcome": "blocked: Asking price is more than 3x the new price.",
+          "seconds": 0.5,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 26",
+          "result": "ok",
+          "outcome": "blocked: Chemical is past its expiry date.",
+          "seconds": 0.5,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "listing 27",
+          "result": "ok",
+          "outcome": "needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk.",
+          "seconds": 0.6,
+          "cost_usd": 0.0
+        },
+        {
+          "job": "negotiate 1/1",
+          "result": "ok",
+          "outcome": "agreed",
+          "seconds": 7.9,
+          "cost_usd": 0.000844
+        },
+        {
+          "job": "negotiate 3/3",
+          "result": "ok",
+          "outcome": "round_cap",
+          "seconds": 12.4,
+          "cost_usd": 0.003314
+        },
+        {
+          "job": "negotiate 5/5",
+          "result": "ok",
+          "outcome": "agreed",
+          "seconds": 10.7,
+          "cost_usd": 0.00209
+        },
+        {
+          "job": "negotiate 11/11",
+          "result": "ok",
+          "outcome": "walked_away",
+          "seconds": 11.9,
+          "cost_usd": 0.0027
+        }
+      ]
+    },
+    {
+      "setup": "process-per-run (30 s startup timeout, no reuse)",
+      "concurrency": 6,
+      "jobs": 27,
+      "ok": 27,
+      "crashes": 0,
+      "friendly_errors": 0,
+      "wall_seconds": 91.2,
+      "median_job_seconds": 16.3,
+      "cost_usd": 0.0207,
+      "crash_details": [],
+      "jobs_detail": [
+        {
+          "job": "listing 2",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.3,
+          "cost_usd": 0.0009353300000000001
+        },
+        {
+          "job": "listing 4",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.3,
+          "cost_usd": 0.0006883
+        },
+        {
+          "job": "listing 6",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.9,
+          "cost_usd": 0.0008064600000000001
+        },
+        {
+          "job": "listing 7",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.3,
+          "cost_usd": 0.00074975
+        },
+        {
+          "job": "listing 8",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.9,
+          "cost_usd": 0.0006474100000000001
+        },
+        {
+          "job": "listing 9",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 17.6,
+          "cost_usd": 0.00079908
+        },
+        {
+          "job": "listing 10",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 15.8,
+          "cost_usd": 0.00071957
+        },
+        {
+          "job": "listing 12",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 15.8,
+          "cost_usd": 0.00081356
+        },
+        {
+          "job": "listing 13",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.2,
+          "cost_usd": 0.00073731
+        },
+        {
+          "job": "listing 14",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 15.5,
+          "cost_usd": 0.0007228499999999999
+        },
+        {
+          "job": "listing 15",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.0,
+          "cost_usd": 0.00072862
+        },
+        {
+          "job": "listing 16",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 15.3,
+          "cost_usd": 0.00078471
+        },
+        {
+          "job": "listing 17",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 17.2,
+          "cost_usd": 0.00070697
+        },
+        {
+          "job": "listing 18",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 18.0,
+          "cost_usd": 0.00080121
+        },
+        {
+          "job": "listing 19",
+          "result": "ok",
+          "outcome": "listed (no matching buyers yet)",
+          "seconds": 16.1,
+          "cost_usd": 0.00041002
+        },
+        {
+          "job": "listing 20",
+          "result": "ok",
+          "outcome": "listed and matched",
+          "seconds": 16.6,
+          "cost_usd": 0.0006620700000000001
+        },
+        {
+          "job": "listing 21",
+          "result": "ok",
+          "outcome": "listed (no matching buyers yet)",
+          "seconds": 16.1,
+          "cost_usd": 0.00047534
+        },
+        {
+          "job": "listing 22",
+          "result": "ok",
+          "outcome": "blocked: prompt injection (code pre-screen, no model call)",
+          "seconds": 13.8,
+          "cost_usd": 0
+        },
+        {
+          "job": "listing 23",
+          "result": "ok",
+          "outcome": "blocked: Chemical is past its expiry date.",
+          "seconds": 16.9,
+          "cost_usd": 0
+        },
+        {
+          "job": "listing 24",
+          "result": "ok",
+          "outcome": "blocked: Hazardous material listed without a safety data sheet (SDS).",
+          "seconds": 16.3,
+          "cost_usd": 0
+        },
+        {
+          "job": "listing 25",
+          "result": "ok",
+          "outcome": "blocked: Asking price is more than 3x the new price.",
+          "seconds": 16.0,
+          "cost_usd": 0
+        },
+        {
+          "job": "listing 26",
+          "result": "ok",
+          "outcome": "blocked: Chemical is past its expiry date.",
+          "seconds": 16.0,
+          "cost_usd": 0
+        },
+        {
+          "job": "listing 27",
+          "result": "ok",
+          "outcome": "needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk.",
+          "seconds": 15.8,
+          "cost_usd": 0
+        },
+        {
+          "job": "negotiate 1/1",
+          "result": "ok",
+          "outcome": "agreed",
+          "seconds": 26.5,
+          "cost_usd": 0.0008437
+        },
+        {
+          "job": "negotiate 3/3",
+          "result": "ok",
+          "outcome": "walked_away",
+          "seconds": 26.8,
+          "cost_usd": 0.00291384
+        },
+        {
+          "job": "negotiate 5/5",
+          "result": "ok",
+          "outcome": "agreed",
+          "seconds": 23.2,
+          "cost_usd": 0.00205099
+        },
+        {
+          "job": "negotiate 11/11",
+          "result": "ok",
+          "outcome": "walked_away",
+          "seconds": 26.2,
+          "cost_usd": 0.00268839
+        }
+      ]
+    }
+  ]
+}

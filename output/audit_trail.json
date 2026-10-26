@@ -20,5 +20,2854 @@
       "model": "gpt-6-luna"
     },
     "result": "{\"reply\": \"Hello, Surplus Exchange!\", \"requests\": 1, \"input_tokens\": 30, \"cached_tokens\": 0, \"cache_write_tokens\": 0, \"output_tokens\": 33, \"total_tokens\": 63, \"cost_usd\": 1.95e-05}"
+  },
+  {
+    "timestamp": "2026-10-25T23:22:09.743+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 1,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:22:12.289+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:22:22.243+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:22:22.276+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 1, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-25T23:22:22.312+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:22:22.345+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1047,
+      "output_tokens": 102,
+      "cost_usd": 0.00023817
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.99, \"notes\": \"Seller reports the CPUs were working when pulled last month; MMCs are not included.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:22:22.409+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 850
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:22:24.348+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:22:24.384+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 671,
+      "cached_tokens": 0,
+      "output_tokens": 91,
+      "cost_usd": 0.0001126
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:22:24.445+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2047
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:23:32.956+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:23:32.993+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 1227,
+      "output_tokens": 316,
+      "cost_usd": 0.00018287
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"need_id\": 1, \"score\": 100, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 for a line-down Siemens S7-300; $12k/day downtime. Runs 4x S7-300 (18 yrs); need is 1 and listing has 3.\"}, {\"buyer_id\": 16, \"need_id\": null, \"score\": 58, \"reason\": \"No open need; runs 3x Sie…"
+  },
+  {
+    "timestamp": "2026-10-25T23:23:33.092+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 443
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:23:35.504+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:23:35.537+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 618,
+      "cached_tokens": 0,
+      "output_tokens": 273,
+      "cost_usd": 0.0001983
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 1000.0, \"rationale\": \"At 48% of the $2,966 new price, the seller\\u2019s $1,425 ask is within the used-working range of $1,186\\u2013$1,631 and is reasonable for this obsolete part, which can command the upper end of its band. The same-condition active ask is also …"
+  },
+  {
+    "timestamp": "2026-10-25T23:23:35.577+00:00",
+    "run_id": "80e9bcb0e93e",
+    "subject": "listing:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"80e9bcb0e93e\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1667, \"cached_tokens\": 2274, \"cache_write_tokens\": 1212, \"output_tokens\": 782, \"total_tokens\": 5935, \"cost_usd\": 0.000732}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:01.070+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 12,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:02.922+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 204
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:08.996+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "1756-EN2T",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:09.012+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"1756-EN2T\", \"count\": 1, \"parts\": [{\"part_number\": \"1756-EN2T\", \"manufacturer\": \"Allen-Bradley\", \"family\": \"Network\", \"description\": \"ControlLogix EtherNet/IP bridge module, 10/100, 128 connections\", \"category\": \"spare_part\", \"new_price\": 2405.0, \"scrap_value\": 19.33, \"hazmat\": 0, \"hazmat…"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:09.028+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:24:09.049+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 1251,
+      "cached_tokens": 0,
+      "output_tokens": 84,
+      "cost_usd": 0.00031323
+    },
+    "result": "{\"part_number\": \"1756-EN2T\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1095.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.99, \"notes\": \"Used and tested; current firmware stated.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:09.074+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 801
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:10.204+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:24:10.229+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 637,
+      "cached_tokens": 0,
+      "output_tokens": 22,
+      "cost_usd": 7.47e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:10.255+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2060
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:13.912+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:24:13.927+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 456,
+      "cost_usd": 0.00039148
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 31, \"need_id\": 12, \"score\": 92, \"reason\": \"Open need #12: 2x 1756-ENBT for ControlLogix 5560, high urgency at $3,000/day; the listed 1756-EN2T is a direct replacement. Runs 3x ControlLogix 5560 (13 yrs).\"}, {\"buyer_id\": 21, \"need_id\": null, \"score\": 61, \"reason\": \"No open …"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:13.970+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 464
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:16.031+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:24:16.044+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 613,
+      "cached_tokens": 0,
+      "output_tokens": 222,
+      "cost_usd": 0.0001723
+    },
+    "result": "{\"ask\": 1095.0, \"floor_suggestion\": 766.5, \"rationale\": \"At $1,095, the seller\\u2019s ask is reasonable for a used-working module: it is about 45.5% of the $2,405 new price, within the 40\\u201355% condition range ($962\\u2013$1,322.75). The same-condition active ask is also $1,095, and one open need…"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:16.062+00:00",
+    "run_id": "538122eee363",
+    "subject": "listing:12",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"538122eee363\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 2627, \"cached_tokens\": 0, \"cache_write_tokens\": 2376, \"output_tokens\": 784, \"total_tokens\": 5787, \"cost_usd\": 0.000952}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:31.137+00:00",
+    "run_id": "c73d59e85bbe",
+    "subject": "listing:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 22,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:33.134+00:00",
+    "run_id": "c73d59e85bbe",
+    "subject": "listing:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "blocked",
+    "args": {
+      "patterns": [
+        "ignore (all )?(previous|prior|above) instructions",
+        "\\byou are now\\b",
+        "system (note|prompt)",
+        "do not flag",
+        "rank .{0,60}#\\s*1",
+        "set the price to"
+      ]
+    },
+    "stop_reason": "injection_pattern"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:33.170+00:00",
+    "run_id": "c73d59e85bbe",
+    "subject": "listing:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"c73d59e85bbe\", \"kind\": \"seller_flow\", \"requests\": 0, \"input_tokens\": 0, \"cached_tokens\": 0, \"cache_write_tokens\": 0, \"output_tokens\": 0, \"total_tokens\": 0, \"cost_usd\": 0.0}",
+    "stop_reason": "blocked: prompt injection (code pre-screen, no model call)"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:49.675+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 26,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:51.707+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 206
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:56.915+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "sodium hypochlorite 12.5% bleach CIP drums"
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:56.937+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"sodium hypochlorite 12.5% bleach CIP drums\", \"count\": 0, \"parts\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:56.956+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "bleach sodium hypochlorite"
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:24:56.980+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"bleach sodium hypochlorite\", \"count\": 0, \"parts\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:57.005+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:24:57.026+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 1387,
+      "cached_tokens": 1076,
+      "output_tokens": 187,
+      "cost_usd": 0.00038409
+    },
+    "result": "{\"part_number\": null, \"qty\": 5, \"condition\": \"new_sealed\", \"asking_price\": 95.0, \"expiry_date\": null, \"manufacture_date\": \"2026-03-15\", \"sds_available\": 1, \"confidence\": 0.35, \"notes\": \"No matching catalog part was found for sodium hypochlorite 12.5%.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:24:57.045+00:00",
+    "run_id": "9221c17be665",
+    "subject": "listing:26",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"9221c17be665\", \"kind\": \"seller_flow\", \"requests\": 3, \"input_tokens\": 1387, \"cached_tokens\": 1076, \"cache_write_tokens\": 1129, \"output_tokens\": 187, \"total_tokens\": 3779, \"cost_usd\": 0.000384}",
+    "stop_reason": "needs_human: part not identified"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:13.105+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 27,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:15.542+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 234
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:19.458+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "1756-L61",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:19.502+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"1756-L61\", \"count\": 1, \"parts\": [{\"part_number\": \"1756-L61\", \"manufacturer\": \"Allen-Bradley\", \"family\": \"PLC CPU\", \"description\": \"ControlLogix 5561 controller, 2 MB memory\", \"category\": \"spare_part\", \"new_price\": 6724.0, \"scrap_value\": 80.35, \"hazmat\": 0, \"hazmat_class\": null, \"shelf_li…"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:19.540+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:25:19.576+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 1255,
+      "cached_tokens": 0,
+      "output_tokens": 84,
+      "cost_usd": 0.0003115
+    },
+    "result": "{\"part_number\": \"1756-L61\", \"qty\": 5, \"condition\": \"new_sealed\", \"asking_price\": 1950.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.99, \"notes\": \"Ships from an overseas warehouse in 2\\u20133 weeks.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:19.654+00:00",
+    "run_id": "aa2dea92b1a0",
+    "subject": "listing:27",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"aa2dea92b1a0\", \"kind\": \"seller_flow\", \"requests\": 2, \"input_tokens\": 1255, \"cached_tokens\": 0, \"cache_write_tokens\": 1152, \"output_tokens\": 84, \"total_tokens\": 2491, \"cost_usd\": 0.000311}",
+    "stop_reason": "needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk."
+  },
+  {
+    "timestamp": "2026-10-25T23:25:35.356+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 19,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:37.161+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 220
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:40.719+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Q06UDEHCPU",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:40.740+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Q06UDEHCPU\", \"count\": 1, \"parts\": [{\"part_number\": \"Q06UDEHCPU\", \"manufacturer\": \"Mitsubishi Electric\", \"family\": \"PLC CPU\", \"description\": \"MELSEC-Q universal model CPU, 60k steps, Ethernet\", \"category\": \"spare_part\", \"new_price\": 2309.0, \"scrap_value\": 28.57, \"hazmat\": 0, \"hazmat_class…"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:40.764+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:25:40.779+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 1250,
+      "cached_tokens": 0,
+      "output_tokens": 112,
+      "cost_usd": 0.00032488
+    },
+    "result": "{\"part_number\": \"Q06UDEHCPU\", \"qty\": 1, \"condition\": \"used_untested\", \"asking_price\": 640.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.99, \"notes\": \"Listed as not tested.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:40.810+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 762
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:42.380+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:25:42.400+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 617,
+      "cached_tokens": 0,
+      "output_tokens": 61,
+      "cost_usd": 9.22e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:42.435+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 451
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:25:45.463+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:25:45.483+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 610,
+      "cached_tokens": 0,
+      "output_tokens": 238,
+      "cost_usd": 0.00018
+    },
+    "result": "{\"ask\": 640.0, \"floor_suggestion\": 450.0, \"rationale\": \"At $640, the ask is about 28% of the $2,309 new price, within the 20\\u201335% range for used-untested equipment and well above the $28.57 scrap value. The ask matches the current $640 listing; with no open needs matched or approved deals, ther…"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:45.498+00:00",
+    "run_id": "70346f1d2399",
+    "subject": "listing:19",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"70346f1d2399\", \"kind\": \"seller_flow\", \"requests\": 4, \"input_tokens\": 2477, \"cached_tokens\": 0, \"cache_write_tokens\": 1151, \"output_tokens\": 411, \"total_tokens\": 4039, \"cost_usd\": 0.000597}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-25T23:25:59.656+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 4,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:26:01.474+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 255
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:26:06.447+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "96416889",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:26:06.463+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"96416889\", \"count\": 1, \"parts\": [{\"part_number\": \"96416889\", \"manufacturer\": \"Grundfos\", \"family\": \"Pump spare\", \"description\": \"CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)\", \"category\": \"spare_part\", \"new_price\": 678.0, \"scrap_value\": 11.42, \"hazmat\": 0, \"hazmat_class\": null, \"shelf_life_…"
+  },
+  {
+    "timestamp": "2026-10-25T23:26:06.481+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:26:06.495+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 1263,
+      "cached_tokens": 0,
+      "output_tokens": 79,
+      "cost_usd": 0.00031043
+    },
+    "result": "{\"part_number\": \"96416889\", \"qty\": 6, \"condition\": \"new_open_box\", \"asking_price\": 435.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.99, \"notes\": \"Boxes were opened for inspection only; never installed.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:26:06.530+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 777
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:26:07.673+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:26:07.690+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 625,
+      "cached_tokens": 0,
+      "output_tokens": 61,
+      "cost_usd": 9.3e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:26:07.722+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1937
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:26:11.418+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:26:11.434+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 279,
+      "cost_usd": 0.00029635
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 23, \"need_id\": 4, \"score\": 93, \"reason\": \"Open need #4: 3 Grundfos CR 32 pump spares; their buyer text specifies HQQE seal kits for two leaking pumps, with high urgency and $4,000/day downtime cost. Runs 7x CR 32 (12 yrs).\"}, {\"buyer_id\": 18, \"need_id\": null, \"score\": 57, …"
+  },
+  {
+    "timestamp": "2026-10-25T23:26:11.475+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 437
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:26:13.615+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:26:13.634+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 609,
+      "cached_tokens": 0,
+      "output_tokens": 200,
+      "cost_usd": 0.0001609
+    },
+    "result": "{\"ask\": 435.0, \"floor_suggestion\": 305.0, \"rationale\": \"For new-open-box condition, the typical range is 60\\u201370% of the $678 new price ($406.80\\u2013$474.60), so the seller\\u2019s $435 ask is reasonable and matches the current ask for this part. The $11.42 scrap value is a lower bound, and one …"
+  },
+  {
+    "timestamp": "2026-10-25T23:26:13.650+00:00",
+    "run_id": "e2e257503ace",
+    "subject": "listing:4",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"e2e257503ace\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 2623, \"cached_tokens\": 0, \"cache_write_tokens\": 2311, \"output_tokens\": 619, \"total_tokens\": 5553, \"cost_usd\": 0.000861}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-25T23:29:39.060+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 26,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:29:43.990+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 206
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:29:47.037+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "sodium hypochlorite 12.5% bleach CIP drums"
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:29:47.064+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"sodium hypochlorite 12.5% bleach CIP drums\", \"count\": 1, \"parts\": [{\"part_number\": \"HYPO-125-55G\", \"manufacturer\": \"Generic\", \"family\": \"Chemical\", \"description\": \"Sodium hypochlorite 12.5% solution, 55-gallon drum\", \"category\": \"chemical\", \"new_price\": 238.0, \"scrap_value\": 0.0, \"hazmat…"
+  },
+  {
+    "timestamp": "2026-10-25T23:29:47.103+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:29:47.138+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 1261,
+      "cached_tokens": 0,
+      "output_tokens": 98,
+      "cost_usd": 0.0003216
+    },
+    "result": "{\"part_number\": \"HYPO-125-55G\", \"qty\": 5, \"condition\": \"new_sealed\", \"asking_price\": 95.0, \"expiry_date\": null, \"manufacture_date\": \"2026-03-15\", \"sds_available\": 1, \"confidence\": 0.99, \"notes\": \"\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:29:47.232+00:00",
+    "run_id": "b25c1e8e47ca",
+    "subject": "listing:26",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"b25c1e8e47ca\", \"kind\": \"seller_flow\", \"requests\": 2, \"input_tokens\": 1261, \"cached_tokens\": 0, \"cache_write_tokens\": 1172, \"output_tokens\": 98, \"total_tokens\": 2531, \"cost_usd\": 0.000322}",
+    "stop_reason": "blocked: Chemical is past its expiry date."
+  },
+  {
+    "timestamp": "2026-10-25T23:30:15.665+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "listing:1/need:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 1,
+      "need_id": 1,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:30:25.421+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 434
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.072+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.114+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 1, \"qty\": 1, \"floor_price\": 905.0, \"public_asking_price\": 1425.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.155+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1400,
+      "message": "Given the line-down urgency, I can offer this working CPU at $1,400. Please let me know if that works for you."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.196+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 1, \"action\": \"offer\", \"price\": 1400.0, \"status\": \"open\", \"rounds_left\": 5, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.241+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.279+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2047,
+      "cached_tokens": 0,
+      "output_tokens": 192,
+      "cost_usd": 0.00043258
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1400.0, \"reasoning\": \"Opened just below the public asking price while recognizing the buyer\\u2019s stated line-down urgency.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:30:31.347+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 585
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.654+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.695+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 1, \"qty\": 1, \"ceiling_price\": 1890.0, \"urgency\": \"line_down\", \"downtime_cost_per_day\": 12000.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.733+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "Accepted. Please proceed with the sale and shipment arrangements."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.773+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 2, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 1400.0, \"end_reason\": \"buyer accepted $1,400.00\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.808+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.851+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2202,
+      "cached_tokens": 0,
+      "output_tokens": 136,
+      "cost_usd": 0.0004232
+    },
+    "result": "{\"move\": \"accept\", \"price\": 1400.0, \"reasoning\": \"Accepted the seller\\u2019s offer because the line-down urgency makes avoiding further delay more valuable than continued bargaining.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:30:37.951+00:00",
+    "run_id": "ab083bf73cc5",
+    "subject": "negotiation:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"ab083bf73cc5\", \"kind\": \"negotiation\", \"requests\": 6, \"input_tokens\": 4249, \"cached_tokens\": 0, \"cache_write_tokens\": 2135, \"output_tokens\": 328, \"total_tokens\": 6712, \"cost_usd\": 0.000856}",
+    "stop_reason": "agreed"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:01.391+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "listing:3/need:3",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 3,
+      "need_id": 3,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:14.196+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 437
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.038+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.076+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 2, \"listing_id\": 3, \"qty\": 1, \"floor_price\": 1010.0, \"public_asking_price\": 1149.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.112+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1149,
+      "message": "We can offer this new-sealed PowerFlex 525 at the listed price of $1,149. Let me know if you have a counteroffer."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.152+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 1, \"action\": \"offer\", \"price\": 1149.0, \"status\": \"open\", \"rounds_left\": 5, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.196+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.240+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2044,
+      "cached_tokens": 0,
+      "output_tokens": 180,
+      "cost_usd": 0.00042527
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1149.0, \"reasoning\": \"Opened at the public asking price to preserve room for negotiation.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:22.309+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 591
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.097+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.136+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 2, \"need_id\": 3, \"qty\": 1, \"ceiling_price\": 715.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 1500.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.180+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 700,
+      "message": "Given the new-sealed condition, we can move substantially from an opening position and offer $700 per unit. Please let me know if you can meet us near there."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.219+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 2, \"action\": \"offer\", \"price\": 700.0, \"status\": \"open\", \"rounds_left\": 4, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.251+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.283+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2202,
+      "cached_tokens": 0,
+      "output_tokens": 394,
+      "cost_usd": 0.00058445
+    },
+    "result": "{\"move\": \"offer\", \"price\": 700.0, \"reasoning\": \"I made a substantial counteroffer while leaving room to negotiate toward a deal within budget.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:32.342+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 816
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.670+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.698+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 2, \"listing_id\": 3, \"qty\": 1, \"floor_price\": 1010.0, \"public_asking_price\": 1149.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.728+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1135,
+      "message": "Thanks for the offer. Given the new-sealed condition, we can make a modest adjustment to $1,135 per unit."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.768+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 3, \"action\": \"offer\", \"price\": 1135.0, \"status\": \"open\", \"rounds_left\": 3, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.797+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.831+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2242,
+      "cached_tokens": 0,
+      "output_tokens": 241,
+      "cost_usd": 0.00049508
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1135.0, \"reasoning\": \"Countered with a modest concession from the listed ask while preserving room to negotiate.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:36.890+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 994
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.253+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.287+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 2, \"need_id\": 3, \"qty\": 1, \"ceiling_price\": 715.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 1500.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.322+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 715,
+      "message": "We can make a modest improvement to $715 per unit for this purchase. Please let us know if you can work with that."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.371+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": false, \"code\": \"would_reveal_private_limit\", \"message\": \"Your message would reveal your private limit. Rewrite it without that number.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.408+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 715,
+      "message": "We can make one more improvement on our offer. Please let us know whether this works for you."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.453+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 4, \"action\": \"offer\", \"price\": 715.0, \"status\": \"open\", \"rounds_left\": 2, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.503+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.542+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 4,
+      "input_tokens": 1479,
+      "cached_tokens": 2327,
+      "output_tokens": 343,
+      "cost_usd": 0.00051955
+    },
+    "result": "{\"move\": \"offer\", \"price\": 715.0, \"reasoning\": \"Raised the offer modestly while maintaining a firm position on the purchase price.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:43.615+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1155
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:49.566+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:31:49.655+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 2, \"listing_id\": 3, \"qty\": 1, \"floor_price\": 1010.0, \"public_asking_price\": 1149.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:49.716+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1100,
+      "message": "We appreciate the improved offer. For this new-sealed drive, we can make a stronger adjustment to $1,100 per unit."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:49.762+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 5, \"action\": \"offer\", \"price\": 1100.0, \"status\": \"open\", \"rounds_left\": 1, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:49.900+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:31:49.978+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 1362,
+      "cached_tokens": 1056,
+      "output_tokens": 396,
+      "cost_usd": 0.00052501
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1100.0, \"reasoning\": \"Made a more substantial concession while keeping the offer within an appropriate range for the new-sealed item.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:50.044+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1342
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.135+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.179+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 2, \"need_id\": 3, \"qty\": 1, \"ceiling_price\": 715.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 1500.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.222+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "walk_away",
+    "args": {
+      "reason": "We’re unable to reach a workable price at this stage, so we’ll have to step away. Thank you for considering our offer."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.262+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "walk_away",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 6, \"action\": \"walk_away\", \"status\": \"walked_away\", \"price\": null, \"end_reason\": \"buyer walked away\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.299+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.338+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2206,
+      "output_tokens": 240,
+      "cost_usd": 0.00035048
+    },
+    "result": "{\"move\": \"walk_away\", \"price\": null, \"reasoning\": \"The seller\\u2019s final offer remains far above the price we can pay, and there is no meaningful room to close the gap in the last round.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:31:56.430+00:00",
+    "run_id": "eb3d297abab4",
+    "subject": "negotiation:2",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"eb3d297abab4\", \"kind\": \"negotiation\", \"requests\": 19, \"input_tokens\": 9707, \"cached_tokens\": 5589, \"cache_write_tokens\": 7810, \"output_tokens\": 1794, \"total_tokens\": 24900, \"cost_usd\": 0.0029}",
+    "stop_reason": "walked_away"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:17.779+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "listing:5/need:5",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 5,
+      "need_id": 5,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:29.177+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 435
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.176+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.223+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 3, \"listing_id\": 5, \"qty\": 1, \"floor_price\": 2210.0, \"public_asking_price\": 2875.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.273+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 2875,
+      "message": "Our asking price is $2,875 for this refurbished ACS580 drive. We’re open to discussing a reasonable offer."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.323+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 3, \"round\": 1, \"action\": \"offer\", \"price\": 2875.0, \"status\": \"open\", \"rounds_left\": 5, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.363+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.402+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2036,
+      "cached_tokens": 0,
+      "output_tokens": 167,
+      "cost_usd": 0.00041573
+    },
+    "result": "{\"move\": \"offer\", \"price\": 2875.0, \"reasoning\": \"Opened at the public asking price and invited a reasonable counteroffer.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:39.472+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 582
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.090+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.129+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 3, \"need_id\": 5, \"qty\": 1, \"ceiling_price\": 2340.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 2500.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.168+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 2200,
+      "message": "Given the refurbished condition, I can offer $2,200 per unit. We can move promptly if that works for you."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.215+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 3, \"round\": 2, \"action\": \"offer\", \"price\": 2200.0, \"status\": \"open\", \"rounds_left\": 4, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.260+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.314+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2181,
+      "cached_tokens": 0,
+      "output_tokens": 294,
+      "cost_usd": 0.0005186
+    },
+    "result": "{\"move\": \"offer\", \"price\": 2200.0, \"reasoning\": \"Made a prompt, condition-conscious counter-offer while leaving room to reach an agreement.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:47.387+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 757
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.478+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.517+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 3, \"listing_id\": 5, \"qty\": 1, \"floor_price\": 2210.0, \"public_asking_price\": 2875.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.561+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 2600,
+      "message": "Thanks for the prompt offer. Given the drive’s refurbished condition, I can move to $2,600 per unit; let me know if you can come closer."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.600+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 3, \"round\": 3, \"action\": \"offer\", \"price\": 2600.0, \"status\": \"open\", \"rounds_left\": 3, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.641+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.685+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2206,
+      "cached_tokens": 0,
+      "output_tokens": 290,
+      "cost_usd": 0.00051973
+    },
+    "result": "{\"move\": \"offer\", \"price\": 2600.0, \"reasoning\": \"Countered the buyer\\u2019s offer with a substantial concession while preserving room for further negotiation.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:52.749+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 966
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.421+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.466+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 3, \"need_id\": 5, \"qty\": 1, \"ceiling_price\": 2340.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 2500.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.511+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 2300,
+      "message": "I can improve to $2,300 per unit for the refurbished drive. If you can meet that, we’re ready to proceed promptly."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.557+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 3, \"round\": 4, \"action\": \"offer\", \"price\": 2300.0, \"status\": \"open\", \"rounds_left\": 2, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.606+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.644+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 1342,
+      "cached_tokens": 1043,
+      "output_tokens": 395,
+      "cost_usd": 0.00052138
+    },
+    "result": "{\"move\": \"offer\", \"price\": 2300.0, \"reasoning\": \"Improved my offer while leaving room for a final response if needed.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:32:59.714+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1150
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.627+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.663+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 3, \"listing_id\": 5, \"qty\": 1, \"floor_price\": 2210.0, \"public_asking_price\": 2875.0}"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.703+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "Your offer of $2,300 per unit works for us. We’re ready to proceed."
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.743+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 3, \"round\": 5, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 2300.0, \"end_reason\": \"seller accepted $2,300.00\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.790+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.832+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 1361,
+      "cached_tokens": 1055,
+      "output_tokens": 233,
+      "cost_usd": 0.00042315
+    },
+    "result": "{\"move\": \"accept\", \"price\": 2300.0, \"reasoning\": \"Accepted the buyer\\u2019s offer because it is above the seller\\u2019s acceptable range and only two rounds remained.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:05.948+00:00",
+    "run_id": "cfd07a8f4342",
+    "subject": "negotiation:3",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"cfd07a8f4342\", \"kind\": \"negotiation\", \"requests\": 15, \"input_tokens\": 9126, \"cached_tokens\": 2098, \"cache_write_tokens\": 6204, \"output_tokens\": 1379, \"total_tokens\": 18807, \"cost_usd\": 0.002399}",
+    "stop_reason": "agreed"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:41.055+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "seller:7",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 7
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:44.761+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 219
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:49.531+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Grundfos CR15 shaft seal kit HQQE",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:49.574+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Grundfos CR15 shaft seal kit HQQE\", \"count\": 2, \"parts\": [{\"part_number\": \"96416889\", \"manufacturer\": \"Grundfos\", \"family\": \"Pump spare\", \"description\": \"CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)\", \"category\": \"spare_part\", \"new_price\": 678.0, \"scrap_value\": 11.42, \"hazmat\": 0, \"hazmat_c…"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:49.619+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:33:49.667+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "seller:7",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 1253,
+      "cached_tokens": 0,
+      "output_tokens": 92,
+      "cost_usd": 0.00032843
+    },
+    "result": "{\"part_number\": \"96525458\", \"qty\": 2, \"condition\": \"new_open_box\", \"asking_price\": 330.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.99, \"notes\": \"Seller states $330 each or best offer; recorded the stated per-unit price.\"}"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:49.789+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 751
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:50.853+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:33:50.904+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 620,
+      "cached_tokens": 0,
+      "output_tokens": 22,
+      "cost_usd": 7.3e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:51.018+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2484
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:54.868+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:33:54.911+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 518,
+      "cost_usd": 0.00044048
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 39, \"need_id\": 20, \"score\": 96, \"reason\": \"Open need #20: high-priority Grundfos CR 15 pump-spare need for 1 shaft seal kit; listing part 96525458 fits. Runs 5x CR 15 (14 yrs); downtime cost $3,500/day.\"}, {\"buyer_id\": 30, \"need_id\": null, \"score\": 64, \"reason\": \"Runs 6x G…"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:55.018+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 438
+    }
+  },
+  {
+    "timestamp": "2026-10-25T23:33:57.307+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-25T23:33:57.343+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 609,
+      "cached_tokens": 0,
+      "output_tokens": 238,
+      "cost_usd": 0.0001799
+    },
+    "result": "{\"ask\": 330.0, \"floor_suggestion\": 230.0, \"rationale\": \"At $330, the seller\\u2019s ask is reasonable for new-open-box condition: it is about 66% of the $499 new price, within the 60\\u201370% band ($299\\u2013$349), and well above the $10.61 scrap value. One open need is matched and there is one comp…"
+  },
+  {
+    "timestamp": "2026-10-25T23:33:57.381+00:00",
+    "run_id": "ee05ea7cdea6",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"ee05ea7cdea6\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 2608, \"cached_tokens\": 0, \"cache_write_tokens\": 2608, \"output_tokens\": 870, \"total_tokens\": 6086, \"cost_usd\": 0.001022}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T00:01:31.612+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 1,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-26T00:01:33.302+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.259+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.278+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 8, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.295+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.313+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 0,
+      "output_tokens": 100,
+      "cost_usd": 0.00044807
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"confidence\": 0.98, \"notes\": \"Pulled and reported working; missing MMCs and housing scuffs noted.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.350+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 850
+    }
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.600+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.619+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 671,
+      "cached_tokens": 0,
+      "output_tokens": 91,
+      "cost_usd": 0.0001126
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.648+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2047
+    }
+  },
+  {
+    "timestamp": "2026-10-26T00:01:36.996+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T00:01:37.015+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 1227,
+      "output_tokens": 316,
+      "cost_usd": 0.00018287
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"need_id\": 1, \"score\": 100, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 for a line-down Siemens S7-300; $12k/day downtime. Runs 4x S7-300 (18 yrs); need is 1 and listing has 3.\"}, {\"buyer_id\": 16, \"need_id\": null, \"score\": 58, \"reason\": \"No open need; runs 3x Sie…"
+  },
+  {
+    "timestamp": "2026-10-26T00:01:37.058+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 355
+    }
+  },
+  {
+    "timestamp": "2026-10-26T00:01:40.083+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T00:01:40.103+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 585,
+      "cached_tokens": 0,
+      "output_tokens": 257,
+      "cost_usd": 0.000187
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 1000.0, \"rationale\": \"The seller\\u2019s $1,425 ask is reasonable for a used-working unit: it is about 48% of the $2,966 new price, within the 40\\u201355% condition band. Because this part is obsolete and one open need is matched, holding the ask is justified; the…"
+  },
+  {
+    "timestamp": "2026-10-26T00:01:40.124+00:00",
+    "run_id": "d64310cc81e6",
+    "subject": "listing:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"d64310cc81e6\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1634, \"cached_tokens\": 1227, \"cache_write_tokens\": 2983, \"output_tokens\": 764, \"total_tokens\": 6608, \"cost_usd\": 0.000931}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:29.677+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 9.6, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:29.707+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 12,
+      "seller_id": null
+    }
+  },
+  {
+    "timestamp": "2026-10-26T01:17:34.394+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 204
+    }
+  },
+  {
+    "timestamp": "2026-10-26T01:17:36.888+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "AB 1756-EN2T",
+      "limit": 5
+    }
+  },
+  {
+    "timestamp": "2026-10-26T01:17:36.926+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"AB 1756-EN2T\", \"count\": 5, \"parts\": [{\"part_number\": \"1756-EN2T\", \"manufacturer\": \"Allen-Bradley\", \"family\": \"Network\", \"description\": \"ControlLogix EtherNet/IP bridge module, 10/100, 128 connections\", \"category\": \"spare_part\", \"new_price\": 2405.0, \"scrap_value\": 19.33, \"hazmat\": 0, \"haz…"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:36.966+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T01:17:37.016+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 2231,
+      "output_tokens": 84,
+      "cost_usd": 0.00017088
+    },
+    "result": "{\"part_number\": \"1756-EN2T\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1095.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Tested and reported working.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:37.127+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 801
+    }
+  },
+  {
+    "timestamp": "2026-10-26T01:17:37.484+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T01:17:37.533+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 637,
+      "cached_tokens": 0,
+      "output_tokens": 22,
+      "cost_usd": 7.47e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:37.615+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2060
+    }
+  },
+  {
+    "timestamp": "2026-10-26T01:17:37.956+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T01:17:38.008+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 456,
+      "cost_usd": 0.00039148
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 31, \"need_id\": 12, \"score\": 92, \"reason\": \"Open need #12: 2x 1756-ENBT for ControlLogix 5560, high urgency at $3,000/day; the listed 1756-EN2T is a direct replacement. Runs 3x ControlLogix 5560 (13 yrs).\"}, {\"buyer_id\": 21, \"need_id\": null, \"score\": 61, \"reason\": \"No open …"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:38.123+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 375
+    }
+  },
+  {
+    "timestamp": "2026-10-26T01:17:38.508+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T01:17:38.561+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 580,
+      "cached_tokens": 0,
+      "output_tokens": 237,
+      "cost_usd": 0.0001765
+    },
+    "result": "{\"ask\": 1095.0, \"floor_suggestion\": 766.5, \"rationale\": \"The seller\\u2019s $1,095 ask is reasonable for a used-working unit: the condition-based range is $962\\u2013$1,322.75 (40\\u201355% of the $2,405 new price), well above the $19.33 scrap value. One open need is matched, but there are no comparab…"
+  },
+  {
+    "timestamp": "2026-10-26T01:17:38.613+00:00",
+    "run_id": "444791e73207",
+    "subject": "listing:12",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"444791e73207\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1595, \"cached_tokens\": 2231, \"cache_write_tokens\": 1858, \"output_tokens\": 799, \"total_tokens\": 6483, \"cost_usd\": 0.000814}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T01:19:32.557+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 6.1, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
   }
 ]

@@ -1,0 +1,101 @@
+{
+  "run_id": "70346f1d2399",
+  "kind": "seller_flow",
+  "subject": "listing:19",
+  "outcome": "listed and matched",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "listing_agent",
+      "status": "done",
+      "draft": {
+        "part_number": "Q06UDEHCPU",
+        "qty": 1,
+        "condition": "used_untested",
+        "asking_price": 640.0,
+        "expiry_date": null,
+        "manufacture_date": null,
+        "sds_available": null,
+        "confidence": 0.99,
+        "notes": "Listed as not tested."
+      }
+    },
+    {
+      "step": "save",
+      "status": "kept",
+      "note": "listing is already 'active'; draft used for checking only"
+    },
+    {
+      "step": "compliance",
+      "status": "allowed",
+      "rules": "all code rules passed",
+      "guard": "allow"
+    },
+    {
+      "step": "matching",
+      "status": "no_candidates",
+      "note": "no company runs a compatible platform or needs this part; no model call"
+    },
+    {
+      "step": "pricing",
+      "status": "done",
+      "ask": 640.0,
+      "floor_suggestion": 450.0,
+      "rationale": "At $640, the ask is about 28% of the $2,309 new price, within the 20\u201335% range for used-untested equipment and well above the $28.57 scrap value. The ask matches the current $640 listing; with no open needs matched or approved deals, there is little evidence to justify pricing higher.",
+      "clamped": false,
+      "new_price": 2309.0,
+      "scrap_value": 28.57
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "listing_agent",
+      "requests": 2,
+      "input_tokens": 1250,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1151,
+      "output_tokens": 112,
+      "total_tokens": 2513,
+      "cost_usd": 0.00032488
+    },
+    {
+      "agent": "compliance_guard",
+      "requests": 1,
+      "input_tokens": 617,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 61,
+      "total_tokens": 678,
+      "cost_usd": 9.22e-05
+    },
+    {
+      "agent": "pricing_agent",
+      "requests": 1,
+      "input_tokens": 610,
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 238,
+      "total_tokens": 848,
+      "cost_usd": 0.00018
+    }
+  ],
+  "totals": {
+    "run_id": "70346f1d2399",
+    "kind": "seller_flow",
+    "requests": 4,
+    "input_tokens": 2477,
+    "cached_tokens": 0,
+    "cache_write_tokens": 1151,
+    "output_tokens": 411,
+    "total_tokens": 4039,
+    "cost_usd": 0.000597
+  },
+  "listing_id": 19,
+  "answer_key_check": {
+    "listing_fields": "6/6 correct",
+    "field_misses": {}
+  }
+}

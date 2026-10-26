@@ -1,0 +1,214 @@
+{
+  "run_id": "eb3d297abab4",
+  "kind": "negotiation",
+  "subject": "negotiation:2",
+  "outcome": "walked_away",
+  "steps": [
+    {
+      "step": "open",
+      "status": "done",
+      "negotiation_id": 2,
+      "qty": 1,
+      "max_rounds": 6
+    },
+    {
+      "step": "seller_turn",
+      "status": "moved",
+      "round": 1,
+      "action": "offer",
+      "price": 1149.0,
+      "message": "We can offer this new-sealed PowerFlex 525 at the listed price of $1,149. Let me know if you have a counteroffer.",
+      "reasoning": "Opened at the public asking price to preserve room for negotiation."
+    },
+    {
+      "step": "buyer_turn",
+      "status": "moved",
+      "round": 2,
+      "action": "offer",
+      "price": 700.0,
+      "message": "Given the new-sealed condition, we can move substantially from an opening position and offer $700 per unit. Please let me know if you can meet us near there.",
+      "reasoning": "I made a substantial counteroffer while leaving room to negotiate toward a deal within budget."
+    },
+    {
+      "step": "seller_turn",
+      "status": "moved",
+      "round": 3,
+      "action": "offer",
+      "price": 1135.0,
+      "message": "Thanks for the offer. Given the new-sealed condition, we can make a modest adjustment to $1,135 per unit.",
+      "reasoning": "Countered with a modest concession from the listed ask while preserving room to negotiate."
+    },
+    {
+      "step": "buyer_turn",
+      "status": "moved",
+      "round": 4,
+      "action": "offer",
+      "price": 715.0,
+      "message": "We can make one more improvement on our offer. Please let us know whether this works for you.",
+      "reasoning": "Raised the offer modestly while maintaining a firm position on the purchase price."
+    },
+    {
+      "step": "seller_turn",
+      "status": "moved",
+      "round": 5,
+      "action": "offer",
+      "price": 1100.0,
+      "message": "We appreciate the improved offer. For this new-sealed drive, we can make a stronger adjustment to $1,100 per unit.",
+      "reasoning": "Made a more substantial concession while keeping the offer within an appropriate range for the new-sealed item."
+    },
+    {
+      "step": "buyer_turn",
+      "status": "moved",
+      "round": 6,
+      "action": "walk_away",
+      "price": 0.0,
+      "message": "We\u2019re unable to reach a workable price at this stage, so we\u2019ll have to step away. Thank you for considering our offer.",
+      "reasoning": "The seller\u2019s final offer remains far above the price we can pay, and there is no meaningful room to close the gap in the last round."
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "seller_negotiator",
+      "requests": 3,
+      "input_tokens": 2044,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1047,
+      "output_tokens": 180,
+      "total_tokens": 3271,
+      "cost_usd": 0.00042527
+    },
+    {
+      "agent": "buyer_negotiator",
+      "requests": 3,
+      "input_tokens": 2202,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1338,
+      "output_tokens": 394,
+      "total_tokens": 3934,
+      "cost_usd": 0.00058445
+    },
+    {
+      "agent": "seller_negotiator",
+      "requests": 3,
+      "input_tokens": 2242,
+      "cached_tokens": 0,
+      "cache_write_tokens": 1203,
+      "output_tokens": 241,
+      "total_tokens": 3686,
+      "cost_usd": 0.00049508
+    },
+    {
+      "agent": "buyer_negotiator",
+      "requests": 4,
+      "input_tokens": 1479,
+      "cached_tokens": 2327,
+      "cache_write_tokens": 1415,
+      "output_tokens": 343,
+      "total_tokens": 5564,
+      "cost_usd": 0.00051955
+    },
+    {
+      "agent": "seller_negotiator",
+      "requests": 3,
+      "input_tokens": 1362,
+      "cached_tokens": 1056,
+      "cache_write_tokens": 1442,
+      "output_tokens": 396,
+      "total_tokens": 4256,
+      "cost_usd": 0.00052501
+    },
+    {
+      "agent": "buyer_negotiator",
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2206,
+      "cache_write_tokens": 1365,
+      "output_tokens": 240,
+      "total_tokens": 4189,
+      "cost_usd": 0.00035048
+    }
+  ],
+  "totals": {
+    "run_id": "eb3d297abab4",
+    "kind": "negotiation",
+    "requests": 19,
+    "input_tokens": 9707,
+    "cached_tokens": 5589,
+    "cache_write_tokens": 7810,
+    "output_tokens": 1794,
+    "total_tokens": 24900,
+    "cost_usd": 0.0029
+  },
+  "negotiation": {
+    "ok": true,
+    "negotiation_id": 2,
+    "listing_id": 3,
+    "need_id": 3,
+    "seller_id": 3,
+    "buyer_id": 22,
+    "qty": 1,
+    "status": "walked_away",
+    "rounds_used": 6,
+    "max_rounds": 6,
+    "next_to_move": null,
+    "agreed_price": null,
+    "end_reason": "buyer walked away",
+    "offers": [
+      {
+        "round": 1,
+        "from_side": "seller",
+        "action": "offer",
+        "price": 1149.0,
+        "qty": 1,
+        "created_at": "2026-10-25T23:31:19+00:00",
+        "message_untrusted": "We can offer this new-sealed PowerFlex 525 at the listed price of $1,149. Let me know if you have a counteroffer."
+      },
+      {
+        "round": 2,
+        "from_side": "buyer",
+        "action": "offer",
+        "price": 700.0,
+        "qty": 1,
+        "created_at": "2026-10-25T23:31:30+00:00",
+        "message_untrusted": "Given the new-sealed condition, we can move substantially from an opening position and offer $700 per unit. Please let me know if you can meet us near there."
+      },
+      {
+        "round": 3,
+        "from_side": "seller",
+        "action": "offer",
+        "price": 1135.0,
+        "qty": 1,
+        "created_at": "2026-10-25T23:31:35+00:00",
+        "message_untrusted": "Thanks for the offer. Given the new-sealed condition, we can make a modest adjustment to $1,135 per unit."
+      },
+      {
+        "round": 4,
+        "from_side": "buyer",
+        "action": "offer",
+        "price": 715.0,
+        "qty": 1,
+        "created_at": "2026-10-25T23:31:41+00:00",
+        "message_untrusted": "We can make one more improvement on our offer. Please let us know whether this works for you."
+      },
+      {
+        "round": 5,
+        "from_side": "seller",
+        "action": "offer",
+        "price": 1100.0,
+        "qty": 1,
+        "created_at": "2026-10-25T23:31:48+00:00",
+        "message_untrusted": "We appreciate the improved offer. For this new-sealed drive, we can make a stronger adjustment to $1,100 per unit."
+      },
+      {
+        "round": 6,
+        "from_side": "buyer",
+        "action": "walk_away",
+        "price": 0.0,
+        "qty": 1,
+        "created_at": "2026-10-25T23:31:54+00:00",
+        "message_untrusted": "We\u2019re unable to reach a workable price at this stage, so we\u2019ll have to step away. Thank you for considering our offer."
+      }
+    ]
+  },
+  "deal": null
+}

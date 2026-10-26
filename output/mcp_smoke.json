@@ -1,6 +1,6 @@
 {
   "description": "Smoke test of the surplus-exchange MCP server over the real MCP protocol (stdio): one server process per role, on a scratch copy of data/exchange.db. Each call states the expected outcome.",
-  "tested_at": "2026-10-25T23:10:59+00:00",
+  "tested_at": "2026-10-26T01:18:45+00:00",
   "server": "mcp_server/server.py (FastMCP, stdio)",
   "max_negotiation_rounds": 6,
   "tools_by_role": {
@@ -9,7 +9,9 @@
       "check_listing_rules",
       "create_listing",
       "create_need",
+      "end_negotiation",
       "flag_listing",
+      "get_company_profile",
       "get_compatibility",
       "get_exchange_date",
       "get_listing",
@@ -32,6 +34,7 @@
       "update_listing_draft"
     ],
     "seller_agent": [
+      "get_company_profile",
       "get_compatibility",
       "get_exchange_date",
       "get_listing",
@@ -40,9 +43,11 @@
       "get_negotiation",
       "get_price_reference",
       "lookup_part",
-      "submit_offer"
+      "submit_offer",
+      "walk_away"
     ],
     "buyer_agent": [
+      "get_company_profile",
       "get_compatibility",
       "get_exchange_date",
       "get_listing",
@@ -51,7 +56,8 @@
       "get_negotiation",
       "get_price_reference",
       "lookup_part",
-      "submit_offer"
+      "submit_offer",
+      "walk_away"
     ],
     "human_approver": [
       "approve_deal",
@@ -72,6 +78,7 @@
     ],
     "system": [
       "check_listing_rules",
+      "get_company_profile",
       "get_compatibility",
       "get_exchange_date",
       "get_listing",
@@ -106,8 +113,17 @@
     "create_need": [
       "broker"
     ],
+    "end_negotiation": [
+      "broker"
+    ],
     "flag_listing": [
       "broker"
+    ],
+    "get_company_profile": [
+      "broker",
+      "seller_agent",
+      "buyer_agent",
+      "system"
     ],
     "get_compatibility": [
       "broker",
@@ -225,14 +241,169 @@
     ],
     "update_listing_draft": [
       "broker"
+    ],
+    "walk_away": [
+      "seller_agent",
+      "buyer_agent"
+    ]
+  },
+  "refused_calls_logged_by_server": {
+    "count": 29,
+    "expected": 29,
+    "rows": [
+      {
+        "role": "broker",
+        "tool": "create_listing",
+        "code": "invalid_field"
+      },
+      {
+        "role": "broker",
+        "tool": "record_matches",
+        "code": "refused"
+      },
+      {
+        "role": "broker",
+        "tool": "activate_listing",
+        "code": "compliance_blocked"
+      },
+      {
+        "role": "broker",
+        "tool": "activate_listing",
+        "code": "compliance_blocked"
+      },
+      {
+        "role": "broker",
+        "tool": "activate_listing",
+        "code": "compliance_blocked"
+      },
+      {
+        "role": "broker",
+        "tool": "activate_listing",
+        "code": "compliance_blocked"
+      },
+      {
+        "role": "broker",
+        "tool": "activate_listing",
+        "code": "compliance_blocked"
+      },
+      {
+        "role": "broker",
+        "tool": "activate_listing",
+        "code": "compliance_needs_review"
+      },
+      {
+        "role": "broker",
+        "tool": "search_buyers_for_listing",
+        "code": "not_active"
+      },
+      {
+        "role": "broker",
+        "tool": "approve_deal",
+        "code": "not_in_role"
+      },
+      {
+        "role": "broker",
+        "tool": "open_negotiation",
+        "code": "duplicate"
+      },
+      {
+        "role": "broker",
+        "tool": "end_negotiation",
+        "code": "closed"
+      },
+      {
+        "role": "buyer_agent",
+        "tool": "get_company_profile",
+        "code": "not_your_company"
+      },
+      {
+        "role": "buyer_agent",
+        "tool": "submit_offer",
+        "code": "not_your_turn"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "submit_offer",
+        "code": "outside_your_limit"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "submit_offer",
+        "code": "would_reveal_private_limit"
+      },
+      {
+        "role": "buyer_agent",
+        "tool": "get_negotiation",
+        "code": "not_your_negotiation"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "submit_offer",
+        "code": "wrong_direction"
+      },
+      {
+        "role": "buyer_agent",
+        "tool": "submit_offer",
+        "code": "wrong_direction"
+      },
+      {
+        "role": "buyer_agent",
+        "tool": "submit_offer",
+        "code": "outside_your_limit"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "submit_offer",
+        "code": "closed"
+      },
+      {
+        "role": "buyer_agent",
+        "tool": "walk_away",
+        "code": "not_your_turn"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "walk_away",
+        "code": "would_reveal_private_limit"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "submit_offer",
+        "code": "round_cap"
+      },
+      {
+        "role": "seller_agent",
+        "tool": "submit_offer",
+        "code": "closed"
+      },
+      {
+        "role": "broker",
+        "tool": "request_deal_approval",
+        "code": "wrong_status"
+      },
+      {
+        "role": "human_approver",
+        "tool": "approve_deal",
+        "code": "invalid_approver"
+      },
+      {
+        "role": "human_approver",
+        "tool": "reject_deal",
+        "code": "not_pending"
+      },
+      {
+        "role": "system",
+        "tool": "submit_offer",
+        "code": "not_in_role"
+      }
     ]
   },
   "summary": {
-    "calls": 72,
-    "passed": 72,
+    "calls": 82,
+    "passed": 82,
     "failed": 0,
-    "tools_registered": 31,
-    "tools_called": 31,
+    "tools_registered": 34,
+    "tools_called": 34,
     "tools_never_called": []
   },
   "calls": [
@@ -262,7 +433,7 @@
       "passed": true,
       "result": {
         "query": "6ES7 315-2AG10",
-        "count": 1,
+        "count": 8,
         "parts": [
           {
             "part_number": "6ES7315-2AG10-0AB0",
@@ -279,7 +450,40 @@
             "fits_platforms": [
               "Siemens S7-300"
             ]
-          }
+          },
+          {
+            "part_number": "6ES7315-2EH14-0AB0",
+            "manufacturer": "Siemens",
+            "family": "PLC CPU",
+            "description": "SIMATIC S7-300 CPU 315-2 PN/DP, 384 KB",
+            "category": "spare_part",
+            "new_price": 3286.0,
+            "scrap_value": 56.16,
+            "hazmat": 0,
+            "hazmat_class": null,
+            "shelf_life_months": null,
+            "obsolete": 0,
+            "fits_platforms": [
+              "Siemens S7-300"
+            ]
+          },
+          {
+            "part_number": "6ES7321-1BL00-0AA0",
+            "manufacturer": "Siemens",
+            "family": "PLC I/O",
+            "description": "S7-300 SM 321 digital input 32 x 24 V DC",
+            "category": "spare_part",
+            "new_price": 530.0,
+            "scrap_value": 7.84,
+            "hazmat": 0,
+            "hazmat_class": null,
+            "shelf_life_months": null,
+            "obsolete": 0,
+            "fits_platforms": [
+              "Siemens S7-300"
+            ]
+          },
+          "... 5 more"
         ]
       }
     },
@@ -296,7 +500,7 @@
       "passed": true,
       "result": {
         "query": "CR 15 seal",
-        "count": 1,
+        "count": 4,
         "parts": [
           {
             "part_number": "96525458",
@@ -313,7 +517,40 @@
             "fits_platforms": [
               "Grundfos CR 15"
             ]
-          }
+          },
+          {
+            "part_number": "96416889",
+            "manufacturer": "Grundfos",
+            "family": "Pump spare",
+            "description": "CR 32 shaft seal kit, HQQE (SiC/SiC/EPDM)",
+            "category": "spare_part",
+            "new_price": 678.0,
+            "scrap_value": 11.42,
+            "hazmat": 0,
+            "hazmat_class": null,
+            "shelf_life_months": null,
+            "obsolete": 0,
+            "fits_platforms": [
+              "Grundfos CR 32"
+            ]
+          },
+          {
+            "part_number": "96455084",
+            "manufacturer": "Grundfos",
+            "family": "Pump spare",
+            "description": "CR 15-3 impeller and chamber stack kit",
+            "category": "spare_part",
+            "new_price": 930.0,
+            "scrap_value": 24.67,
+            "hazmat": 0,
+            "hazmat_class": null,
+            "shelf_life_months": null,
+            "obsolete": 0,
+            "fits_platforms": [
+              "Grundfos CR 15"
+            ]
+          },
+          "... 1 more"
         ]
       }
     },
@@ -449,6 +686,51 @@
     {
       "step": 8,
       "role": "broker",
+      "tool": "get_company_profile",
+      "args": {
+        "company_id": 20
+      },
+      "expect": "ok",
+      "why": "buyer profile: runs 4x Siemens S7-300 (18 yrs)",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "company_id": 20,
+        "name": "Riverbend Foods",
+        "type": "plant",
+        "location": "Cedar Rapids, IA",
+        "industry": "Food & beverage",
+        "installed_equipment": [
+          {
+            "platform": "Siemens S7-300",
+            "qty": 4,
+            "years_in_use": 18
+          }
+        ],
+        "open_needs": [
+          {
+            "need_id": 1,
+            "status": "open",
+            "buyer_id": 20,
+            "buyer_name": "Riverbend Foods",
+            "buyer_location": "Cedar Rapids, IA",
+            "part_number": "6ES7315-2AG10-0AB0",
+            "platform": "Siemens S7-300",
+            "family": null,
+            "qty": 1,
+            "urgency": "line_down",
+            "downtime_cost_per_day": 12000.0,
+            "created_at": "2026-10-14T14:19:00",
+            "buyer_text_untrusted": "LINE DOWN - cpu on our S7-300 packaging line died overnight. need a 315-2DP (6ES7 315-2AG10) or compatible asap. losing ~$12k/day"
+          }
+        ],
+        "active_listing_ids": []
+      }
+    },
+    {
+      "step": 9,
+      "role": "broker",
       "tool": "create_listing",
       "args": {
         "seller_id": 7,
@@ -473,7 +755,7 @@
       }
     },
     {
-      "step": 9,
+      "step": 10,
       "role": "broker",
       "tool": "create_listing",
       "args": {
@@ -494,7 +776,7 @@
       }
     },
     {
-      "step": 10,
+      "step": 11,
       "role": "broker",
       "tool": "check_listing_rules",
       "args": {
@@ -514,7 +796,7 @@
       }
     },
     {
-      "step": 11,
+      "step": 12,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -533,7 +815,7 @@
       }
     },
     {
-      "step": 12,
+      "step": 13,
       "role": "broker",
       "tool": "search_listings_for_need",
       "args": {
@@ -585,7 +867,7 @@
             "fits_platforms": [
               "Grundfos CR 15"
             ],
-            "created_at": "2026-10-25T23:10:25+00:00",
+            "created_at": "2026-10-26T01:18:07+00:00",
             "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea",
             "why_it_fits": "96525458 is a pump spare that fits the buyer's Grundfos CR 15"
           }
@@ -593,7 +875,7 @@
       }
     },
     {
-      "step": 13,
+      "step": 14,
       "role": "broker",
       "tool": "search_buyers_for_listing",
       "args": {
@@ -628,7 +910,7 @@
           "fits_platforms": [
             "Grundfos CR 15"
           ],
-          "created_at": "2026-10-25T23:10:25+00:00",
+          "created_at": "2026-10-26T01:18:07+00:00",
           "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea"
         },
         "candidate_count": 6,
@@ -683,7 +965,7 @@
       }
     },
     {
-      "step": 14,
+      "step": 15,
       "role": "broker",
       "tool": "record_matches",
       "args": {
@@ -718,7 +1000,7 @@
       }
     },
     {
-      "step": 15,
+      "step": 16,
       "role": "broker",
       "tool": "record_matches",
       "args": {
@@ -751,7 +1033,7 @@
       }
     },
     {
-      "step": 16,
+      "step": 17,
       "role": "broker",
       "tool": "list_buyer_profiles",
       "args": {},
@@ -797,7 +1079,7 @@
       }
     },
     {
-      "step": 17,
+      "step": 18,
       "role": "broker",
       "tool": "create_need",
       "args": {
@@ -821,7 +1103,7 @@
       }
     },
     {
-      "step": 18,
+      "step": 19,
       "role": "broker",
       "tool": "update_listing_draft",
       "args": {
@@ -839,7 +1121,7 @@
       }
     },
     {
-      "step": 19,
+      "step": 20,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -863,7 +1145,7 @@
       }
     },
     {
-      "step": 20,
+      "step": 21,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -887,7 +1169,7 @@
       }
     },
     {
-      "step": 21,
+      "step": 22,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -911,7 +1193,7 @@
       }
     },
     {
-      "step": 22,
+      "step": 23,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -935,7 +1217,7 @@
       }
     },
     {
-      "step": 23,
+      "step": 24,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -959,7 +1241,7 @@
       }
     },
     {
-      "step": 24,
+      "step": 25,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -983,7 +1265,7 @@
       }
     },
     {
-      "step": 25,
+      "step": 26,
       "role": "broker",
       "tool": "search_buyers_for_listing",
       "args": {
@@ -1000,7 +1282,7 @@
       }
     },
     {
-      "step": 26,
+      "step": 27,
       "role": "broker",
       "tool": "flag_listing",
       "args": {
@@ -1018,7 +1300,7 @@
       }
     },
     {
-      "step": 27,
+      "step": 28,
       "role": "broker",
       "tool": "approve_deal",
       "args": {
@@ -1035,7 +1317,7 @@
       }
     },
     {
-      "step": 28,
+      "step": 29,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1060,11 +1342,12 @@
         "next_to_move": "seller",
         "agreed_price": null,
         "end_reason": null,
-        "offers": []
+        "offers": [],
+        "final_offer_pending": false
       }
     },
     {
-      "step": 29,
+      "step": 30,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1089,11 +1372,12 @@
         "next_to_move": "seller",
         "agreed_price": null,
         "end_reason": null,
-        "offers": []
+        "offers": [],
+        "final_offer_pending": false
       }
     },
     {
-      "step": 30,
+      "step": 31,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1118,11 +1402,12 @@
         "next_to_move": "seller",
         "agreed_price": null,
         "end_reason": null,
-        "offers": []
+        "offers": [],
+        "final_offer_pending": false
       }
     },
     {
-      "step": 31,
+      "step": 32,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1140,7 +1425,73 @@
       }
     },
     {
-      "step": 32,
+      "step": 33,
+      "role": "broker",
+      "tool": "open_negotiation",
+      "args": {
+        "listing_id": 7,
+        "need_id": 7
+      },
+      "expect": "ok",
+      "why": "listing 7 / need 7, to test the broker's safety stop",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "negotiation_id": 4,
+        "listing_id": 7,
+        "need_id": 7,
+        "seller_id": 7,
+        "buyer_id": 26,
+        "qty": 1,
+        "status": "open",
+        "rounds_used": 0,
+        "max_rounds": 6,
+        "next_to_move": "seller",
+        "agreed_price": null,
+        "end_reason": null,
+        "offers": [],
+        "final_offer_pending": false
+      }
+    },
+    {
+      "step": 34,
+      "role": "broker",
+      "tool": "end_negotiation",
+      "args": {
+        "negotiation_id": 4,
+        "reason": "smoke test: agent stuck"
+      },
+      "expect": "ok",
+      "why": "broker stops a stuck negotiation",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "negotiation_id": 4,
+        "status": "stopped"
+      }
+    },
+    {
+      "step": 35,
+      "role": "broker",
+      "tool": "end_negotiation",
+      "args": {
+        "negotiation_id": 4,
+        "reason": "again"
+      },
+      "expect": "refused",
+      "why": "can't stop a closed negotiation",
+      "expected_code": "closed",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "closed",
+        "message": "Negotiation is 'stopped', not open."
+      }
+    },
+    {
+      "step": 36,
       "role": "seller_agent",
       "tool": "get_my_private_terms",
       "args": {},
@@ -1159,7 +1510,7 @@
       }
     },
     {
-      "step": 33,
+      "step": 37,
       "role": "buyer_agent",
       "tool": "get_my_private_terms",
       "args": {},
@@ -1179,7 +1530,67 @@
       }
     },
     {
-      "step": 34,
+      "step": 38,
+      "role": "buyer_agent",
+      "tool": "get_company_profile",
+      "args": {},
+      "expect": "ok",
+      "why": "buyer reads its own company profile",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "company_id": 20,
+        "name": "Riverbend Foods",
+        "type": "plant",
+        "location": "Cedar Rapids, IA",
+        "industry": "Food & beverage",
+        "installed_equipment": [
+          {
+            "platform": "Siemens S7-300",
+            "qty": 4,
+            "years_in_use": 18
+          }
+        ],
+        "open_needs": [
+          {
+            "need_id": 1,
+            "status": "open",
+            "buyer_id": 20,
+            "buyer_name": "Riverbend Foods",
+            "buyer_location": "Cedar Rapids, IA",
+            "part_number": "6ES7315-2AG10-0AB0",
+            "platform": "Siemens S7-300",
+            "family": null,
+            "qty": 1,
+            "urgency": "line_down",
+            "downtime_cost_per_day": 12000.0,
+            "created_at": "2026-10-14T14:19:00",
+            "buyer_text_untrusted": "LINE DOWN - cpu on our S7-300 packaging line died overnight. need a 315-2DP (6ES7 315-2AG10) or compatible asap. losing ~$12k/day"
+          }
+        ],
+        "active_listing_ids": []
+      }
+    },
+    {
+      "step": 39,
+      "role": "buyer_agent",
+      "tool": "get_company_profile",
+      "args": {
+        "company_id": 1
+      },
+      "expect": "refused",
+      "why": "buyer can't read the seller's profile",
+      "expected_code": "not_your_company",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "not_your_company",
+        "message": "You can only read your own company's profile."
+      }
+    },
+    {
+      "step": 40,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1197,7 +1608,7 @@
       }
     },
     {
-      "step": 35,
+      "step": 41,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1216,7 +1627,7 @@
       }
     },
     {
-      "step": 36,
+      "step": 42,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1235,7 +1646,7 @@
       }
     },
     {
-      "step": 37,
+      "step": 43,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1255,11 +1666,12 @@
         "price": 1400.0,
         "status": "open",
         "rounds_left": 5,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 38,
+      "step": 44,
       "role": "buyer_agent",
       "tool": "get_negotiation",
       "args": {},
@@ -1288,14 +1700,15 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-25T23:10:32+00:00",
+            "created_at": "2026-10-26T01:18:15+00:00",
             "message_untrusted": "Pulled working, ships today."
           }
-        ]
+        ],
+        "final_offer_pending": false
       }
     },
     {
-      "step": 39,
+      "step": 45,
       "role": "buyer_agent",
       "tool": "get_negotiation",
       "args": {
@@ -1312,7 +1725,7 @@
       }
     },
     {
-      "step": 40,
+      "step": 46,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1332,11 +1745,12 @@
         "price": 1100.0,
         "status": "open",
         "rounds_left": 4,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 41,
+      "step": 47,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1354,7 +1768,7 @@
       }
     },
     {
-      "step": 42,
+      "step": 48,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1374,11 +1788,12 @@
         "price": 1300.0,
         "status": "open",
         "rounds_left": 3,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 43,
+      "step": 49,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1396,7 +1811,7 @@
       }
     },
     {
-      "step": 44,
+      "step": 50,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1414,7 +1829,7 @@
       }
     },
     {
-      "step": 45,
+      "step": 51,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1434,11 +1849,12 @@
         "price": 1250.0,
         "status": "open",
         "rounds_left": 2,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 46,
+      "step": 52,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1460,7 +1876,7 @@
       }
     },
     {
-      "step": 47,
+      "step": 53,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1478,7 +1894,7 @@
       }
     },
     {
-      "step": 48,
+      "step": 54,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1497,11 +1913,12 @@
         "price": 1149.0,
         "status": "open",
         "rounds_left": 5,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 49,
+      "step": 55,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1520,19 +1937,53 @@
         "price": 650.0,
         "status": "open",
         "rounds_left": 4,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 50,
-      "role": "seller_agent",
-      "tool": "submit_offer",
+      "step": 56,
+      "role": "buyer_agent",
+      "tool": "walk_away",
       "args": {
-        "action": "walk_away",
-        "message": "Too far apart."
+        "reason": "Too expensive."
+      },
+      "expect": "refused",
+      "why": "walk_away still respects turns",
+      "expected_code": "not_your_turn",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "not_your_turn",
+        "message": "It is the seller's turn."
+      }
+    },
+    {
+      "step": 57,
+      "role": "seller_agent",
+      "tool": "walk_away",
+      "args": {
+        "reason": "Can't go under 1010."
+      },
+      "expect": "refused",
+      "why": "walk-away reason would leak the floor",
+      "expected_code": "would_reveal_private_limit",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "would_reveal_private_limit",
+        "message": "Your message would reveal your private limit. Rewrite it without that number."
+      }
+    },
+    {
+      "step": 58,
+      "role": "seller_agent",
+      "tool": "walk_away",
+      "args": {
+        "reason": "Too far apart."
       },
       "expect": "ok",
-      "why": "seller walks away",
+      "why": "seller walks away (dedicated tool)",
       "expected_code": null,
       "passed": true,
       "result": {
@@ -1546,7 +1997,7 @@
       }
     },
     {
-      "step": 51,
+      "step": 59,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1565,11 +2016,12 @@
         "price": 2875.0,
         "status": "open",
         "rounds_left": 5,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 52,
+      "step": 60,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1588,11 +2040,12 @@
         "price": 2000.0,
         "status": "open",
         "rounds_left": 4,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 53,
+      "step": 61,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1611,11 +2064,12 @@
         "price": 2850.0,
         "status": "open",
         "rounds_left": 3,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 54,
+      "step": 62,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1634,11 +2088,12 @@
         "price": 2030.0,
         "status": "open",
         "rounds_left": 2,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 55,
+      "step": 63,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1657,11 +2112,12 @@
         "price": 2825.0,
         "status": "open",
         "rounds_left": 1,
+        "final_offer": false,
         "end_reason": null
       }
     },
     {
-      "step": 56,
+      "step": 64,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1678,13 +2134,14 @@
         "round": 6,
         "action": "offer",
         "price": 2060.0,
-        "status": "round_cap",
+        "status": "open",
         "rounds_left": 0,
-        "end_reason": "round cap of 6 reached without agreement"
+        "final_offer": true,
+        "end_reason": "round cap of 6 reached: final offer, the other side may only accept or decline"
       }
     },
     {
-      "step": 57,
+      "step": 65,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1692,17 +2149,55 @@
         "price": 2800
       },
       "expect": "refused",
-      "why": "round cap: negotiation is closed",
+      "why": "round cap: the final offer can't be countered",
+      "expected_code": "round_cap",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "round_cap",
+        "message": "The round cap (6 offers) is reached: you may only accept the final offer or walk away."
+      }
+    },
+    {
+      "step": 66,
+      "role": "seller_agent",
+      "tool": "walk_away",
+      "args": {
+        "reason": "Can't do 2,060."
+      },
+      "expect": "ok",
+      "why": "seller declines the final offer -> status round_cap",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "negotiation_id": 3,
+        "round": 7,
+        "action": "walk_away",
+        "status": "round_cap",
+        "price": null,
+        "end_reason": "round cap of 6 reached; seller declined the final offer"
+      }
+    },
+    {
+      "step": 67,
+      "role": "seller_agent",
+      "tool": "submit_offer",
+      "args": {
+        "action": "accept"
+      },
+      "expect": "refused",
+      "why": "no moves after the cap closes",
       "expected_code": "closed",
       "passed": true,
       "result": {
         "ok": false,
         "code": "closed",
-        "message": "Negotiation is 'round_cap' (round cap of 6 reached without agreement). No more moves."
+        "message": "Negotiation is 'round_cap' (round cap of 6 reached; seller declined the final offer). No more moves."
       }
     },
     {
-      "step": 58,
+      "step": 68,
       "role": "broker",
       "tool": "request_deal_approval",
       "args": {
@@ -1724,12 +2219,12 @@
           "status": "pending_approval",
           "approved_by": null,
           "decided_at": null,
-          "created_at": "2026-10-25T23:10:50+00:00"
+          "created_at": "2026-10-26T01:18:35+00:00"
         }
       }
     },
     {
-      "step": 59,
+      "step": 69,
       "role": "broker",
       "tool": "request_deal_approval",
       "args": {
@@ -1746,7 +2241,7 @@
       }
     },
     {
-      "step": 60,
+      "step": 70,
       "role": "broker",
       "tool": "get_negotiation",
       "args": {
@@ -1765,11 +2260,11 @@
         "buyer_id": 24,
         "qty": 1,
         "status": "round_cap",
-        "rounds_used": 6,
+        "rounds_used": 7,
         "max_rounds": 6,
         "next_to_move": null,
         "agreed_price": null,
-        "end_reason": "round cap of 6 reached without agreement",
+        "end_reason": "round cap of 6 reached; seller declined the final offer",
         "offers": [
           {
             "round": 1,
@@ -1777,7 +2272,7 @@
             "action": "offer",
             "price": 2875.0,
             "qty": 1,
-            "created_at": "2026-10-25T23:10:46+00:00",
+            "created_at": "2026-10-26T01:18:30+00:00",
             "message_untrusted": ""
           },
           {
@@ -1786,7 +2281,7 @@
             "action": "offer",
             "price": 2000.0,
             "qty": 1,
-            "created_at": "2026-10-25T23:10:47+00:00",
+            "created_at": "2026-10-26T01:18:32+00:00",
             "message_untrusted": ""
           },
           {
@@ -1795,15 +2290,16 @@
             "action": "offer",
             "price": 2850.0,
             "qty": 1,
-            "created_at": "2026-10-25T23:10:47+00:00",
+            "created_at": "2026-10-26T01:18:32+00:00",
             "message_untrusted": ""
           },
-          "... 3 more"
-        ]
+          "... 4 more"
+        ],
+        "final_offer_pending": false
       }
     },
     {
-      "step": 61,
+      "step": 71,
       "role": "broker",
       "tool": "list_listings",
       "args": {
@@ -1888,14 +2384,14 @@
             "sds_available": null,
             "fits_platforms": [],
             "created_at": "2026-10-10T10:55:00",
-            "seller_text_untrusted": "60 cartriges Loctite E-120HP epoxy 50ml, exp 07/2026, still in cold storage. $8 each, cheap!"
+            "seller_text_untrusted": "60 cartriges Loctite E-120HP epoxy 50ml, unopened, exp 07/2026, still in cold storage. $8 each, cheap!"
           },
           "... 4 more"
         ]
       }
     },
     {
-      "step": 62,
+      "step": 72,
       "role": "broker",
       "tool": "list_needs",
       "args": {
@@ -1958,7 +2454,7 @@
       }
     },
     {
-      "step": 63,
+      "step": 73,
       "role": "broker",
       "tool": "list_matches",
       "args": {},
@@ -1978,14 +2474,14 @@
             "reason": "Exact CR 15 HQQE seal kit for Tidewater's CIP pump",
             "direction": "buyer_to_seller",
             "run_id": "smoke",
-            "created_at": "2026-10-25T23:10:25+00:00",
+            "created_at": "2026-10-26T01:18:07+00:00",
             "buyer_name": "Tidewater Dairy"
           }
         ]
       }
     },
     {
-      "step": 64,
+      "step": 74,
       "role": "broker",
       "tool": "list_negotiations",
       "args": {},
@@ -1994,7 +2490,7 @@
       "expected_code": null,
       "passed": true,
       "result": {
-        "count": 3,
+        "count": 4,
         "negotiations": [
           {
             "negotiation_id": 1,
@@ -2016,7 +2512,7 @@
                 "action": "offer",
                 "price": 1400.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:32+00:00",
+                "created_at": "2026-10-26T01:18:15+00:00",
                 "message_untrusted": "Pulled working, ships today."
               },
               {
@@ -2025,7 +2521,7 @@
                 "action": "offer",
                 "price": 1100.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:32+00:00",
+                "created_at": "2026-10-26T01:18:16+00:00",
                 "message_untrusted": "Line is down; can pay fast."
               },
               {
@@ -2034,11 +2530,12 @@
                 "action": "offer",
                 "price": 1300.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:32+00:00",
+                "created_at": "2026-10-26T01:18:16+00:00",
                 "message_untrusted": "Meet me at 1300."
               },
               "... 2 more"
-            ]
+            ],
+            "final_offer_pending": false
           },
           {
             "negotiation_id": 2,
@@ -2060,7 +2557,7 @@
                 "action": "offer",
                 "price": 1149.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:39+00:00",
+                "created_at": "2026-10-26T01:18:22+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2069,7 +2566,7 @@
                 "action": "offer",
                 "price": 650.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:39+00:00",
+                "created_at": "2026-10-26T01:18:24+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2078,10 +2575,11 @@
                 "action": "walk_away",
                 "price": 0.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:39+00:00",
+                "created_at": "2026-10-26T01:18:24+00:00",
                 "message_untrusted": "Too far apart."
               }
-            ]
+            ],
+            "final_offer_pending": false
           },
           {
             "negotiation_id": 3,
@@ -2091,11 +2589,11 @@
             "buyer_id": 24,
             "qty": 1,
             "status": "round_cap",
-            "rounds_used": 6,
+            "rounds_used": 7,
             "max_rounds": 6,
             "next_to_move": null,
             "agreed_price": null,
-            "end_reason": "round cap of 6 reached without agreement",
+            "end_reason": "round cap of 6 reached; seller declined the final offer",
             "offers": [
               {
                 "round": 1,
@@ -2103,7 +2601,7 @@
                 "action": "offer",
                 "price": 2875.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:46+00:00",
+                "created_at": "2026-10-26T01:18:30+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2112,7 +2610,7 @@
                 "action": "offer",
                 "price": 2000.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:47+00:00",
+                "created_at": "2026-10-26T01:18:32+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2121,17 +2619,19 @@
                 "action": "offer",
                 "price": 2850.0,
                 "qty": 1,
-                "created_at": "2026-10-25T23:10:47+00:00",
+                "created_at": "2026-10-26T01:18:32+00:00",
                 "message_untrusted": ""
               },
-              "... 3 more"
-            ]
-          }
+              "... 4 more"
+            ],
+            "final_offer_pending": false
+          },
+          "... 1 more"
         ]
       }
     },
     {
-      "step": 65,
+      "step": 75,
       "role": "broker",
       "tool": "list_deals",
       "args": {},
@@ -2152,7 +2652,7 @@
             "status": "pending_approval",
             "approved_by": null,
             "decided_at": null,
-            "created_at": "2026-10-25T23:10:50+00:00",
+            "created_at": "2026-10-26T01:18:35+00:00",
             "part_number": "6ES7315-2AG10-0AB0",
             "seller_name": "Hartwell Precision Components",
             "buyer_name": "Riverbend Foods"
@@ -2161,7 +2661,7 @@
       }
     },
     {
-      "step": 66,
+      "step": 76,
       "role": "broker",
       "tool": "list_notifications",
       "args": {
@@ -2182,14 +2682,14 @@
             "listing_id": 28,
             "need_id": 20,
             "read": 0,
-            "created_at": "2026-10-25T23:10:25+00:00",
+            "created_at": "2026-10-26T01:18:07+00:00",
             "company_name": "Tidewater Dairy"
           }
         ]
       }
     },
     {
-      "step": 67,
+      "step": 77,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
@@ -2207,7 +2707,7 @@
       }
     },
     {
-      "step": 68,
+      "step": 78,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
@@ -2230,7 +2730,7 @@
       }
     },
     {
-      "step": 69,
+      "step": 79,
       "role": "human_approver",
       "tool": "reject_deal",
       "args": {
@@ -2248,7 +2748,7 @@
       }
     },
     {
-      "step": 70,
+      "step": 80,
       "role": "system",
       "tool": "log_tokens",
       "args": {
@@ -2270,7 +2770,7 @@
       }
     },
     {
-      "step": 71,
+      "step": 81,
       "role": "system",
       "tool": "get_token_summary",
       "args": {
@@ -2304,7 +2804,7 @@
       }
     },
     {
-      "step": 72,
+      "step": 82,
       "role": "system",
       "tool": "submit_offer",
       "args": {

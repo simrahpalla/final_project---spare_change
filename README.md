@@ -59,9 +59,20 @@ It prints where the key was found (`repo folder` or `parent folder`), a one-line
 .venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --port 8000     # macOS/Linux: .venv/bin/python -m ...
 ```
 
-Open **http://localhost:8000**. The header shows `gpt-6-luna · key from …` when the key is found. Click **Test model connection** to make one live call.
+Open **http://localhost:8000**. For the first few seconds the header says **"Starting up… loading marketplace tools"**: the backend is starting its tool servers once, in the background, and every request reuses them afterwards. It then shows `gpt-6-luna · key from … · tools ready`. Click **Test model connection** to make one live call.
 
 ---
+
+## Try the agents from the command line
+
+```bash
+.venv/Scripts/python.exe backend/run_flow.py --listing 1          # seller flow: listing -> compliance -> matches -> price -> outreach
+.venv/Scripts/python.exe backend/run_flow.py --listing 22         # planted prompt injection: blocked before any model call
+.venv/Scripts/python.exe backend/run_flow.py --text "2 grundfos CR15 seal kits HQQE, never installed, 330 ea" --seller 7
+.venv/Scripts/python.exe backend/run_flow.py --negotiate 1 1      # seller agent vs buyer agent -> deal pending human approval
+```
+
+Each run prints every step with its tokens and cost (a full run costs well under $0.01) and is saved to `output/runs/`. Add `--reset` to start from a clean database.
 
 ## How it's built
 

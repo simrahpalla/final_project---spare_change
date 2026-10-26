@@ -22,6 +22,10 @@ def reset(original: Path = ORIGINAL_DB, working: Path = WORKING_DB) -> Path:
         raise FileNotFoundError(f"{original} not found. Run scripts/seed_data.py first.")
     if working.resolve() == original.resolve():
         raise ValueError("The working copy must be a different file from the original.")
+    # The working copy runs in SQLite WAL mode: stale -wal/-shm side files from the old copy must go,
+    # or SQLite would replay them onto the fresh copy.
+    for side in (working.with_name(working.name + "-wal"), working.with_name(working.name + "-shm")):
+        side.unlink(missing_ok=True)
     shutil.copyfile(original, working)  # copies contents only, so the working copy stays writable
     return working
 

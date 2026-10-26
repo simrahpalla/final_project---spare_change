@@ -23,6 +23,8 @@ def make_model() -> OpenAIResponsesModel:
         api_key=key,
         base_url=config.PORTKEY_BASE_URL,
         default_headers={"x-portkey-api-key": key, "x-portkey-provider": "openai"},
+        timeout=60,      # seconds per model request
+        max_retries=0,   # retries are done (once) by the broker, so every attempt is logged in the audit trail
     )
     return OpenAIResponsesModel(config.MODEL_NAME, provider=OpenAIProvider(openai_client=client))
 

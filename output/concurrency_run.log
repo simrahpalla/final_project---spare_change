@@ -1,0 +1,94 @@
+
+=== backend @ 2 at once ===
+  backend up in 7.2s, tools ready (MCP startup 2.1s)
+  [ok            ] listing 2              4s  listed and matched
+  [ok            ] listing 4              4s  listed and matched
+  [ok            ] listing 7              2s  listed and matched
+  [ok            ] listing 6              2s  listed and matched
+  [ok            ] listing 8              1s  listed and matched
+  [ok            ] listing 9              2s  listed and matched
+  [ok            ] listing 10             1s  listed and matched
+  [ok            ] listing 12             2s  listed and matched
+  [ok            ] listing 13             2s  listed and matched
+  [ok            ] listing 14             2s  listed and matched
+  [ok            ] listing 15             2s  listed and matched
+  [ok            ] listing 16             2s  listed and matched
+  [ok            ] listing 17             2s  listed and matched
+  [ok            ] listing 18             2s  listed and matched
+  [ok            ] listing 19             2s  listed (no matching buyers yet)
+  [ok            ] listing 21             1s  listed (no matching buyers yet)
+  [ok            ] listing 22             0s  blocked: prompt injection (code pre-screen, no model call)
+  [ok            ] listing 23             0s  blocked: Chemical is past its expiry date.
+  [ok            ] listing 24             0s  blocked: Hazardous material listed without a safety data sheet (SDS).
+  [ok            ] listing 25             0s  blocked: Asking price is more than 3x the new price.
+  [ok            ] listing 20             2s  listed and matched
+  [ok            ] listing 26             0s  blocked: Chemical is past its expiry date.
+  [ok            ] listing 27             0s  needs_review: Discontinued part offered new-sealed far below list: cou
+  [ok            ] negotiate 1/1          8s  agreed
+  [ok            ] negotiate 3/3         14s  round_cap
+  [ok            ] negotiate 5/5         11s  agreed
+  [ok            ] negotiate 11/11       14s  walked_away
+  -> 27/27 ok, 0 crash(es), 0 friendly error(s), wall 44.9s
+
+=== backend @ 6 at once ===
+  backend up in 7.7s, tools ready (MCP startup 2.2s)
+  [ok            ] listing 9              3s  listed and matched
+  [ok            ] listing 7              4s  listed and matched
+  [ok            ] listing 8              4s  listed and matched
+  [ok            ] listing 4              4s  listed and matched
+  [ok            ] listing 6              5s  listed and matched
+  [ok            ] listing 2              5s  listed and matched
+  [ok            ] listing 10             2s  listed and matched
+  [ok            ] listing 14             1s  listed and matched
+  [ok            ] listing 12             3s  listed and matched
+  [ok            ] listing 17             2s  listed and matched
+  [ok            ] listing 13             3s  listed and matched
+  [ok            ] listing 18             2s  listed and matched
+  [ok            ] listing 16             2s  listed and matched
+  [ok            ] listing 22             0s  blocked: prompt injection (code pre-screen, no model call)
+  [ok            ] listing 15             2s  listed and matched
+  [ok            ] listing 23             0s  blocked: Chemical is past its expiry date.
+  [ok            ] listing 19             1s  listed (no matching buyers yet)
+  [ok            ] listing 24             0s  blocked: Hazardous material listed without a safety data sheet (SDS).
+  [ok            ] listing 25             0s  blocked: Asking price is more than 3x the new price.
+  [ok            ] listing 26             1s  blocked: Chemical is past its expiry date.
+  [ok            ] listing 27             1s  needs_review: Discontinued part offered new-sealed far below list: cou
+  [ok            ] listing 21             1s  listed (no matching buyers yet)
+  [ok            ] listing 20             2s  listed and matched
+  [ok            ] negotiate 1/1          8s  agreed
+  [ok            ] negotiate 5/5         11s  agreed
+  [ok            ] negotiate 11/11       12s  walked_away
+  [ok            ] negotiate 3/3         12s  round_cap
+  -> 27/27 ok, 0 crash(es), 0 friendly error(s), wall 20.3s
+
+=== process @ 6 at once ===
+  done listing 4                             16s  listed and matched
+  done listing 2                             16s  listed and matched
+  done listing 7                             16s  listed and matched
+  done listing 8                             17s  listed and matched
+  done listing 6                             17s  listed and matched
+  done listing 9                             18s  listed and matched
+  done listing 10                            16s  listed and matched
+  done listing 12                            16s  listed and matched
+  done listing 14                            16s  listed and matched
+  done listing 13                            16s  listed and matched
+  done listing 15                            16s  listed and matched
+  done listing 16                            15s  listed and matched
+  done listing 22                            14s  blocked: prompt injection (code pre-screen, no model call)
+  done listing 19                            16s  listed (no matching buyers yet)
+  done listing 21                            16s  listed (no matching buyers yet)
+  done listing 20                            17s  listed and matched
+  done listing 17                            17s  listed and matched
+  done listing 18                            18s  listed and matched
+  done listing 23                            17s  blocked: Chemical is past its expiry date.
+  done listing 24                            16s  blocked: Hazardous material listed without a safety data sheet (SDS).
+  done listing 25                            16s  blocked: Asking price is more than 3x the new price.
+  done listing 27                            16s  needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk.
+  done listing 26                            16s  blocked: Chemical is past its expiry date.
+  done negotiate 1/1                         26s  agreed
+  done negotiate 5/5                         23s  agreed
+  done negotiate 3/3                         27s  walked_away
+  done negotiate 11/11                       26s  walked_away
+  -> 27/27 ok, 0 crash(es), 0 friendly error(s), wall 91.2s
+
+Wrote output/concurrency_test.json and the Concurrency section of output/phase3_stress.md

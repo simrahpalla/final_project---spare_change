@@ -16,14 +16,14 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 
 `MAX_NEGOTIATION_ROUNDS` (default 6) sets the round cap.
 
-## Tools by role (31 tools)
+## Tools by role (34 tools)
 
 | Tool | broker | seller_agent | buyer_agent | human_approver | system | What it does |
 |---|:-:|:-:|:-:|:-:|:-:|---|
 | `get_exchange_date` | ✓ | ✓ | ✓ | ✓ | ✓ | The exchange's "today" (never the clock) |
 | `lookup_part` | ✓ | ✓ | ✓ | ✓ | ✓ | Messy text or partial part number → catalog parts |
 | `get_compatibility` | ✓ | ✓ | ✓ | ✓ | ✓ | Platforms a part fits, plus its substitutes |
-| `get_price_reference` | ✓ | ✓ | ✓ | ✓ | ✓ | New price, scrap value, current asks, approved deals |
+| `get_price_reference` | ✓ | ✓ | ✓ | ✓ | ✓ | New price, scrap value, other listings' asks, approved deals |
 | `get_listing` / `get_need` | ✓ | ✓ | ✓ | ✓ | ✓ | Public fields only. User text is returned as `*_text_untrusted` |
 | `create_listing` | ✓ | | | | | Store a structured listing (`submitted`). Unknown part numbers are refused. Expiry is derived from the manufacture date in code |
 | `update_listing_draft` | ✓ | | | | | Fix fields of a `submitted` listing |
@@ -36,10 +36,13 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 | `list_buyer_profiles` | ✓ | | | | | All companies, unfiltered (only for the cost experiment) |
 | `record_matches` | ✓ | | | | | Save matches and notify both sides. **Ungrounded matches are rejected** |
 | `open_negotiation` | ✓ | | | | | Start one negotiation for a listing–need pair |
-| `get_negotiation` | ✓ | own only | own only | ✓ | ✓ | Offers and status. No private limits |
+| `get_negotiation` | ✓ | own only | own only | ✓ | ✓ | Offer history, round number, status and whose turn. No private limits |
+| `end_negotiation` | ✓ | | | | | Broker safety stop for a stuck negotiation (status `stopped`) |
+| `get_company_profile` | ✓ | own only | own only | | ✓ | Installed equipment (platform, qty, years), open needs, active listings |
 | `request_deal_approval` | ✓ | | | | | Agreed → deal `pending_approval` |
 | `get_my_private_terms` | | ✓ (floor) | ✓ (ceiling) | | | **Only that side's** limit |
-| `submit_offer` | | ✓ | ✓ | | | Offer / accept / walk away, with the code rules below |
+| `submit_offer` | | ✓ | ✓ | | | Offer or accept, with the code rules below |
+| `walk_away` | | ✓ | ✓ | | | Decline and end the negotiation (same turn and no-leak rules) |
 | `approve_deal` / `reject_deal` | | | | ✓ | | **Human only**: refuses agent-like names |
 | `list_listings` / `list_needs` / `list_matches` / `list_negotiations` / `list_deals` / `list_notifications` | ✓ | | | ✓ | ✓ | Dashboard views (public fields) |
 | `log_tokens` / `get_token_summary` | | | | | ✓ | `token_usage` rows, the evidence for tokenomics |
@@ -65,4 +68,4 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 .venv/Scripts/python.exe scripts/mcp_smoke.py
 ```
 
-It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (72 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **72/72 as expected, 31/31 tools called.**
+It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (80 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **80/80 as expected, 34/34 tools called.**

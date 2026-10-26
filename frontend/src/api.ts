@@ -6,6 +6,8 @@ export type Health = {
   key_found: boolean
   key_source: string
   frontend_built: boolean
+  mcp: { status: 'starting' | 'ready' | 'failed' | 'stopped'; error?: string | null; startup_seconds?: number | null }
+  active_runs?: number
 }
 
 export type LlmCheck = {
