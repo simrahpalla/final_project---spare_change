@@ -8783,5 +8783,202 @@
     "action": "run_end",
     "result": "{\"run_id\": \"1c911454360f\", \"kind\": \"need_flow\", \"requests\": 5, \"input_tokens\": 2731, \"cached_tokens\": 0, \"cache_write_tokens\": 2359, \"output_tokens\": 565, \"total_tokens\": 5655, \"cost_usd\": 0.00085}",
     "stop_reason": "posted and matched"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:14.623+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 3.3, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:43.454+00:00",
+    "run_id": "f535f02708da",
+    "subject": "listing:1/need:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 1,
+      "need_id": 1,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:56:49.928+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 473
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:56:52.922+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T05:56:52.946+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 1, \"qty\": 1, \"floor_price\": 905.0, \"public_asking_price\": 1425.0}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:52.967+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1400,
+      "message": "Given the urgency of your need, we can move slightly from our asking price to support a prompt resolution."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:56:52.994+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 1, \"action\": \"offer\", \"price\": 1400.0, \"status\": \"open\", \"rounds_left\": 5, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:53.016+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:56:53.039+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2133,
+      "output_tokens": 198,
+      "cost_usd": 0.00031926
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1400.0, \"reasoning\": \"Opened at $1,400, a modest concession from the ask while the buyer\\u2019s line-down urgency may support a strong price.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:53.098+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 620
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.239+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.267+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 1, \"qty\": 1, \"ceiling_price\": 1890.0, \"urgency\": \"line_down\", \"downtime_cost_per_day\": 12000.0}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.297+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "We accept your offer and appreciate your prompt accommodation. Please proceed with the sale."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.323+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 2, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 1400.0, \"end_reason\": \"buyer accepted $1,400.00\"}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.345+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.371+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2274,
+      "output_tokens": 155,
+      "cost_usd": 0.00030342
+    },
+    "result": "{\"move\": \"accept\", \"price\": 1400.0, \"reasoning\": \"Accepted $1,400 because the plant is line down, making delay substantially more costly than continued bargaining.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T05:56:55.453+00:00",
+    "run_id": "f535f02708da",
+    "subject": "negotiation:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"f535f02708da\", \"kind\": \"negotiation\", \"requests\": 6, \"input_tokens\": 756, \"cached_tokens\": 4407, \"cache_write_tokens\": 2612, \"output_tokens\": 353, \"total_tokens\": 8128, \"cost_usd\": 0.000623}",
+    "stop_reason": "agreed"
   }
 ]

@@ -1,15 +1,15 @@
-import type { RunStatus, Session } from '../api'
+import type { NegotiationView, RunStatus, Session, Totals } from '../api'
 import { cost, kg, money, num } from '../format'
 import { Ban, Check, Dot, Eye, Leaf, Spinner } from '../icons'
-import { railItems } from '../pipeline'
+import { negotiationRail, railItems, type RailItem } from '../pipeline'
 import { InfoTip } from './Results'
 
-function AgentActivity({ run, need }: { run: RunStatus | null; need: boolean }) {
-  const items = railItems(run, need)
+function AgentActivity({ run, need, items: given }: { run: RunStatus | null; need: boolean; items?: RailItem[] }) {
+  const items = given ?? railItems(run, need)
   return (
     <section className="card rail-card">
       <h3>Agent activity</h3>
-      {!run && <p className="muted small rail-empty">Steps appear here as agents work. "(code)" means no AI model was used.</p>}
+      {!run && !given && <p className="muted small rail-empty">Steps appear here as agents work. "(code)" means no AI model was used.</p>}
       <ul className="steps">
         {items.map((i) => (
           <li key={i.key} className={`step s-${i.state}`}>
@@ -32,8 +32,9 @@ function AgentActivity({ run, need }: { run: RunStatus | null; need: boolean }) 
   )
 }
 
-function CostMeter({ run, session }: { run: RunStatus | null; session: Session | null }) {
-  const t = run?.totals
+function CostMeter(props: { run: RunStatus | null; session: Session | null; totals?: Totals | null; title?: string }) {
+  const { run, session } = props
+  const t = props.totals !== undefined ? props.totals : run?.totals
   const input = t ? t.input_tokens + t.cached_tokens + t.cache_write_tokens : 0
   const cachedPct = t && input > 0 ? Math.round((100 * t.cached_tokens) / input) : 0
   const spent = session?.cost_usd ?? 0
@@ -41,7 +42,7 @@ function CostMeter({ run, session }: { run: RunStatus | null; session: Session |
   const pct = Math.min(100, (100 * spent) / budget)
   return (
     <section className="card rail-card">
-      <h3>Cost this run</h3>
+      <h3>{props.title ?? 'Cost this run'}</h3>
       <div className="big">{t ? cost(t.cost_usd) : '$0.00'}</div>
       <div className="kv">
         <span>Tokens</span>
@@ -114,11 +115,37 @@ function SessionImpact({ session }: { session: Session | null }) {
   )
 }
 
-export function Rail(props: { run: RunStatus | null; need?: boolean; session: Session | null }) {
+function negotiationTotals(v: NegotiationView | null | undefined): Totals | null {
+  if (!v) return null
+  if (v.live?.totals) return v.live.totals
+  return {
+    requests: v.cost.requests,
+    input_tokens: v.cost.tokens,
+    cached_tokens: 0,
+    cache_write_tokens: 0,
+    output_tokens: 0,
+    total_tokens: v.cost.tokens,
+    cost_usd: v.cost.cost_usd,
+  }
+}
+
+export function Rail(props: {
+  run: RunStatus | null
+  need?: boolean
+  session: Session | null
+  negotiating?: boolean
+  negotiation?: NegotiationView | null
+}) {
+  const neg = !!props.negotiating
   return (
     <aside className="rail">
-      <AgentActivity run={props.run} need={!!props.need} />
-      <CostMeter run={props.run} session={props.session} />
+      <AgentActivity run={props.run} need={!!props.need} items={neg ? negotiationRail(props.negotiation ?? null) : undefined} />
+      <CostMeter
+        run={props.run}
+        session={props.session}
+        totals={neg ? negotiationTotals(props.negotiation) : undefined}
+        title={neg ? 'Cost of this negotiation' : undefined}
+      />
       <SessionImpact session={props.session} />
     </aside>
   )

@@ -185,7 +185,7 @@ export function OutcomeCard({
 
 // ------------------------------------------------------------------ buyers
 
-export function BuyerMatches({ matching, companies }: { matching: Step; companies: Company[] }) {
+export function BuyerMatches({ matching, companies, onStart }: { matching: Step; companies: Company[]; onStart?: (needId: number) => void }) {
   const where = (id: number) => {
     const c = companies.find((x) => x.id === id)
     return c ? `${c.city}, ${c.state}` : ''
@@ -228,7 +228,18 @@ export function BuyerMatches({ matching, companies }: { matching: Step; companie
               </div>
               <div className="reason">{m.reason}</div>
             </div>
-            {m.need_id ? <span className="needchip">Open need #{m.need_id}</span> : <span />}
+            {m.need_id ? (
+              <span className="match-actions">
+                <span className="needchip">Open need #{m.need_id}</span>
+                {onStart && (
+                  <button className="btn ghost" onClick={() => onStart(m.need_id)}>
+                    Start negotiation
+                  </button>
+                )}
+              </span>
+            ) : (
+              <span />
+            )}
           </div>
         ))}
       </div>

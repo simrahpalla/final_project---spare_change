@@ -29,7 +29,8 @@ const TIDEWATER_NEED: NeedSample = {
   expect: 'Nobody lists this kit yet, so the matching agent is skipped (no model call) and the need waits for surplus.',
 }
 
-export type Featured = { id: number; role: string; whatToTry: string; post: string | null; need?: NeedSample }
+// negotiate: the account's sample negotiation (Negotiations tab). The outcome follows from the private limits.
+export type Featured = { id: number; role: string; whatToTry: string; post: string | null; need?: NeedSample; negotiate?: string }
 
 export const DEFAULT_ACCOUNT = 1
 
@@ -39,6 +40,8 @@ export const FEATURED: Featured[] = [
     role: 'Seller',
     whatToTry: 'Click Find buyers. The agents list your S7-300 CPUs and rank Riverbend Foods first, because its line is down.',
     post: SIEMENS,
+    negotiate:
+      'Sample negotiations: start one with Riverbend Foods (S7-300 CPU: a clear deal, their line is down) or Prairie Packaging (SM 321 input cards: a narrow deal). Then switch to the buyer to approve its side.',
   },
   {
     id: 12,
@@ -46,12 +49,14 @@ export const FEATURED: Featured[] = [
     whatToTry:
       'Click Find buyers. Ironclad Castings asked for the discontinued 1756-ENBT, and the agents know your EN2T replaces it.',
     post: EN2T,
+    negotiate: 'Sample negotiation: start one with Ironclad Castings on your 1756-EN2T modules (a clear deal).',
   },
   {
     id: 13,
     role: 'Seller',
     whatToTry: 'Click Find buyers. The solvent expired in August, so code blocks the listing before any matching.',
     post: EXPIRED,
+    negotiate: 'Sample negotiation: start one with Coastal Electronics on your IPA drums. Your limits barely overlap, so expect a narrow deal (or a close walk-away).',
   },
   {
     id: 20,
@@ -60,6 +65,7 @@ export const FEATURED: Featured[] = [
       'On Buy, click Find to post the sample request. To get an alert for your line-down CPU need, run the Siemens PLC example as Hartwell, then open the bell.',
     post: null,
     need: RIVERBEND_NEED,
+    negotiate: 'Sample negotiation: start one with Hartwell on the S7-300 CPU (a clear deal: your line is down, so your agent moves fast). Approve your side when it lands.',
   },
   {
     id: 39,
@@ -70,6 +76,16 @@ export const FEATURED: Featured[] = [
     need: TIDEWATER_NEED,
   },
 ]
+
+// Added in Phase 6: the walk-away example (a seller whose floor is above the buyer's budget).
+FEATURED.push({
+  id: 11,
+  role: 'Seller · walk-away',
+  whatToTry: 'Your Modicon M340 processors are listed. Open Negotiations to see what happens when a buyer can\'t reach your floor.',
+  post: null,
+  negotiate:
+    'Sample negotiation: start one with Northwoods Pulp on your Modicon M340 processors. Keep your floor where it is and watch your agent hold it: expect a walk-away, with the next-best buyer suggested.',
+})
 
 export const featured = (id: number) => FEATURED.find((f) => f.id === id)
 

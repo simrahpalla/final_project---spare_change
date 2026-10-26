@@ -37,6 +37,7 @@ export function BuyPage(props: {
   onRunDone: () => void
   form: NeedForm
   onForm: (f: NeedForm) => void
+  onStartNegotiation: (t: { listingId: number; needId: number }) => void
 }) {
   const { form, onForm, run, onRun, onRunDone } = props
   const sample = featured(props.accountId)?.need
@@ -201,7 +202,11 @@ export function BuyPage(props: {
               subject="need"
             />
           )}
-          {!stopped && need && (matching ? <ListingMatches matching={matching} /> : running && <Skeleton text={workingText(run)} />)}
+          {!stopped && need && (matching ? (
+            <ListingMatches matching={matching} onStart={(listingId) => props.onStartNegotiation({ listingId, needId: need.need_id })} />
+          ) : (
+            running && <Skeleton text={workingText(run)} />
+          ))}
           {alerts && <AlertsSent alerts={alerts} />}
         </>
       )}
@@ -291,7 +296,7 @@ function NeedCard({ need, maxPrice }: { need: Need; maxPrice: number | null }) {
   )
 }
 
-function ListingMatches({ matching }: { matching: Step }) {
+function ListingMatches({ matching, onStart }: { matching: Step; onStart: (listingId: number) => void }) {
   if (matching.status === 'no_candidates' || !matching.ranked?.length) {
     return (
       <section className="card section key">
@@ -333,9 +338,8 @@ function ListingMatches({ matching }: { matching: Step }) {
               </div>
               <div className="reason">{m.reason}</div>
             </div>
-            <button className="btn ghost soon" disabled title="Agent negotiation opens in Phase 6">
+            <button className="btn ghost" onClick={() => onStart(m.listing_id)}>
               Start negotiation
-              <span className="soon-tag">Phase 6</span>
             </button>
           </div>
         ))}

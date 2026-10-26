@@ -1,6 +1,6 @@
 {
   "description": "Smoke test of the surplus-exchange MCP server over the real MCP protocol (stdio): one server process per role, on a scratch copy of data/exchange.db. Each call states the expected outcome.",
-  "tested_at": "2026-10-26T05:36:31+00:00",
+  "tested_at": "2026-10-26T05:59:31+00:00",
   "server": "mcp_server/server.py (FastMCP, stdio)",
   "max_negotiation_rounds": 6,
   "tools_by_role": {
@@ -30,9 +30,11 @@
       "open_negotiation",
       "record_matches",
       "request_deal_approval",
+      "save_turn_note",
       "search_buyers_for_listing",
       "search_listings_for_need",
       "send_match_alerts",
+      "store_suggested_floor",
       "update_listing_draft"
     ],
     "seller_agent": [
@@ -80,7 +82,8 @@
       "list_negotiations",
       "list_notifications",
       "lookup_part",
-      "reject_deal"
+      "reject_deal",
+      "set_private_limit"
     ],
     "system": [
       "check_listing_rules",
@@ -92,6 +95,8 @@
       "get_marketplace_board",
       "get_need",
       "get_negotiation",
+      "get_negotiation_for_company",
+      "get_negotiation_start",
       "get_price_reference",
       "get_token_summary",
       "list_companies",
@@ -99,7 +104,9 @@
       "list_listings",
       "list_matches",
       "list_needs",
+      "list_negotiable_pairs",
       "list_negotiations",
+      "list_negotiations_for_company",
       "list_notifications",
       "log_tokens",
       "lookup_part",
@@ -184,6 +191,12 @@
       "human_approver",
       "system"
     ],
+    "get_negotiation_for_company": [
+      "system"
+    ],
+    "get_negotiation_start": [
+      "system"
+    ],
     "get_price_reference": [
       "broker",
       "seller_agent",
@@ -221,9 +234,15 @@
       "human_approver",
       "system"
     ],
+    "list_negotiable_pairs": [
+      "system"
+    ],
     "list_negotiations": [
       "broker",
       "human_approver",
+      "system"
+    ],
+    "list_negotiations_for_company": [
       "system"
     ],
     "list_notifications": [
@@ -256,6 +275,9 @@
     "request_deal_approval": [
       "broker"
     ],
+    "save_turn_note": [
+      "broker"
+    ],
     "search_buyers_for_listing": [
       "broker"
     ],
@@ -263,6 +285,12 @@
       "broker"
     ],
     "send_match_alerts": [
+      "broker"
+    ],
+    "set_private_limit": [
+      "human_approver"
+    ],
+    "store_suggested_floor": [
       "broker"
     ],
     "submit_offer": [
@@ -278,8 +306,8 @@
     ]
   },
   "refused_calls_logged_by_server": {
-    "count": 29,
-    "expected": 29,
+    "count": 32,
+    "expected": 32,
     "rows": [
       {
         "role": "broker",
@@ -422,6 +450,21 @@
         "code": "not_pending"
       },
       {
+        "role": "human_approver",
+        "tool": "set_private_limit",
+        "code": "not_yours"
+      },
+      {
+        "role": "system",
+        "tool": "get_negotiation_start",
+        "code": "not_yours"
+      },
+      {
+        "role": "system",
+        "tool": "get_negotiation_for_company",
+        "code": "not_your_negotiation"
+      },
+      {
         "role": "system",
         "tool": "submit_offer",
         "code": "not_in_role"
@@ -429,11 +472,11 @@
     ]
   },
   "summary": {
-    "calls": 89,
-    "passed": 89,
+    "calls": 100,
+    "passed": 100,
     "failed": 0,
-    "tools_registered": 39,
-    "tools_called": 39,
+    "tools_registered": 46,
+    "tools_called": 46,
     "tools_never_called": []
   },
   "calls": [
@@ -964,7 +1007,7 @@
             "fits_platforms": [
               "Grundfos CR 15"
             ],
-            "created_at": "2026-10-26T05:35:54+00:00",
+            "created_at": "2026-10-26T05:58:54+00:00",
             "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea",
             "why_it_fits": "96525458 is a pump spare that fits the buyer's Grundfos CR 15"
           }
@@ -1007,7 +1050,7 @@
           "fits_platforms": [
             "Grundfos CR 15"
           ],
-          "created_at": "2026-10-26T05:35:54+00:00",
+          "created_at": "2026-10-26T05:58:54+00:00",
           "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea"
         },
         "candidate_count": 6,
@@ -1573,7 +1616,7 @@
       "result": {
         "ok": false,
         "code": "duplicate",
-        "message": "A negotiation for this pair is already open or agreed."
+        "message": "This request is already in a negotiation or a deal waiting for approval."
       }
     },
     {
@@ -1852,7 +1895,7 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:36:03+00:00",
+            "created_at": "2026-10-26T05:59:03+00:00",
             "message_untrusted": "Pulled working, ships today."
           }
         ],
@@ -2369,9 +2412,13 @@
           "price": 1250.0,
           "qty": 1,
           "status": "pending_approval",
+          "seller_approved_by": null,
+          "seller_approved_at": null,
+          "buyer_approved_by": null,
+          "buyer_approved_at": null,
           "approved_by": null,
           "decided_at": null,
-          "created_at": "2026-10-26T05:36:22+00:00"
+          "created_at": "2026-10-26T05:59:23+00:00"
         }
       }
     },
@@ -2394,6 +2441,42 @@
     },
     {
       "step": 74,
+      "role": "broker",
+      "tool": "save_turn_note",
+      "args": {
+        "negotiation_id": 1,
+        "side": "seller",
+        "round": 1,
+        "note": "Opened near the ask."
+      },
+      "expect": "ok",
+      "why": "a negotiator's private reason, shown only to its own company",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true
+      }
+    },
+    {
+      "step": 75,
+      "role": "broker",
+      "tool": "store_suggested_floor",
+      "args": {
+        "listing_id": 28,
+        "floor": 250
+      },
+      "expect": "ok",
+      "why": "pricing agent's floor kept only if the seller has none (this listing already has one: not stored)",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "listing_id": 28,
+        "stored": false
+      }
+    },
+    {
+      "step": 76,
       "role": "broker",
       "tool": "get_negotiation",
       "args": {
@@ -2424,7 +2507,7 @@
             "action": "offer",
             "price": 2875.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:36:17+00:00",
+            "created_at": "2026-10-26T05:59:18+00:00",
             "message_untrusted": ""
           },
           {
@@ -2433,7 +2516,7 @@
             "action": "offer",
             "price": 2000.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:36:18+00:00",
+            "created_at": "2026-10-26T05:59:19+00:00",
             "message_untrusted": ""
           },
           {
@@ -2442,7 +2525,7 @@
             "action": "offer",
             "price": 2850.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:36:18+00:00",
+            "created_at": "2026-10-26T05:59:19+00:00",
             "message_untrusted": ""
           },
           "... 4 more"
@@ -2451,7 +2534,7 @@
       }
     },
     {
-      "step": 75,
+      "step": 77,
       "role": "broker",
       "tool": "list_listings",
       "args": {
@@ -2543,7 +2626,7 @@
       }
     },
     {
-      "step": 76,
+      "step": 78,
       "role": "broker",
       "tool": "list_needs",
       "args": {
@@ -2606,7 +2689,7 @@
       }
     },
     {
-      "step": 77,
+      "step": 79,
       "role": "broker",
       "tool": "list_matches",
       "args": {},
@@ -2626,14 +2709,14 @@
             "reason": "Exact CR 15 HQQE seal kit for Tidewater's CIP pump",
             "direction": "buyer_to_seller",
             "run_id": "smoke",
-            "created_at": "2026-10-26T05:35:54+00:00",
+            "created_at": "2026-10-26T05:58:55+00:00",
             "buyer_name": "Tidewater Dairy"
           }
         ]
       }
     },
     {
-      "step": 78,
+      "step": 80,
       "role": "broker",
       "tool": "list_negotiations",
       "args": {},
@@ -2664,7 +2747,7 @@
                 "action": "offer",
                 "price": 1400.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:03+00:00",
+                "created_at": "2026-10-26T05:59:03+00:00",
                 "message_untrusted": "Pulled working, ships today."
               },
               {
@@ -2673,7 +2756,7 @@
                 "action": "offer",
                 "price": 1100.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:03+00:00",
+                "created_at": "2026-10-26T05:59:03+00:00",
                 "message_untrusted": "Line is down; can pay fast."
               },
               {
@@ -2682,8 +2765,8 @@
                 "action": "offer",
                 "price": 1300.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:03+00:00",
-                "message_untrusted": "Meet me at 1300."
+                "created_at": "2026-10-26T05:59:03+00:00",
+                "message_untrusted": "Meet me at [price]."
               },
               "... 2 more"
             ],
@@ -2709,7 +2792,7 @@
                 "action": "offer",
                 "price": 1149.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:10+00:00",
+                "created_at": "2026-10-26T05:59:10+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2718,7 +2801,7 @@
                 "action": "offer",
                 "price": 650.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:10+00:00",
+                "created_at": "2026-10-26T05:59:11+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2727,7 +2810,7 @@
                 "action": "walk_away",
                 "price": 0.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:10+00:00",
+                "created_at": "2026-10-26T05:59:11+00:00",
                 "message_untrusted": "Too far apart."
               }
             ],
@@ -2753,7 +2836,7 @@
                 "action": "offer",
                 "price": 2875.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:17+00:00",
+                "created_at": "2026-10-26T05:59:18+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2762,7 +2845,7 @@
                 "action": "offer",
                 "price": 2000.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:18+00:00",
+                "created_at": "2026-10-26T05:59:19+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2771,7 +2854,7 @@
                 "action": "offer",
                 "price": 2850.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:36:18+00:00",
+                "created_at": "2026-10-26T05:59:19+00:00",
                 "message_untrusted": ""
               },
               "... 4 more"
@@ -2783,7 +2866,7 @@
       }
     },
     {
-      "step": 79,
+      "step": 81,
       "role": "broker",
       "tool": "list_deals",
       "args": {},
@@ -2802,9 +2885,13 @@
             "price": 1250.0,
             "qty": 1,
             "status": "pending_approval",
+            "seller_approved_by": null,
+            "seller_approved_at": null,
+            "buyer_approved_by": null,
+            "buyer_approved_at": null,
             "approved_by": null,
             "decided_at": null,
-            "created_at": "2026-10-26T05:36:22+00:00",
+            "created_at": "2026-10-26T05:59:23+00:00",
             "part_number": "6ES7315-2AG10-0AB0",
             "seller_name": "Hartwell Precision Components",
             "buyer_name": "Riverbend Foods"
@@ -2813,7 +2900,7 @@
       }
     },
     {
-      "step": 80,
+      "step": 82,
       "role": "broker",
       "tool": "list_notifications",
       "args": {
@@ -2836,19 +2923,21 @@
             "score": 96,
             "run_id": "smoke",
             "read": 0,
-            "created_at": "2026-10-26T05:35:54+00:00",
+            "closed_reason": null,
+            "created_at": "2026-10-26T05:58:55+00:00",
             "company_name": "Tidewater Dairy"
           }
         ]
       }
     },
     {
-      "step": 81,
+      "step": 83,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
         "deal_id": 1,
-        "approver": "seller_negotiator"
+        "approver": "seller_negotiator",
+        "side": "seller"
       },
       "expect": "refused",
       "why": "agent names can't approve",
@@ -2861,30 +2950,54 @@
       }
     },
     {
-      "step": 82,
+      "step": 84,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
         "deal_id": 1,
         "approver": "Simrah Palla",
+        "side": "seller",
         "note": "smoke test"
       },
       "expect": "ok",
-      "why": "a human approves: deal closes",
+      "why": "the seller's person approves: still waiting for the buyer",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "deal_id": 1,
+        "status": "pending_approval",
+        "approved": [
+          "seller"
+        ],
+        "waiting_for": "buyer"
+      }
+    },
+    {
+      "step": 85,
+      "role": "human_approver",
+      "tool": "approve_deal",
+      "args": {
+        "deal_id": 1,
+        "approver": "Riverbend buyer",
+        "side": "buyer"
+      },
+      "expect": "ok",
+      "why": "the buyer's person approves too: deal closes",
       "expected_code": null,
       "passed": true,
       "result": {
         "ok": true,
         "deal_id": 1,
         "status": "approved",
-        "approved_by": "Simrah Palla",
+        "approved_by": "seller: Simrah Palla; buyer: Riverbend buyer",
         "price": 1250.0,
         "qty": 1,
         "listing_units_left": 2
       }
     },
     {
-      "step": 83,
+      "step": 86,
       "role": "human_approver",
       "tool": "reject_deal",
       "args": {
@@ -2902,7 +3015,45 @@
       }
     },
     {
-      "step": 84,
+      "step": 87,
+      "role": "human_approver",
+      "tool": "set_private_limit",
+      "args": {
+        "company_id": 20,
+        "need_id": 20,
+        "value": 400
+      },
+      "expect": "refused",
+      "why": "a company can't set another company's budget",
+      "expected_code": "not_yours",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "not_yours",
+        "message": "You can only set the budget of your own request."
+      }
+    },
+    {
+      "step": 88,
+      "role": "human_approver",
+      "tool": "set_private_limit",
+      "args": {
+        "company_id": 39,
+        "need_id": 20,
+        "value": 400
+      },
+      "expect": "ok",
+      "why": "Tidewater sets its own budget for need #20",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "need_id": 20,
+        "ceiling_price": 400.0
+      }
+    },
+    {
+      "step": 89,
       "role": "system",
       "tool": "log_tokens",
       "args": {
@@ -2924,7 +3075,7 @@
       }
     },
     {
-      "step": 85,
+      "step": 90,
       "role": "system",
       "tool": "get_token_summary",
       "args": {
@@ -2958,7 +3109,7 @@
       }
     },
     {
-      "step": 86,
+      "step": 91,
       "role": "system",
       "tool": "list_companies",
       "args": {},
@@ -3007,7 +3158,7 @@
       }
     },
     {
-      "step": 87,
+      "step": 92,
       "role": "system",
       "tool": "get_marketplace_board",
       "args": {},
@@ -3178,7 +3329,275 @@
       }
     },
     {
-      "step": 88,
+      "step": 93,
+      "role": "system",
+      "tool": "get_negotiation_start",
+      "args": {
+        "listing_id": 12,
+        "need_id": 12,
+        "company_id": 12
+      },
+      "expect": "ok",
+      "why": "before starting: the seller's side, its own floor, free units",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "side": "seller",
+        "listing_id": 12,
+        "need_id": 12,
+        "why_it_fits": "1756-EN2T is a listed substitute for 1756-ENBT (EN2T is Rockwell's direct replacement for the discontinued ENBT.)",
+        "listing": {
+          "part_number": "1756-EN2T",
+          "description": "ControlLogix EtherNet/IP bridge module, 10/100, 128 connections",
+          "condition": "used_working",
+          "asking_price": 1095.0,
+          "qty": 3,
+          "seller_name": "Summit Automation Surplus",
+          "location": "Columbus, OH"
+        },
+        "need": {
+          "buyer_name": "Ironclad Castings",
+          "qty": 2,
+          "urgency": "high",
+          "downtime_cost_per_day": 3000.0,
+          "buyer_location": "Peoria, IL"
+        },
+        "qty": 2,
+        "my_limit": {
+          "label": "Your floor",
+          "value": 790.0,
+          "set_by": "seller"
+        },
+        "can_start": true,
+        "blocker": null,
+        "open_negotiation_id": null
+      }
+    },
+    {
+      "step": 94,
+      "role": "system",
+      "tool": "get_negotiation_start",
+      "args": {
+        "listing_id": 12,
+        "need_id": 12,
+        "company_id": 20
+      },
+      "expect": "refused",
+      "why": "a company that is neither side can't start it",
+      "expected_code": "not_yours",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "not_yours",
+        "message": "You can only negotiate for your own listing or request."
+      }
+    },
+    {
+      "step": 95,
+      "role": "system",
+      "tool": "list_negotiable_pairs",
+      "args": {
+        "company_id": 12
+      },
+      "expect": "ok",
+      "why": "deals Summit could start",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "pairs": [
+          {
+            "listing_id": 12,
+            "need_id": 12,
+            "side": "seller",
+            "with": "Ironclad Castings",
+            "part_number": "1756-EN2T",
+            "description": "ControlLogix EtherNet/IP bridge module, 10/100, 128 connections",
+            "qty": 2,
+            "urgency": "high",
+            "asking_price": 1095.0,
+            "score": null,
+            "why": "1756-EN2T is a listed substitute for 1756-ENBT (EN2T is Rockwell's direct replacement for the discontinued ENBT.)"
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "step": 96,
+      "role": "system",
+      "tool": "list_negotiations_for_company",
+      "args": {
+        "company_id": 20
+      },
+      "expect": "ok",
+      "why": "Riverbend's negotiations",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "negotiations": [
+          {
+            "negotiation_id": 1,
+            "side": "buyer",
+            "counterpart": "Hartwell Precision Components",
+            "part_number": "6ES7315-2AG10-0AB0",
+            "qty": 1,
+            "status": "approved",
+            "rounds_used": 5,
+            "max_rounds": 6,
+            "deal_status": "approved",
+            "price": 1250.0,
+            "needs_my_approval": false,
+            "run_id": null,
+            "created_at": "2026-10-26T05:58:55+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "step": 97,
+      "role": "system",
+      "tool": "get_negotiation_for_company",
+      "args": {
+        "negotiation_id": 1,
+        "company_id": 20
+      },
+      "expect": "ok",
+      "why": "the buyer's view: its own budget, never the seller's floor",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "negotiation_id": 1,
+        "side": "buyer",
+        "counterpart": "Hartwell Precision Components",
+        "run_id": null,
+        "listing": {
+          "listing_id": 1,
+          "part_number": "6ES7315-2AG10-0AB0",
+          "description": "SIMATIC S7-300 CPU 315-2 DP, 256 KB",
+          "condition": "used_working",
+          "asking_price": 1425.0,
+          "seller_name": "Hartwell Precision Components",
+          "location": "Dayton, OH"
+        },
+        "need": {
+          "need_id": 1,
+          "buyer_name": "Riverbend Foods",
+          "urgency": "line_down",
+          "qty": 1,
+          "downtime_cost_per_day": 12000.0
+        },
+        "qty": 1,
+        "status": "approved",
+        "rounds_used": 5,
+        "max_rounds": 6,
+        "next_to_move": null,
+        "final_offer_pending": false,
+        "agreed_price": 1250.0,
+        "offers": [
+          {
+            "round": 1,
+            "from_side": "seller",
+            "action": "offer",
+            "price": 1400.0,
+            "qty": 1,
+            "created_at": "2026-10-26T05:59:03+00:00",
+            "message_untrusted": "Pulled working, ships today."
+          },
+          {
+            "round": 2,
+            "from_side": "buyer",
+            "action": "offer",
+            "price": 1100.0,
+            "qty": 1,
+            "created_at": "2026-10-26T05:59:03+00:00",
+            "message_untrusted": "Line is down; can pay fast."
+          },
+          {
+            "round": 3,
+            "from_side": "seller",
+            "action": "offer",
+            "price": 1300.0,
+            "qty": 1,
+            "created_at": "2026-10-26T05:59:03+00:00",
+            "message_untrusted": "Meet me at [price]."
+          },
+          "... 2 more"
+        ],
+        "my_limit": {
+          "label": "Your budget",
+          "value": 1890.0
+        },
+        "my_notes": [],
+        "my_blocked": [
+          {
+            "at": "2026-10-26T05:59:03+00:00",
+            "code": "not_your_turn",
+            "price": 1000,
+            "text": "Your agent tried to move out of turn, and the rules blocked it."
+          },
+          {
+            "at": "2026-10-26T05:59:03+00:00",
+            "code": "wrong_direction",
+            "price": 1050,
+            "text": "Your agent tried to lower its offer to $1,050.00 after a higher one, and the rules blocked it."
+          },
+          {
+            "at": "2026-10-26T05:59:03+00:00",
+            "code": "outside_your_limit",
+            "price": 2000,
+            "text": "Your agent tried to offer $2,000.00 above your budget, and the rules blocked it."
+          }
+        ],
+        "deal": {
+          "deal_id": 1,
+          "price": 1250.0,
+          "qty": 1,
+          "total": 1250.0,
+          "status": "approved",
+          "relative": "$640 under your budget",
+          "i_approved": true,
+          "they_approved": true,
+          "impact": {
+            "value_recovered": 1250.0,
+            "scrap_value_total": 45.64,
+            "kg_kept_out_of_scrap": 0.3,
+            "est_kg_co2e_avoided": 18.0,
+            "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+          }
+        },
+        "explanation": null,
+        "next_best": null,
+        "cost": {
+          "cost_usd": 0,
+          "tokens": 0,
+          "requests": 0
+        }
+      }
+    },
+    {
+      "step": 98,
+      "role": "system",
+      "tool": "get_negotiation_for_company",
+      "args": {
+        "negotiation_id": 1,
+        "company_id": 12
+      },
+      "expect": "refused",
+      "why": "a third company can't read the negotiation",
+      "expected_code": "not_your_negotiation",
+      "passed": true,
+      "result": {
+        "ok": false,
+        "code": "not_your_negotiation",
+        "message": "This negotiation belongs to other companies."
+      }
+    },
+    {
+      "step": 99,
       "role": "system",
       "tool": "mark_notifications_read",
       "args": {
@@ -3195,7 +3614,7 @@
       }
     },
     {
-      "step": 89,
+      "step": 100,
       "role": "system",
       "tool": "submit_offer",
       "args": {

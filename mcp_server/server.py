@@ -244,6 +244,35 @@ def _release_listing(conn, listing_id: int) -> None:
         conn.execute("UPDATE listings SET status='active' WHERE id=? AND status='in_negotiation'", (listing_id,))
 
 
+def _units_locked(conn, listing_id: int) -> int:
+    """Units of a listing held by open negotiations or deals waiting for approval (they can't be sold twice)."""
+    return conn.execute("SELECT COALESCE(SUM(qty), 0) FROM negotiations WHERE listing_id=? AND status IN ('open','agreed')",
+                        (listing_id,)).fetchone()[0]
+
+
+def _limits(conn, n) -> tuple[float | None, float | None]:
+    """(seller floor, buyer ceiling) of a negotiation. Internal only: never returned to the other side."""
+    f = conn.execute("SELECT floor_price FROM seller_private WHERE listing_id=?", (n["listing_id"],)).fetchone()
+    c = conn.execute("SELECT ceiling_price FROM buyer_private WHERE need_id=?", (n["need_id"],)).fetchone()
+    return (f[0] if f else None), (c[0] if c else None)
+
+
+_MONEY = re.compile(r"\$\s?\d[\d,]*(?:\.\d+)?|(?<![\w.\-/])\d{1,3}(?:,\d{3})+(?:\.\d+)?(?![\w\-/])|(?<![\w.\-/])\d{3,}(?:\.\d+)?(?![\w\-/])")
+
+
+def _scrub_message(conn, n, text: str) -> str:
+    """Messages between agents carry no money figures: the price is the offer's own field, shown next to it. Every
+    dollar amount (and any bare 3+ digit number) is replaced, the same way for every message, so a removed number
+    never hints that it was the other side's limit. Either limit written as a bare number is removed too."""
+    if not text:
+        return text
+    text = _MONEY.sub("[price]", text)
+    for limit in _limits(conn, n):
+        if limit and _limit_in_message(text, limit):
+            text = _redact_number(text, limit).replace("[private]", "[price]")
+    return text
+
+
 def _redact_number(text: str, value: float) -> str:
     variants = sorted({f"{value:,.2f}", f"{value:.2f}", f"{value:,.0f}", f"{value:g}", str(int(value))}, key=len, reverse=True)
     for v in variants:
@@ -391,7 +420,7 @@ def create_listing(seller_id: int, raw_text: str, part_number: str, qty: int, co
             "expiry_date, sds_available, status, created_at) VALUES (?,?,?,?,?,?,?,?,?, 'submitted', ?)",
             (seller_id, raw_text, part_number, qty, condition, asking_price, loc, expiry, sds_available, _now()))
         if floor_price:
-            conn.execute("INSERT INTO seller_private VALUES (?,?)", (cur.lastrowid, floor_price))
+            conn.execute("INSERT INTO seller_private (listing_id, floor_price) VALUES (?,?)", (cur.lastrowid, floor_price))
         return {"ok": True, "listing_id": cur.lastrowid, "status": "submitted", "expiry_date": expiry,
                 "expiry_derived_from_manufacture_date": bool(manufacture_date and not expiry_date),
                 "floor_recorded": bool(floor_price)}
@@ -654,9 +683,10 @@ def send_match_alerts(run_id: str) -> dict:
 # --------------------------------------------------------------------------- broker: negotiation + deals
 
 
-def open_negotiation(listing_id: int, need_id: int, qty: int | None = None) -> dict:
-    """Start a negotiation between an active listing and an open need it can fill. The seller agent moves
-    first; sides alternate; the round cap is enforced by the server."""
+def open_negotiation(listing_id: int, need_id: int, qty: int | None = None, run_id: str | None = None) -> dict:
+    """Start a negotiation between an active listing and an open need it can fill. The units it covers are
+    locked (no other negotiation can use them) until it ends. The seller agent moves first; sides alternate;
+    the round cap is enforced by the server."""
     with _db(write=True) as conn:
         r, n = _listing_row(conn, listing_id), _need_row(conn, need_id)
         if not r or not n:
@@ -669,15 +699,18 @@ def open_negotiation(listing_id: int, need_id: int, qty: int | None = None) -> d
         has_ceiling = conn.execute("SELECT 1 FROM buyer_private WHERE need_id=?", (need_id,)).fetchone()
         if not has_floor or not has_ceiling:
             return _fail("Both sides must have set a private limit before negotiating.", "missing_private_limit")
-        if conn.execute("SELECT 1 FROM negotiations WHERE listing_id=? AND need_id=? AND status IN ('open','agreed')",
-                        (listing_id, need_id)).fetchone():
-            return _fail("A negotiation for this pair is already open or agreed.", "duplicate")
-        q = qty or min(r["qty"], n["qty"])
-        if not 0 < q <= min(r["qty"], n["qty"]):
-            return _fail(f"qty must be between 1 and {min(r['qty'], n['qty'])}.", "invalid_field")
+        if conn.execute("SELECT 1 FROM negotiations WHERE need_id=? AND status IN ('open','agreed')", (need_id,)).fetchone():
+            return _fail("This request is already in a negotiation or a deal waiting for approval.", "duplicate")
+        free = r["qty"] - _units_locked(conn, listing_id)
+        if free <= 0:
+            return _fail(f"All {r['qty']} unit(s) of this listing are in other negotiations or deals waiting for approval.",
+                         "units_locked")
+        q = qty or min(free, n["qty"])
+        if not 0 < q <= min(free, n["qty"]):
+            return _fail(f"qty must be between 1 and {min(free, n['qty'])} (units not held by another negotiation).", "invalid_field")
         cur = conn.execute(
-            "INSERT INTO negotiations (listing_id, need_id, seller_id, buyer_id, qty, status, max_rounds, created_at) "
-            "VALUES (?,?,?,?,?, 'open', ?, ?)", (listing_id, need_id, r["seller_id"], n["buyer_id"], q, MAX_ROUNDS, _now()))
+            "INSERT INTO negotiations (listing_id, need_id, seller_id, buyer_id, qty, status, max_rounds, run_id, created_at) "
+            "VALUES (?,?,?,?,?, 'open', ?, ?, ?)", (listing_id, need_id, r["seller_id"], n["buyer_id"], q, MAX_ROUNDS, run_id, _now()))
         conn.execute("UPDATE listings SET status='in_negotiation' WHERE id=? AND status='active'", (listing_id,))
         return {"ok": True, **_negotiation_view(conn, conn.execute("SELECT * FROM negotiations WHERE id=?", (cur.lastrowid,)).fetchone())}
 
@@ -708,10 +741,12 @@ def request_deal_approval(negotiation_id: int) -> dict:
         cur = conn.execute(
             "INSERT INTO deals (negotiation_id, listing_id, need_id, price, qty, status, created_at) "
             "VALUES (?,?,?,?,?, 'pending_approval', ?)", (negotiation_id, n["listing_id"], n["need_id"], price, n["qty"], _now()))
-        conn.execute("UPDATE listings SET status='pending_deal' WHERE id=?", (n["listing_id"],))
+        total = conn.execute("SELECT qty FROM listings WHERE id=?", (n["listing_id"],)).fetchone()[0]
+        if total - _units_locked(conn, n["listing_id"]) <= 0:  # every unit is spoken for
+            conn.execute("UPDATE listings SET status='pending_deal' WHERE id=?", (n["listing_id"],))
         for cid in (n["seller_id"], n["buyer_id"]):
-            _notify(conn, cid, "deal_pending", f"Deal #{cur.lastrowid}: {n['qty']} unit(s) at ${price:,.2f} each awaits human approval.",
-                    listing_id=n["listing_id"], need_id=n["need_id"])
+            _notify(conn, cid, "deal_pending", f"Deal #{cur.lastrowid}: {n['qty']} unit(s) at ${price:,.2f} each. Both companies "
+                    "must approve it before it closes.", listing_id=n["listing_id"], need_id=n["need_id"])
         return {"ok": True, "deal": dict(conn.execute("SELECT * FROM deals WHERE id=?", (cur.lastrowid,)).fetchone())}
 
 
@@ -781,6 +816,7 @@ def submit_offer(action: str, price: float | None = None, message: str = "") -> 
         if message and _limit_in_message(message, limit):
             return _fail("Your message would reveal your private limit. Rewrite it without that number.",
                          "would_reveal_private_limit")
+        message = _scrub_message(conn, n, message)  # then: no money figures at all (the price is the offer's own field)
         mine = [o for o in offers if o["from_side"] == side and o["action"] == "offer"]
         theirs = [o for o in offers if o["from_side"] != side and o["action"] == "offer"]
         their_last = theirs[-1]["price"] if theirs else None
@@ -905,9 +941,12 @@ def _check_human(approver: str) -> str | None:
     return None
 
 
-def approve_deal(deal_id: int, approver: str, note: str = "") -> dict:
-    """HUMAN ONLY. Approve a pending deal: it closes, the listing's quantity drops (sold out = 'sold'),
-    the need is filled, and both sides are notified."""
+def approve_deal(deal_id: int, approver: str, side: str, note: str = "") -> dict:
+    """HUMAN ONLY. One company's person approves ITS side ('seller' or 'buyer') of a pending deal. The deal
+    closes only when both sides have approved: then the listing's quantity drops (sold out = 'sold'), the need
+    is filled, the match alerts about them close, and both sides are notified."""
+    if side not in ("seller", "buyer"):
+        return _fail("side must be 'seller' or 'buyer'.", "invalid_field")
     if err := _check_human(approver):
         return _fail(err, "invalid_approver")
     with _db(write=True) as conn:
@@ -917,34 +956,354 @@ def approve_deal(deal_id: int, approver: str, note: str = "") -> dict:
         if d["status"] != "pending_approval":
             return _fail(f"Deal {deal_id} is '{d['status']}', not pending.", "not_pending")
         n = conn.execute("SELECT * FROM negotiations WHERE id=?", (d["negotiation_id"],)).fetchone()
-        conn.execute("UPDATE deals SET status='approved', approved_by=?, decided_at=? WHERE id=?", (approver.strip(), _now(), deal_id))
+        if d[f"{side}_approved_by"]:
+            return {"ok": True, "deal_id": deal_id, "status": "pending_approval", "already_approved": True}
+        conn.execute(f"UPDATE deals SET {side}_approved_by=?, {side}_approved_at=? WHERE id=?", (approver.strip(), _now(), deal_id))
+        d = conn.execute("SELECT * FROM deals WHERE id=?", (deal_id,)).fetchone()
+        if not (d["seller_approved_by"] and d["buyer_approved_by"]):
+            other = "buyer" if side == "seller" else "seller"
+            name = conn.execute("SELECT name FROM companies WHERE id=?", (n[f"{side}_id"],)).fetchone()[0]
+            _notify(conn, n[f"{other}_id"], "deal_pending", f"{name} approved deal #{deal_id} ({d['qty']} unit(s) at "
+                    f"${d['price']:,.2f}). It closes when you approve it too.", listing_id=d["listing_id"], need_id=d["need_id"])
+            return {"ok": True, "deal_id": deal_id, "status": "pending_approval", "approved": [side], "waiting_for": other}
+        by = f"seller: {d['seller_approved_by']}; buyer: {d['buyer_approved_by']}"
+        conn.execute("UPDATE deals SET status='approved', approved_by=?, decided_at=? WHERE id=?", (by, _now(), deal_id))
         conn.execute("UPDATE negotiations SET status='approved' WHERE id=?", (n["id"],))
         left = conn.execute("SELECT qty FROM listings WHERE id=?", (d["listing_id"],)).fetchone()[0] - d["qty"]
         if left > 0:  # units remain: back on the market with the smaller quantity
-            conn.execute("UPDATE listings SET qty=?, status='active' WHERE id=?", (left, d["listing_id"]))
+            conn.execute("UPDATE listings SET qty=?, status='in_negotiation' WHERE id=?", (left, d["listing_id"]))
+            _release_listing(conn, d["listing_id"])
         else:
             conn.execute("UPDATE listings SET status='sold' WHERE id=?", (d["listing_id"],))
+            conn.execute("UPDATE notifications SET closed_reason='listing sold' WHERE kind='new_match' AND listing_id=? "
+                         "AND closed_reason IS NULL", (d["listing_id"],))
         conn.execute("UPDATE needs SET status='filled' WHERE id=?", (d["need_id"],))
+        conn.execute("UPDATE notifications SET closed_reason='request filled' WHERE kind='new_match' AND need_id=? "
+                     "AND closed_reason IS NULL", (d["need_id"],))
         for cid in (n["seller_id"], n["buyer_id"]):
-            _notify(conn, cid, "deal_approved", f"Deal #{deal_id} approved by {approver.strip()}: {d['qty']} unit(s) at ${d['price']:,.2f}.",
-                    listing_id=d["listing_id"], need_id=d["need_id"])
-        return {"ok": True, "deal_id": deal_id, "status": "approved", "approved_by": approver.strip(),
+            _notify(conn, cid, "deal_approved", f"Deal #{deal_id} closed: both companies approved {d['qty']} unit(s) at "
+                    f"${d['price']:,.2f}.", listing_id=d["listing_id"], need_id=d["need_id"])
+        return {"ok": True, "deal_id": deal_id, "status": "approved", "approved_by": by,
                 "price": d["price"], "qty": d["qty"], "listing_units_left": max(left, 0)}
 
 
-def reject_deal(deal_id: int, approver: str, note: str = "") -> dict:
-    """HUMAN ONLY. Reject a pending deal: nothing is sold and the listing goes back on the market."""
+def reject_deal(deal_id: int, approver: str, side: str = "", note: str = "") -> dict:
+    """HUMAN ONLY. Either company's person rejects a pending deal: nothing is sold, the negotiation closes and
+    the listing goes back on the market."""
     if err := _check_human(approver):
         return _fail(err, "invalid_approver")
     with _db(write=True) as conn:
         d = conn.execute("SELECT * FROM deals WHERE id=?", (deal_id,)).fetchone()
         if not d or d["status"] != "pending_approval":
             return _fail(f"Deal {deal_id} is not pending.", "not_pending")
+        n = conn.execute("SELECT * FROM negotiations WHERE id=?", (d["negotiation_id"],)).fetchone()
+        who = (f"the {side} " if side in ("seller", "buyer") else "") + f"({approver.strip()})"
         conn.execute("UPDATE deals SET status='rejected', approved_by=?, decided_at=? WHERE id=?", (approver.strip(), _now(), deal_id))
         conn.execute("UPDATE negotiations SET status='rejected', end_reason=? WHERE id=?",
-                     (f"rejected by {approver.strip()}: {note}"[:300], d["negotiation_id"]))
-        conn.execute("UPDATE listings SET status='active' WHERE id=?", (d["listing_id"],))
+                     ((f"deal rejected by {who}" + (f": {note}" if note else ""))[:300], d["negotiation_id"]))
+        conn.execute("UPDATE listings SET status='in_negotiation' WHERE id=? AND status IN ('pending_deal','in_negotiation')", (d["listing_id"],))
+        _release_listing(conn, d["listing_id"])
+        for cid in (n["seller_id"], n["buyer_id"]):
+            _notify(conn, cid, "deal_rejected", f"Deal #{deal_id} was rejected by {who}. Nothing was sold; the listing is back "
+                    "on the market.", listing_id=d["listing_id"], need_id=d["need_id"])
         return {"ok": True, "deal_id": deal_id, "status": "rejected", "decided_by": approver.strip()}
+
+
+# --------------------------------------------------------------------------- private limits (each company, its own)
+
+
+def set_private_limit(company_id: int, value: float, listing_id: int | None = None, need_id: int | None = None) -> dict:
+    """HUMAN ONLY (the company itself). Set YOUR OWN private limit: the floor of your listing, or the budget
+    (max per unit) of your request. Only your own negotiator agent ever reads it. Locked while a negotiation
+    that uses it is open."""
+    if (listing_id is None) == (need_id is None):
+        return _fail("Give exactly one of listing_id or need_id.", "invalid_field")
+    if not isinstance(value, (int, float)) or not 0 < value <= 10_000_000:
+        return _fail("The limit must be a positive price per unit.", "invalid_field")
+    value = round(float(value), 2)
+    with _db(write=True) as conn:
+        if listing_id is not None:
+            r = _listing_row(conn, listing_id)
+            if not r or r["seller_id"] != company_id:
+                return _fail("You can only set the floor of your own listing.", "not_yours")
+            if conn.execute("SELECT 1 FROM negotiations WHERE listing_id=? AND status='open'", (listing_id,)).fetchone():
+                return _fail("Your floor is locked while your agent is negotiating with it.", "locked")
+            if r["asking_price"] and value > r["asking_price"]:
+                return _fail(f"A floor above your public asking price (${r['asking_price']:,.2f}) means your agent could never "
+                             "make an offer.", "floor_above_ask")
+            conn.execute("INSERT INTO seller_private (listing_id, floor_price, set_by) VALUES (?,?, 'seller') "
+                         "ON CONFLICT(listing_id) DO UPDATE SET floor_price=excluded.floor_price, set_by='seller'", (listing_id, value))
+            return {"ok": True, "listing_id": listing_id, "floor_price": value}
+        n = _need_row(conn, need_id)
+        if not n or n["buyer_id"] != company_id:
+            return _fail("You can only set the budget of your own request.", "not_yours")
+        if conn.execute("SELECT 1 FROM negotiations WHERE need_id=? AND status='open'", (need_id,)).fetchone():
+            return _fail("Your budget is locked while your agent is negotiating with it.", "locked")
+        if n["part_number"]:
+            new = conn.execute("SELECT new_price FROM part_catalog WHERE part_number=?", (n["part_number"],)).fetchone()[0]
+            if new and value > MAX_CEILING_X_NEW * new:
+                return _fail(f"A budget of ${value:,.0f} is more than {MAX_CEILING_X_NEW}x this part's new price (${new:,.0f}). "
+                             "Please check the number.", "ceiling_implausible")
+        conn.execute("INSERT INTO buyer_private (need_id, ceiling_price) VALUES (?,?) "
+                     "ON CONFLICT(need_id) DO UPDATE SET ceiling_price=excluded.ceiling_price", (need_id, value))
+        return {"ok": True, "need_id": need_id, "ceiling_price": value}
+
+
+def store_suggested_floor(listing_id: int, floor: float) -> dict:
+    """Broker: keep the pricing agent's suggested floor as the listing's starting floor, only if the seller has
+    none yet (set_by='suggested'). The seller reviews or changes it before any negotiation."""
+    with _db(write=True) as conn:
+        r = _listing_row(conn, listing_id)
+        if not r:
+            return _fail(f"No listing {listing_id}.", "not_found")
+        floor = round(min(floor, r["asking_price"]) if r["asking_price"] else floor, 2)
+        if floor <= 0:
+            return _fail("Floor must be positive.", "invalid_field")
+        cur = conn.execute("INSERT OR IGNORE INTO seller_private (listing_id, floor_price, set_by) VALUES (?,?, 'suggested')",
+                           (listing_id, floor))
+        return {"ok": True, "listing_id": listing_id, "stored": bool(cur.rowcount)}
+
+
+def save_turn_note(negotiation_id: int, side: str, round: int, note: str) -> dict:
+    """Broker: store a negotiator's private one-line reason for its move. Shown ONLY to that side's company.
+    The other side's limit is removed if it appears (only possible by coincidence) and isn't a public offer."""
+    if side not in ("seller", "buyer"):
+        return _fail("side must be 'seller' or 'buyer'.", "invalid_field")
+    with _db(write=True) as conn:
+        n = conn.execute("SELECT * FROM negotiations WHERE id=?", (negotiation_id,)).fetchone()
+        if not n:
+            return _fail(f"No negotiation {negotiation_id}.", "not_found")
+        floor, ceiling = _limits(conn, n)
+        other = ceiling if side == "seller" else floor
+        public = {o[0] for o in conn.execute("SELECT price FROM offers WHERE negotiation_id=?", (negotiation_id,))}
+        note = (note or "")[:300]
+        if other and other not in public and _limit_in_message(note, other):
+            note = _redact_number(note, other).replace("[private]", "[a number]")
+        conn.execute("INSERT INTO turn_notes (negotiation_id, side, round, note, created_at) VALUES (?,?,?,?,?)",
+                     (negotiation_id, side, round, note, _now()))
+        return {"ok": True}
+
+
+# --------------------------------------------------------------------------- what ONE company sees (system role)
+
+_BLOCKED_TEXT = {
+    ("seller", "outside_your_limit"): "Your agent tried to {act} below your floor, and the rules blocked it.",
+    ("buyer", "outside_your_limit"): "Your agent tried to {act} above your budget, and the rules blocked it.",
+    ("seller", "above_asking_price"): "Your agent tried to offer {price}, above your public asking price, and the rules blocked it.",
+    ("seller", "wrong_direction"): "Your agent tried to raise its price to {price} after a lower offer, and the rules blocked it.",
+    ("buyer", "wrong_direction"): "Your agent tried to lower its offer to {price} after a higher one, and the rules blocked it.",
+    ("*", "round_cap"): "Your agent tried to counter after the round cap; only accepting or declining was allowed, so the rules blocked it.",
+    ("seller", "would_reveal_private_limit"): "Your agent wrote a message that included your floor; the message was blocked and rewritten.",
+    ("buyer", "would_reveal_private_limit"): "Your agent wrote a message that included your budget; the message was blocked and rewritten.",
+    ("*", "not_your_turn"): "Your agent tried to move out of turn, and the rules blocked it.",
+}
+_LABEL = {"seller": "Your floor", "buyer": "Your budget"}
+_ENDED = ("walked_away", "round_cap", "stopped", "rejected")
+
+
+def _blocked_for(conn, n, side: str) -> list[dict]:
+    """This side's own agent's blocked moves (from refused_calls). Never the other side's."""
+    try:
+        rows = conn.execute("SELECT * FROM refused_calls WHERE negotiation_id=? AND role=? AND tool IN ('submit_offer','walk_away') "
+                            "ORDER BY id", (n["id"], f"{side}_agent")).fetchall()
+    except sqlite3.OperationalError:  # no refusal logged yet in this database
+        return []
+    out = []
+    for r in rows:
+        tmpl = _BLOCKED_TEXT.get((side, r["code"])) or _BLOCKED_TEXT.get(("*", r["code"]))
+        if not tmpl:
+            continue
+        args = json.loads(r["args"] or "{}")
+        price = args.get("price")
+        act = f"offer ${price:,.2f}" if args.get("action") == "offer" and price else "accept the other side's offer"
+        out.append({"at": r["at"], "code": r["code"], "price": price,
+                    "text": tmpl.format(act=act, price=f"${price:,.2f}" if price else "a new price")})
+    return out
+
+
+def _next_best(conn, side: str, r, n) -> dict | None:
+    """After a walk-away, round cap or rejection: the viewer's next-best counterpart (same pre-filter code)."""
+    def score(lid, nid):
+        return conn.execute("SELECT MAX(score) FROM matches WHERE listing_id=? AND need_id=?", (lid, nid)).fetchone()[0]
+    busy_needs = {x[0] for x in conn.execute("SELECT need_id FROM negotiations WHERE status IN ('open','agreed')")}
+    if side == "seller":
+        cands = []
+        for x in conn.execute("SELECT id FROM needs WHERE status IN ('open','matched') AND id != ?", (n["id"],)):
+            other = _need_row(conn, x[0])
+            if other["id"] in busy_needs or not _fill_reason(conn, r, other):
+                continue
+            cands.append((-(score(r["id"], other["id"]) or 0), URGENCY_RANK[other["urgency"]], -other["downtime_cost_per_day"], other))
+        if not cands:
+            return None
+        o = sorted(cands, key=lambda t: t[:3])[0][3]
+        return {"listing_id": r["id"], "need_id": o["id"], "with": o["buyer_name"], "score": -sorted(cands, key=lambda t: t[:3])[0][0] or None,
+                "detail": f"needs {o['qty']} ({o['urgency'].replace('_', ' ')})"}
+    today, cands = _today(conn), []
+    for x in conn.execute("SELECT id FROM listings WHERE status IN ('active','in_negotiation') AND id != ? "
+                          "AND (expiry_date IS NULL OR expiry_date >= ?)", (r["id"], today)):
+        other = _listing_row(conn, x[0])
+        if other["qty"] - _units_locked(conn, other["id"]) <= 0 or not _fill_reason(conn, other, n):
+            continue
+        cands.append((-(score(other["id"], n["id"]) or 0), other["asking_price"] or 1e9, other))
+    if not cands:
+        return None
+    best = sorted(cands, key=lambda t: t[:2])[0]
+    o = best[2]
+    return {"listing_id": o["id"], "need_id": n["id"], "with": o["seller_name"], "score": -best[0] or None,
+            "detail": f"{o['qty']} x {o['part_number']}" + (f" at ${o['asking_price']:,.0f}" if o["asking_price"] else "")}
+
+
+def _explain(view: dict, side: str, counterpart: str) -> str | None:
+    st, reason = view["status"], view["end_reason"] or ""
+    mine = f"Your agent ({side})"
+    if st == "walked_away":
+        if reason.startswith(side):
+            return (f"{mine} walked away: {counterpart}'s offers couldn't reach your "
+                    f"{'floor' if side == 'seller' else 'budget'} within the rounds left. Nothing was sold.")
+        return f"{counterpart}'s agent walked away: the offers didn't meet in the rounds available. Nothing was sold."
+    if st == "round_cap":
+        return (f"The round cap of {view['max_rounds']} offers was reached and the final offer was declined, so there is no "
+                "deal. Nothing was sold, and the listing is back on the market.")
+    if st == "stopped":
+        return "Spare Change stopped this negotiation (" + reason.replace("stopped by broker: ", "") + "). Nothing was sold."
+    if st == "rejected":
+        return "The deal was " + reason.replace("deal rejected by", "rejected by") + ". Nothing was sold; the listing is back on the market."
+    return None
+
+
+def get_negotiation_for_company(negotiation_id: int, company_id: int) -> dict:
+    """The negotiation as ONE company sees it: public offers and messages, plus that company's OWN limit, its own
+    agent's private reasons and blocked moves, the deal measured against its own limit, and a next-best match
+    if it ended without a deal. Never anything private of the other side."""
+    with _db() as conn:
+        n = conn.execute("SELECT * FROM negotiations WHERE id=?", (negotiation_id,)).fetchone()
+        if not n:
+            return _fail(f"No negotiation {negotiation_id}.", "not_found")
+        if company_id not in (n["seller_id"], n["buyer_id"]):
+            return _fail("This negotiation belongs to other companies.", "not_your_negotiation")
+        side = "seller" if company_id == n["seller_id"] else "buyer"
+        r, nd = _listing_row(conn, n["listing_id"]), _need_row(conn, n["need_id"])
+        view = _negotiation_view(conn, n)
+        floor, ceiling = _limits(conn, n)
+        mine = floor if side == "seller" else ceiling
+        counterpart = nd["buyer_name"] if side == "seller" else r["seller_name"]
+        notes = [{"round": x["round"], "note": x["note"]} for x in conn.execute(
+            "SELECT round, note FROM turn_notes WHERE negotiation_id=? AND side=? ORDER BY id", (n["id"], side))]
+        d = conn.execute("SELECT * FROM deals WHERE negotiation_id=?", (n["id"],)).fetchone()
+        deal = None
+        if d:
+            diff = (d["price"] - mine) if side == "seller" else (mine - d["price"])
+            amt = f"${abs(diff):,.0f}" if abs(diff) >= 100 else f"${abs(diff):,.2f}"
+            rel = (f"{amt} {'above' if diff >= 0 else 'below'} your floor" if side == "seller"
+                   else f"{amt} {'under' if diff >= 0 else 'over'} your budget")
+            imp = get_impact_estimate(d["listing_id"], price=d["price"], qty=d["qty"])
+            other = "buyer" if side == "seller" else "seller"
+            deal = {"deal_id": d["id"], "price": d["price"], "qty": d["qty"], "total": round(d["price"] * d["qty"], 2),
+                    "status": d["status"], "relative": rel, "i_approved": bool(d[f"{side}_approved_by"]),
+                    "they_approved": bool(d[f"{other}_approved_by"]),
+                    "impact": {k: imp.get(k) for k in ("value_recovered", "scrap_value_total", "kg_kept_out_of_scrap",
+                                                       "est_kg_co2e_avoided", "method")}}
+        cost = conn.execute("SELECT COALESCE(SUM(cost_usd),0), COALESCE(SUM(input_tokens+cached_tokens+output_tokens),0), "
+                            "COALESCE(SUM(requests),0) FROM token_usage WHERE run_id=?", (n["run_id"],)).fetchone() if n["run_id"] else (0, 0, 0)
+        return {
+            "ok": True, "negotiation_id": n["id"], "side": side, "counterpart": counterpart, "run_id": n["run_id"],
+            "listing": {"listing_id": r["id"], "part_number": r["part_number"], "description": r["description"],
+                        "condition": r["condition"], "asking_price": r["asking_price"], "seller_name": r["seller_name"],
+                        "location": r["location"]},
+            "need": {"need_id": nd["id"], "buyer_name": nd["buyer_name"], "urgency": nd["urgency"], "qty": nd["qty"],
+                     "downtime_cost_per_day": nd["downtime_cost_per_day"]},
+            "qty": n["qty"], "status": view["status"], "rounds_used": view["rounds_used"], "max_rounds": view["max_rounds"],
+            "next_to_move": view["next_to_move"], "final_offer_pending": view["final_offer_pending"],
+            "agreed_price": view["agreed_price"], "offers": view["offers"],
+            "my_limit": {"label": _LABEL[side], "value": mine}, "my_notes": notes, "my_blocked": _blocked_for(conn, n, side),
+            "deal": deal, "explanation": _explain(view, side, counterpart),
+            "next_best": _next_best(conn, side, r, nd) if view["status"] in _ENDED else None,
+            "cost": {"cost_usd": round(cost[0], 6), "tokens": cost[1], "requests": cost[2]},
+        }
+
+
+def list_negotiations_for_company(company_id: int) -> dict:
+    """One company's negotiations (either side), newest first, with whether its approval is needed."""
+    with _db() as conn:
+        out = []
+        for n in conn.execute("SELECT * FROM negotiations WHERE seller_id=? OR buyer_id=? ORDER BY id DESC", (company_id, company_id)):
+            side = "seller" if n["seller_id"] == company_id else "buyer"
+            other = conn.execute("SELECT name FROM companies WHERE id=?", (n["buyer_id"] if side == "seller" else n["seller_id"],)).fetchone()[0]
+            part = conn.execute("SELECT part_number FROM listings WHERE id=?", (n["listing_id"],)).fetchone()[0]
+            d = conn.execute("SELECT * FROM deals WHERE negotiation_id=?", (n["id"],)).fetchone()
+            out.append({"negotiation_id": n["id"], "side": side, "counterpart": other, "part_number": part, "qty": n["qty"],
+                        "status": n["status"], "rounds_used": n["rounds_used"], "max_rounds": n["max_rounds"],
+                        "deal_status": d["status"] if d else None, "price": d["price"] if d else None,
+                        "needs_my_approval": bool(d and d["status"] == "pending_approval" and not d[f"{side}_approved_by"]),
+                        "run_id": n["run_id"], "created_at": n["created_at"]})
+        return {"ok": True, "negotiations": out}
+
+
+def get_negotiation_start(listing_id: int, need_id: int, company_id: int) -> dict:
+    """Before starting: what the pair is, which side this company is on, its OWN current limit, how many units
+    are free, and whether the negotiation can start (and why not)."""
+    with _db() as conn:
+        r, nd = _listing_row(conn, listing_id), _need_row(conn, need_id)
+        if not r or not nd:
+            return _fail("Unknown listing or request.", "not_found")
+        side = "seller" if r["seller_id"] == company_id else "buyer" if nd["buyer_id"] == company_id else None
+        if not side:
+            return _fail("You can only negotiate for your own listing or request.", "not_yours")
+        floor, ceiling = _limits(conn, {"listing_id": listing_id, "need_id": need_id})
+        mine = floor if side == "seller" else ceiling
+        set_by = None
+        if side == "seller" and floor is not None:
+            set_by = conn.execute("SELECT set_by FROM seller_private WHERE listing_id=?", (listing_id,)).fetchone()[0]
+        free = r["qty"] - _units_locked(conn, listing_id)
+        busy = conn.execute("SELECT id FROM negotiations WHERE need_id=? AND status IN ('open','agreed') ORDER BY id DESC",
+                            (need_id,)).fetchone()
+        why = _fill_reason(conn, r, nd)
+        blocker = None
+        if r["status"] not in MATCHABLE_LISTINGS or (r["expiry_date"] and r["expiry_date"] < _today(conn)):
+            blocker = f"This listing is no longer available ({r['status'].replace('_', ' ')})."
+        elif nd["status"] not in MATCHABLE_NEEDS:
+            blocker = f"This request is {nd['status']}."
+        elif not why:
+            blocker = "This listing doesn't fit this request."
+        elif busy:
+            blocker = "This request is already in a negotiation."
+        elif free <= 0:
+            blocker = "Every unit of this listing is already in another negotiation or a deal waiting for approval."
+        elif (ceiling if side == "seller" else floor) is None:
+            blocker = (f"{nd['buyer_name']} hasn't set a budget for this request yet, so its agent can't negotiate."
+                       if side == "seller" else f"{r['seller_name']} hasn't set a floor for this listing yet.")
+        return {"ok": True, "side": side, "listing_id": listing_id, "need_id": need_id, "why_it_fits": why,
+                "listing": {"part_number": r["part_number"], "description": r["description"], "condition": r["condition"],
+                            "asking_price": r["asking_price"], "qty": r["qty"], "seller_name": r["seller_name"], "location": r["location"]},
+                "need": {"buyer_name": nd["buyer_name"], "qty": nd["qty"], "urgency": nd["urgency"],
+                         "downtime_cost_per_day": nd["downtime_cost_per_day"], "buyer_location": nd["buyer_location"]},
+                "qty": max(min(free, nd["qty"]), 0), "my_limit": {"label": _LABEL[side], "value": mine, "set_by": set_by},
+                "can_start": blocker is None, "blocker": blocker, "open_negotiation_id": busy[0] if busy else None}
+
+
+def list_negotiable_pairs(company_id: int, limit: int = 8) -> dict:
+    """Deals this company could start: its listings x open requests they fill, and its requests x listings
+    that fill them (same pre-filter code as matching), best first. Pairs already negotiating are left out."""
+    with _db() as conn:
+        today, busy = _today(conn), {x[0] for x in conn.execute("SELECT need_id FROM negotiations WHERE status IN ('open','agreed')")}
+        listings = [_listing_row(conn, x[0]) for x in conn.execute(
+            "SELECT id FROM listings WHERE status IN ('active','in_negotiation') AND (expiry_date IS NULL OR expiry_date >= ?)", (today,))]
+        needs = [_need_row(conn, x[0]) for x in conn.execute("SELECT id FROM needs WHERE status IN ('open','matched')")]
+        out = []
+        for r in listings:
+            for nd in needs:
+                if nd["id"] in busy or company_id not in (r["seller_id"], nd["buyer_id"]):
+                    continue
+                if r["qty"] - _units_locked(conn, r["id"]) <= 0 or not (why := _fill_reason(conn, r, nd)):
+                    continue
+                side = "seller" if r["seller_id"] == company_id else "buyer"
+                sc = conn.execute("SELECT MAX(score) FROM matches WHERE listing_id=? AND need_id=?", (r["id"], nd["id"])).fetchone()[0]
+                out.append({"listing_id": r["id"], "need_id": nd["id"], "side": side,
+                            "with": nd["buyer_name"] if side == "seller" else r["seller_name"], "part_number": r["part_number"],
+                            "description": r["description"], "qty": min(r["qty"], nd["qty"]), "urgency": nd["urgency"],
+                            "asking_price": r["asking_price"], "score": sc, "why": why})
+        out.sort(key=lambda x: (-(x["score"] or 0), URGENCY_RANK[x["urgency"]], x["listing_id"]))
+        return {"ok": True, "pairs": out[:limit], "count": len(out)}
 
 
 # --------------------------------------------------------------------------- dashboard views + token logging
@@ -1149,16 +1508,17 @@ ROLE_TOOLS = {
     "broker": COMMON + [create_listing, update_listing_draft, check_listing_rules, activate_listing, flag_listing,
                         create_need, search_buyers_for_listing, search_listings_for_need, list_buyer_profiles,
                         record_matches, send_match_alerts, open_negotiation, get_negotiation, end_negotiation, request_deal_approval,
-                        get_company_profile] + VIEWS,
+                        get_company_profile, store_suggested_floor, save_turn_note] + VIEWS,
     "seller_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
     "buyer_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
-    "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal, list_companies] + VIEWS,
+    "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal, set_private_limit, list_companies] + VIEWS,
     "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary, get_company_profile,
-               list_companies, mark_notifications_read, get_marketplace_board] + VIEWS,
+               list_companies, mark_notifications_read, get_marketplace_board, get_negotiation_for_company,
+               list_negotiations_for_company, get_negotiation_start, list_negotiable_pairs] + VIEWS,
 }
 WRITE_TOOLS = {create_listing, update_listing_draft, activate_listing, flag_listing, create_need, record_matches, send_match_alerts,
                open_negotiation, end_negotiation, request_deal_approval, submit_offer, walk_away, approve_deal,
-               reject_deal, log_tokens, mark_notifications_read}
+               reject_deal, log_tokens, mark_notifications_read, set_private_limit, store_suggested_floor, save_turn_note}
 
 for _fn in ROLE_TOOLS[ROLE]:
     mcp.tool(annotations=WRITES if _fn in WRITE_TOOLS else READ_ONLY)(_fn)

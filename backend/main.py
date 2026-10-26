@@ -82,6 +82,7 @@ class Runtime:
             self.pool = pool
             return
         self.exchange, self.pool = exchange, pool
+        self.neg_slot = asyncio.Semaphore(config.MAX_CONCURRENT_NEGOTIATIONS)  # created on the agent loop
         await pool.start()
 
     async def shutdown(self) -> None:
@@ -191,10 +192,19 @@ async def seller_flow(body: SellerFlowIn) -> dict:
     return await _run(lambda ex: ex.run_seller_flow(listing_id=body.listing_id, text=body.text, seller_id=body.seller_id))
 
 
+def _negotiation_public(result: dict | None) -> dict | None:
+    """A negotiation run's steps hold BOTH agents' private reasoning (which may name their own limits). Outside the
+    company-scoped view (/api/negotiations/{id}?company_id=) only outcome-level fields are returned."""
+    if not result:
+        return result
+    return {k: result.get(k) for k in ("run_id", "outcome", "totals", "agent_calls", "negotiation", "deal")} | {
+        "steps": [{"step": x["step"], "status": x["status"]} for x in result.get("steps", [])]}
+
+
 @app.post("/api/negotiations")
 async def negotiate(body: NegotiationIn) -> dict:
-    """Seller agent vs buyer agent for one listing / need. A deal waits for human approval."""
-    return await _run(lambda ex: ex.run_negotiation(body.listing_id, body.need_id))
+    """Seller agent vs buyer agent for one listing / need (CLI/tests). A deal waits for both companies' approval."""
+    return _negotiation_public(await _run(lambda ex: ex.run_negotiation(body.listing_id, body.need_id, slot=runtime.neg_slot)))
 
 
 @app.post("/api/reset")
@@ -267,12 +277,123 @@ async def marketplace() -> dict:
     return await _system("get_marketplace_board")
 
 
+class StartNegotiationIn(BaseModel):
+    listing_id: int
+    need_id: int
+    company_id: int
+    my_limit: float | None = Field(default=None, gt=0, le=10_000_000)
+
+
+class DecisionIn(BaseModel):
+    company_id: int
+    note: str = Field(default="", max_length=300)
+
+
+async def _tool(role: str, tool: str, **args) -> dict:
+    runtime.require_ready()
+    return await agent_loop.run(runtime.pool[role].call(tool, args))
+
+
+def _refused(res: dict, status: int = 409) -> None:
+    if not res.get("ok"):
+        code = 403 if res.get("code") in ("not_yours", "not_your_negotiation") else status
+        raise HTTPException(code, res.get("message", "Not allowed."))
+
+
+@app.get("/api/negotiations/start-info")
+async def negotiation_start_info(listing_id: int, need_id: int, company_id: int) -> dict:
+    """Before starting: the pair, this company's side and ITS OWN current limit, free units, and any blocker."""
+    res = await _tool("system", "get_negotiation_start", listing_id=listing_id, need_id=need_id, company_id=company_id)
+    _refused(res, 404)
+    return res
+
+
+@app.post("/api/negotiations/start")
+async def negotiation_start(body: StartNegotiationIn) -> dict:
+    """The signed-in company starts a negotiation, optionally adjusting its OWN limit first. Units are locked at once;
+    the agents start when one of the concurrent slots is free (until then the negotiation shows as queued)."""
+    ex = runtime.require_ready()
+    ids = {"listing_id": body.listing_id, "need_id": body.need_id, "company_id": body.company_id}
+    info = await _tool("system", "get_negotiation_start", **ids)
+    _refused(info, 404)
+    if body.my_limit is not None and body.my_limit != (info["my_limit"] or {}).get("value"):
+        key = {"listing_id": body.listing_id} if info["side"] == "seller" else {"need_id": body.need_id}
+        _refused(await _tool("human_approver", "set_private_limit", company_id=body.company_id, value=body.my_limit, **key), 400)
+        info = await _tool("system", "get_negotiation_start", **ids)
+    if not info.get("can_start"):
+        raise HTTPException(409, info.get("blocker") or "This negotiation can't start.")
+    if (info["my_limit"] or {}).get("value") is None:
+        word = "floor" if info["side"] == "seller" else "budget"
+        raise HTTPException(400, f"Set your {word} first. Only your agent sees it.")
+    state = RunState(kind="negotiation", subject=f"listing:{body.listing_id}/need:{body.need_id}")
+    opened = await _tool("broker", "open_negotiation", listing_id=body.listing_id, need_id=body.need_id, run_id=state.run_id)
+    _refused(opened)
+    nid = opened["negotiation_id"]
+    queued = runtime.neg_slot.locked()
+    _register(state, ex.run_negotiation(body.listing_id, body.need_id, state=state, negotiation_id=nid, slot=runtime.neg_slot))
+    return {"negotiation_id": nid, "run_id": state.run_id, "queued": queued}
+
+
+@app.get("/api/companies/{company_id}/negotiations")
+async def company_negotiations(company_id: int) -> dict:
+    """This company's negotiations (newest first) and the deals it could start."""
+    mine = await _tool("system", "list_negotiations_for_company", company_id=company_id)
+    pairs = await _tool("system", "list_negotiable_pairs", company_id=company_id)
+    for n in mine["negotiations"]:
+        st = runs.get(n["run_id"] or "")
+        n["queued"] = bool(st and st.status == "running" and st.current == "queued")
+        n["running"] = bool(st and st.status == "running")
+    return {"negotiations": mine["negotiations"], "ready": pairs["pairs"]}
+
+
+@app.get("/api/negotiations/{negotiation_id}")
+async def negotiation_view(negotiation_id: int, company_id: int) -> dict:
+    """One negotiation as ONE company sees it (its own limit, notes and blocked moves; never the other side's)."""
+    res = await _tool("system", "get_negotiation_for_company", negotiation_id=negotiation_id, company_id=company_id)
+    _refused(res, 404)
+    st = runs.get(res.get("run_id") or "")
+    res["live"] = ({"status": st.status, "queued": st.current == "queued", "working": st.current, "totals": st.totals()}
+                   if st else None)
+    return res
+
+
+async def _decide(negotiation_id: int, body: DecisionIn, approve: bool) -> dict:
+    view = await _tool("system", "get_negotiation_for_company", negotiation_id=negotiation_id, company_id=body.company_id)
+    _refused(view, 404)
+    if not view.get("deal"):
+        raise HTTPException(409, "There is no deal to decide on yet.")
+    me = view["listing"]["seller_name"] if view["side"] == "seller" else view["need"]["buyer_name"]
+    args = {"deal_id": view["deal"]["deal_id"], "approver": f"{me} (demo user)", "side": view["side"]}
+    if approve:
+        res = await _tool("human_approver", "approve_deal", **args)
+    else:
+        res = await _tool("human_approver", "reject_deal", **args, note=body.note)
+    _refused(res)
+    return res
+
+
+@app.post("/api/negotiations/{negotiation_id}/approve")
+async def negotiation_approve(negotiation_id: int, body: DecisionIn) -> dict:
+    """A person at the signed-in company approves ITS side of the deal. It closes when both sides have approved."""
+    return await _decide(negotiation_id, body, True)
+
+
+@app.post("/api/negotiations/{negotiation_id}/reject")
+async def negotiation_reject(negotiation_id: int, body: DecisionIn) -> dict:
+    """Either side rejects the deal: nothing is sold and the listing goes back on the market."""
+    return await _decide(negotiation_id, body, False)
+
+
 @app.get("/api/runs/{run_id}")
 def run_status(run_id: str) -> dict:
     """Live progress: steps so far, the agent working now, token totals, and the result when done."""
     state = runs.get(run_id)
     if not state:
         raise HTTPException(404, "That run isn't available any more. Start a new one.")
+    if state.kind == "negotiation":  # private reasoning lives only in the company-scoped view
+        return {"run_id": run_id, "kind": state.kind, "status": state.status, "current": state.current,
+                "steps": [{"step": x["step"], "status": x["status"]} for x in state.steps], "totals": state.totals(),
+                "agent_calls": list(state.agent_calls), "result": _negotiation_public(state.result)}
     return {"run_id": run_id, "kind": state.kind, "status": state.status, "current": state.current,
             "steps": list(state.steps), "totals": state.totals(), "agent_calls": list(state.agent_calls),
             "result": state.result}

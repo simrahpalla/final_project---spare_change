@@ -23,6 +23,7 @@ export type Company = {
 }
 
 export type Alert = {
+  closed_reason?: string | null
   id: number
   kind: string
   message: string
@@ -192,4 +193,105 @@ export const api = {
 
 export function errorMessage(e: unknown): string {
   return e instanceof ApiError ? e.message : 'Something went wrong. Please try again.'
+}
+
+// ------------------------------------------------------------------ negotiations (Phase 6)
+// Every negotiation view is scoped to ONE company: its own limit, notes and blocked moves; never the other side's.
+
+export type Side = 'seller' | 'buyer'
+
+export type Offer = { round: number; from_side: Side; action: 'offer' | 'accept' | 'walk_away'; price: number; message_untrusted: string | null; created_at: string }
+
+export type Blocked = { at: string; code: string; price: number | null; text: string }
+
+export type Deal = {
+  deal_id: number
+  price: number
+  qty: number
+  total: number
+  status: 'pending_approval' | 'approved' | 'rejected'
+  relative: string
+  i_approved: boolean
+  they_approved: boolean
+  impact: { value_recovered: number | null; scrap_value_total: number; kg_kept_out_of_scrap: number; est_kg_co2e_avoided: number | null; method: string }
+}
+
+export type NegotiationView = {
+  negotiation_id: number
+  side: Side
+  counterpart: string
+  run_id: string | null
+  listing: { listing_id: number; part_number: string; description: string; condition: string; asking_price: number | null; seller_name: string; location: string }
+  need: { need_id: number; buyer_name: string; urgency: string; qty: number; downtime_cost_per_day: number }
+  qty: number
+  status: 'open' | 'agreed' | 'walked_away' | 'round_cap' | 'stopped' | 'approved' | 'rejected'
+  rounds_used: number
+  max_rounds: number
+  next_to_move: Side | null
+  final_offer_pending: boolean
+  agreed_price: number | null
+  offers: Offer[]
+  my_limit: { label: string; value: number | null }
+  my_notes: { round: number; note: string }[]
+  my_blocked: Blocked[]
+  deal: Deal | null
+  explanation: string | null
+  next_best: { listing_id: number; need_id: number; with: string; score: number | null; detail: string } | null
+  cost: { cost_usd: number; tokens: number; requests: number }
+  live: { status: 'running' | 'done'; queued: boolean; working: string | null; totals: Totals } | null
+}
+
+export type NegotiationSummary = {
+  negotiation_id: number
+  side: Side
+  counterpart: string
+  part_number: string
+  qty: number
+  status: NegotiationView['status']
+  rounds_used: number
+  max_rounds: number
+  deal_status: Deal['status'] | null
+  price: number | null
+  needs_my_approval: boolean
+  queued: boolean
+  running: boolean
+}
+
+export type ReadyPair = {
+  listing_id: number
+  need_id: number
+  side: Side
+  with: string
+  part_number: string
+  description: string
+  qty: number
+  urgency: string
+  asking_price: number | null
+  score: number | null
+  why: string
+}
+
+export type StartInfo = {
+  side: Side
+  listing_id: number
+  need_id: number
+  why_it_fits: string | null
+  listing: { part_number: string; description: string; condition: string; asking_price: number | null; qty: number; seller_name: string; location: string }
+  need: { buyer_name: string; qty: number; urgency: string; downtime_cost_per_day: number; buyer_location: string }
+  qty: number
+  my_limit: { label: string; value: number | null; set_by: string | null }
+  can_start: boolean
+  blocker: string | null
+  open_negotiation_id: number | null
+}
+
+export const negotiationApi = {
+  list: (companyId: number) => request<{ negotiations: NegotiationSummary[]; ready: ReadyPair[] }>(`/api/companies/${companyId}/negotiations`),
+  startInfo: (listingId: number, needId: number, companyId: number) =>
+    request<StartInfo>(`/api/negotiations/start-info?listing_id=${listingId}&need_id=${needId}&company_id=${companyId}`),
+  start: (body: { listing_id: number; need_id: number; company_id: number; my_limit: number | null }) =>
+    post<{ negotiation_id: number; run_id: string; queued: boolean }>('/api/negotiations/start', body),
+  view: (id: number, companyId: number) => request<NegotiationView>(`/api/negotiations/${id}?company_id=${companyId}`),
+  approve: (id: number, companyId: number) => post(`/api/negotiations/${id}/approve`, { company_id: companyId }),
+  reject: (id: number, companyId: number, note = '') => post(`/api/negotiations/${id}/reject`, { company_id: companyId, note }),
 }

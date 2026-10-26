@@ -14,6 +14,7 @@ export function SellPage(props: {
   run: RunStatus | null
   onRun: (r: RunStatus | null) => void
   onRunDone: () => void
+  onStartNegotiation: (t: { listingId: number; needId: number }) => void
   text: string
   onText: (t: string) => void
   onScenario: (s: Scenario) => void
@@ -138,7 +139,13 @@ export function SellPage(props: {
 
           {!stopped && (
             <>
-              {matching ? <BuyerMatches matching={matching} companies={props.companies} /> : running && listing && <Skeleton text={workingText(run)} />}
+              {matching ? (
+                <BuyerMatches
+                  matching={matching}
+                  companies={props.companies}
+                  onStart={result && listing?.listing_id ? (needId) => props.onStartNegotiation({ listingId: listing.listing_id, needId }) : undefined}
+                />
+              ) : running && listing && <Skeleton text={workingText(run)} />}
               {pricing ? <PriceCards pricing={pricing} /> : running && matching && <Skeleton text={workingText(run)} />}
               {impact && <ImpactStrip impact={impact} />}
               {alerts && <AlertsSent alerts={alerts} />}

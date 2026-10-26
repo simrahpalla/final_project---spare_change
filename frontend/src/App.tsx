@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { api, errorMessage, type Company, type CompanyProfile, type Health, type RunStatus, type Session } from './api'
-import { ComingSoon } from './components/ComingSoon'
+import { api, errorMessage, type Company, type CompanyProfile, type Health, type NegotiationView, type RunStatus, type Session } from './api'
 import { MarketplacePage } from './components/MarketplacePage'
+import { NegotiationsPage, type Target } from './components/NegotiationsPage'
 import { Nav, type Tab } from './components/Nav'
 import { Rail } from './components/Rail'
 import { SellPage } from './components/SellPage'
@@ -39,6 +39,9 @@ export default function App() {
   const [needForm, setNeedForm] = useState<NeedForm>(() => needFormFor(accountId))
   const [boardVersion, setBoardVersion] = useState(0)
   const [resetting, setResetting] = useState(false)
+  const [negTarget, setNegTarget] = useState<Target | null>(null) // pair about to be negotiated (start panel)
+  const [negSelected, setNegSelected] = useState<number | null>(null)
+  const [negView, setNegView] = useState<NegotiationView | null>(null) // for the right rail
   const [notice, setNotice] = useState<string | null>(null)
   // The paste box starts with the signed-in company's own example post, so a visitor can just click Find buyers.
   const [post, setPost] = useState<string>(() => featured(accountId)?.post ?? '')
@@ -99,6 +102,14 @@ export default function App() {
     setProfile(null)
     setRun(null)
     setNeedRun(null)
+    setNegTarget(null)
+    setNegSelected(null)
+  }
+
+  function startNegotiation(t: Target) {
+    setNegTarget(t)
+    setNegSelected(null)
+    setTab('negotiations')
   }
 
   function runScenario(s: Scenario) {
@@ -112,6 +123,8 @@ export default function App() {
       const r = await api.reset()
       setRun(null)
       setNeedRun(null)
+      setNegTarget(null)
+      setNegSelected(null)
       setPost(featured(accountId)?.post ?? '')
       setNeedForm(needFormFor(accountId))
       setNotice(`${r.message} Every account starts clean.`)
@@ -145,6 +158,8 @@ export default function App() {
         onOpenAlerts={openAlerts}
         onReset={resetDemo}
         resetting={resetting}
+        onStartNegotiation={startNegotiation}
+        onOpenNegotiations={() => setTab('negotiations')}
       />
       {(offline || !ready) && (
         <div className={`banner ${offline || health?.mcp?.status === 'failed' ? 'bad' : ''}`} role="status">
@@ -172,6 +187,7 @@ export default function App() {
             run={run}
             onRun={setRun}
             onRunDone={runDone}
+            onStartNegotiation={startNegotiation}
             text={post}
             onText={setPost}
             onScenario={runScenario}
@@ -186,13 +202,34 @@ export default function App() {
             onRunDone={runDone}
             form={needForm}
             onForm={setNeedForm}
+            onStartNegotiation={startNegotiation}
           />
         ) : tab === 'marketplace' ? (
           <MarketplacePage ready={ready} accountId={accountId} version={boardVersion} />
         ) : (
-          <ComingSoon tab={tab} profile={profile} />
+          <NegotiationsPage
+            accountId={accountId}
+            profile={profile}
+            ready={ready}
+            target={negTarget}
+            onTargetDone={() => setNegTarget(null)}
+            selected={negSelected}
+            onSelect={(id) => {
+              setNegTarget(null)
+              setNegSelected(id)
+            }}
+            onView={setNegView}
+            onStart={startNegotiation}
+            onChanged={runDone}
+          />
         )}
-        <Rail run={tab === 'buy' ? needRun : tab === 'sell' ? run : null} need={tab === 'buy'} session={session} />
+        <Rail
+          run={tab === 'buy' ? needRun : tab === 'sell' ? run : null}
+          need={tab === 'buy'}
+          session={session}
+          negotiating={tab === 'negotiations'}
+          negotiation={negView}
+        />
       </div>
     </div>
   )

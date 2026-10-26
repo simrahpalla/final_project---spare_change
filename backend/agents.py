@@ -407,6 +407,7 @@ class Exchange:
         }, indent=1))
         ask = min(max(price.ask, ref["scrap_value"]), ref["new_price"])
         floor = min(max(price.floor_suggestion, ref["scrap_value"]), ask)
+        await self.call("store_suggested_floor", listing_id=listing_id, floor=round(floor, 2))  # only if none yet
         state.step("pricing", "done", ask=round(ask, 2), floor_suggestion=round(floor, 2), rationale=price.rationale,
                    clamped=(ask != price.ask or floor != price.floor_suggestion), new_price=ref["new_price"], scrap_value=ref["scrap_value"])
         if outreach:
@@ -585,21 +586,34 @@ class Exchange:
 
     # ------------------------------------------------------------------ negotiation
 
-    async def run_negotiation(self, listing_id: int, need_id: int, state: RunState | None = None) -> dict:
+    async def run_negotiation(self, listing_id: int, need_id: int, state: RunState | None = None,
+                              negotiation_id: int | None = None, slot: asyncio.Semaphore | None = None) -> dict:
         """Seller agent vs buyer agent, each in its own MCP process that can read only its own limit.
-        Ends in a deal (pending human approval), a walk-away, the round cap, or a broker safety stop."""
+        Ends in a deal (pending both companies' approval), a walk-away, the round cap, or a broker safety stop.
+        negotiation_id: already opened by the API (units locked at once). slot: concurrency limit; while waiting
+        for a free slot the run shows as 'queued'."""
         state = state or RunState(kind="negotiation", subject=f"listing:{listing_id}/need:{need_id}")
         self._start(state, listing_id=listing_id, need_id=need_id, max_rounds=config.MAX_NEGOTIATION_ROUNDS)
         try:
             await self._check_session_budget(state)
-            opened = await self.call("open_negotiation", listing_id=listing_id, need_id=need_id)
-            if not opened.get("ok"):
-                state.step("open", "refused", result=opened)
-                return self._finish(state, f"refused: {opened.get('message')}")
-            nid = opened["negotiation_id"]
+            if negotiation_id is None:
+                opened = await self.call("open_negotiation", listing_id=listing_id, need_id=need_id, run_id=state.run_id)
+                if not opened.get("ok"):
+                    state.step("open", "refused", result=opened)
+                    return self._finish(state, f"refused: {opened.get('message')}")
+                negotiation_id = opened["negotiation_id"]
+            nid = negotiation_id
             state.subject = f"negotiation:{nid}"
-            state.step("open", "done", negotiation_id=nid, qty=opened["qty"], max_rounds=opened["max_rounds"])
-            return await self._negotiate(state, nid, listing_id, need_id)
+            view = await self.call("get_negotiation", negotiation_id=nid)
+            state.step("open", "done", negotiation_id=nid, qty=view["qty"], max_rounds=view["max_rounds"])
+            if slot is None:
+                return await self._negotiate(state, nid, listing_id, need_id)
+            if slot.locked():
+                state.current = "queued"
+                state.step("queued", "waiting", note=f"{config.MAX_CONCURRENT_NEGOTIATIONS} negotiations are running")
+            async with slot:
+                state.current = None
+                return await self._negotiate(state, nid, listing_id, need_id)
         except Exception as e:  # noqa: BLE001 - caps, model failures, anything: stop safely, never crash the caller
             if isinstance(e, RunLimitReached):
                 state.step("limit", "stopped", reason=e.reason, detail=e.detail)
@@ -639,6 +653,12 @@ class Exchange:
                 view = await self.call("get_negotiation", negotiation_id=nid)
                 if view["status"] != "open":
                     break
+                t = state.totals()
+                if t["cost_usd"] > config.NEGOTIATION_MAX_COST_USD or t["total_tokens"] > config.NEGOTIATION_MAX_TOKENS:
+                    stop = await self.call("end_negotiation", negotiation_id=nid, reason=(
+                        f"cost cap reached (${t['cost_usd']:.4f}, {t['total_tokens']:,} tokens)"))
+                    state.step("cost_cap", "stopped", result=stop, cost_usd=t["cost_usd"], tokens=t["total_tokens"])
+                    break
                 if failures >= 2 or turns >= view["max_rounds"] + 2:
                     stop = await self.call("end_negotiation", negotiation_id=nid,
                                            reason="an agent failed to make a valid move" if failures >= 2 else "too many turns")
@@ -674,6 +694,9 @@ class Exchange:
                 state.step(f"{side}_turn", "moved" if moved else "no_valid_move", round=after["rounds_used"],
                            action=last and last["action"], price=last and last["price"],
                            message=last and last["message_untrusted"], reasoning=turn.reasoning)
+                if moved and turn.reasoning:  # private: shown only to this side's company
+                    await self.call("save_turn_note", negotiation_id=nid, side=side, round=after["rounds_used"],
+                                    note=turn.reasoning)
         finally:
             for s in sides.values():
                 await s["conn"].stop()

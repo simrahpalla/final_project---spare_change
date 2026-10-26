@@ -1,5 +1,5 @@
 // Turns a run's steps into (1) the right-rail activity list and (2) one outcome the result area can show.
-import type { RunStatus, Step } from './api'
+import type { NegotiationView, RunStatus, Step } from './api'
 
 export type RailState = 'done' | 'working' | 'blocked' | 'review' | 'skipped' | 'pending'
 export type RailItem = { key: string; label: string; code: boolean; state: RailState; note?: string }
@@ -126,3 +126,45 @@ export function outcomeKind(outcome: string): OutcomeKind {
 }
 
 export const stepOf = find
+
+// ------------------------------------------------------------------ negotiation rail (from the company-scoped view)
+// Only what this company may see: its own blocked moves, never the other side's.
+
+export function negotiationRail(v: NegotiationView | null): RailItem[] {
+  const base: Omit<RailItem, 'state'>[] = [
+    { key: 'lock', label: 'Units reserved', code: true },
+    { key: 'seller', label: 'Seller agent', code: false },
+    { key: 'buyer', label: 'Buyer agent', code: false },
+    { key: 'rules', label: 'Limit rules', code: true },
+    { key: 'scan', label: 'Message scan', code: true },
+    { key: 'approval', label: 'Approval by both companies', code: false },
+  ]
+  if (!v) return base.map((b) => ({ ...b, state: 'pending' as RailState }))
+  const running = v.status === 'open' && v.live?.status === 'running' && !v.live?.queued
+  const moves = (side: string) => v.offers.filter((o) => o.from_side === side).length
+  const d = v.deal
+  return base.map((b): RailItem => {
+    switch (b.key) {
+      case 'lock':
+        return { ...b, state: 'done', note: `${v.qty} unit${v.qty > 1 ? 's' : ''}` }
+      case 'seller':
+      case 'buyer': {
+        const n = moves(b.key)
+        if (running && v.next_to_move === b.key) return { ...b, state: 'working' }
+        if (v.live?.queued) return { ...b, state: 'pending', note: 'queued' }
+        return { ...b, state: n ? 'done' : v.status === 'open' ? 'pending' : 'skipped', note: n ? `${n} move${n > 1 ? 's' : ''}` : undefined }
+      }
+      case 'rules':
+        return v.my_blocked.length
+          ? { ...b, state: 'blocked', note: `${v.my_blocked.length} of yours blocked` }
+          : { ...b, state: v.offers.length ? 'done' : 'pending', note: v.offers.length ? 'all within limits' : undefined }
+      case 'scan':
+        return { ...b, state: v.offers.length ? 'done' : 'pending', note: v.offers.length ? 'no limits in messages' : undefined }
+      default:
+        if (!d) return { ...b, state: v.status === 'open' ? 'pending' : 'skipped', note: v.status === 'open' ? undefined : 'no deal' }
+        if (d.status === 'approved') return { ...b, state: 'done', note: 'both approved' }
+        if (d.status === 'rejected') return { ...b, state: 'blocked', note: 'rejected' }
+        return { ...b, state: 'review', note: d.i_approved ? 'waiting for them' : 'needs you' }
+    }
+  })
+}

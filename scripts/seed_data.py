@@ -153,7 +153,8 @@ CREATE TABLE matches (
 -- Private negotiation limits. Each side's agent may read only its own row (enforced by MCP roles).
 CREATE TABLE seller_private (
     listing_id INTEGER PRIMARY KEY REFERENCES listings(id),
-    floor_price REAL NOT NULL CHECK (floor_price > 0)   -- lowest acceptable price per unit
+    floor_price REAL NOT NULL CHECK (floor_price > 0),  -- lowest acceptable price per unit
+    set_by TEXT NOT NULL DEFAULT 'seller'               -- 'seller', or 'suggested' (pricing agent, until the seller edits it)
 );
 CREATE TABLE buyer_private (
     need_id INTEGER PRIMARY KEY REFERENCES needs(id),
@@ -196,8 +197,22 @@ CREATE TABLE deals (
     price REAL NOT NULL,
     qty INTEGER NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('pending_approval', 'approved', 'rejected')),
+    seller_approved_by TEXT,          -- each side's human approves its own side; the deal closes only with both
+    seller_approved_at TEXT,
+    buyer_approved_by TEXT,
+    buyer_approved_at TEXT,
     approved_by TEXT,
     decided_at TEXT,
+    created_at TEXT NOT NULL
+);
+
+-- Each negotiator's private reason for its move, shown ONLY to its own company (never to the other side).
+CREATE TABLE turn_notes (
+    id INTEGER PRIMARY KEY,
+    negotiation_id INTEGER NOT NULL REFERENCES negotiations(id),
+    side TEXT NOT NULL CHECK (side IN ('seller', 'buyer')),
+    round INTEGER NOT NULL,
+    note TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
 
@@ -211,6 +226,7 @@ CREATE TABLE notifications (
     score INTEGER,                    -- match score that triggered a new_match alert
     run_id TEXT,                      -- the run that created it (joins token_usage: tokens per alert event)
     read INTEGER NOT NULL DEFAULT 0,
+    closed_reason TEXT,               -- set when the listing is sold or the need filled: the alert is no longer actionable
     created_at TEXT NOT NULL
 );
 -- One new_match alert per company per listing-need pair: re-running a flow never duplicates alerts.
@@ -729,7 +745,7 @@ def build(db_path: Path) -> None:
             "expiry_date, sds_available, status, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (l["id"], l["seller"], l["text"], l["part"], l["qty"], l["cond"], l["ask"], city[l["seller"]],
              l.get("expiry"), l.get("sds"), "submitted" if l.get("bad") else "active", created))
-        con.execute("INSERT INTO seller_private VALUES (?,?)", (l["id"], l["floor"]))
+        con.execute("INSERT INTO seller_private (listing_id, floor_price) VALUES (?,?)", (l["id"], l["floor"]))
     for n in NEEDS:
         created = f"2026-10-{rng.randint(10, 24):02d}T{rng.randint(7, 17):02d}:{rng.randint(0, 59):02d}:00"
         con.execute(

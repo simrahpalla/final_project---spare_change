@@ -78,7 +78,8 @@ class NegotiatorTurn(BaseModel):
 
     move: Literal["offer", "accept", "walk_away", "none"]
     price: float | None = None
-    reasoning: str = Field(description="One sentence: why this move. Never include your private limit.")
+    reasoning: str = Field(description="One sentence for YOUR OWN company only (the other side never sees it): why this "
+                           "move, e.g. 'Countered at $520 because the buyer's line-down urgency suggests room to hold firm.'")
 
 
 # --------------------------------------------------------------------------- audit

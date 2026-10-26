@@ -1,0 +1,138 @@
+{
+  "run_id": "456a0e4f7e57",
+  "kind": "negotiation",
+  "subject": "negotiation:1",
+  "outcome": "agreed",
+  "steps": [
+    {
+      "step": "open",
+      "status": "done",
+      "negotiation_id": 1,
+      "qty": 1,
+      "max_rounds": 6
+    },
+    {
+      "step": "seller_turn",
+      "status": "moved",
+      "round": 1,
+      "action": "offer",
+      "price": 1400.0,
+      "message": "Given the urgency of your need, we can move slightly from our asking price to support a prompt resolution.",
+      "reasoning": "Opened at $1,400, a modest concession from the ask while the buyer\u2019s line-down urgency may support a strong price."
+    },
+    {
+      "step": "buyer_turn",
+      "status": "moved",
+      "round": 2,
+      "action": "accept",
+      "price": 1400.0,
+      "message": "We accept your offer and appreciate your prompt accommodation. Please proceed with the sale.",
+      "reasoning": "Accepted $1,400 because the plant is line down, making delay substantially more costly than continued bargaining."
+    },
+    {
+      "step": "deal",
+      "status": "pending_human_approval",
+      "deal": {
+        "id": 1,
+        "negotiation_id": 1,
+        "listing_id": 1,
+        "need_id": 1,
+        "price": 1400.0,
+        "qty": 1,
+        "status": "pending_approval",
+        "seller_approved_by": null,
+        "seller_approved_at": null,
+        "buyer_approved_by": null,
+        "buyer_approved_at": null,
+        "approved_by": null,
+        "decided_at": null,
+        "created_at": "2026-10-26T05:51:36+00:00"
+      }
+    }
+  ],
+  "agent_calls": [
+    {
+      "agent": "seller_negotiator",
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2133,
+      "cache_write_tokens": 1289,
+      "output_tokens": 198,
+      "total_tokens": 3998,
+      "cost_usd": 0.00031926
+    },
+    {
+      "agent": "buyer_negotiator",
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2274,
+      "cache_write_tokens": 1323,
+      "output_tokens": 155,
+      "total_tokens": 4130,
+      "cost_usd": 0.00030342
+    }
+  ],
+  "totals": {
+    "run_id": "456a0e4f7e57",
+    "kind": "negotiation",
+    "requests": 6,
+    "input_tokens": 756,
+    "cached_tokens": 4407,
+    "cache_write_tokens": 2612,
+    "output_tokens": 353,
+    "total_tokens": 8128,
+    "cost_usd": 0.000623
+  },
+  "negotiation": {
+    "ok": true,
+    "negotiation_id": 1,
+    "listing_id": 1,
+    "need_id": 1,
+    "seller_id": 1,
+    "buyer_id": 20,
+    "qty": 1,
+    "status": "agreed",
+    "rounds_used": 2,
+    "max_rounds": 6,
+    "next_to_move": null,
+    "agreed_price": 1400.0,
+    "end_reason": "buyer accepted $1,400.00",
+    "offers": [
+      {
+        "round": 1,
+        "from_side": "seller",
+        "action": "offer",
+        "price": 1400.0,
+        "qty": 1,
+        "created_at": "2026-10-26T05:51:29+00:00",
+        "message_untrusted": "Given the urgency of your need, we can move slightly from our asking price to support a prompt resolution."
+      },
+      {
+        "round": 2,
+        "from_side": "buyer",
+        "action": "accept",
+        "price": 1400.0,
+        "qty": 1,
+        "created_at": "2026-10-26T05:51:35+00:00",
+        "message_untrusted": "We accept your offer and appreciate your prompt accommodation. Please proceed with the sale."
+      }
+    ],
+    "final_offer_pending": false
+  },
+  "deal": {
+    "id": 1,
+    "negotiation_id": 1,
+    "listing_id": 1,
+    "need_id": 1,
+    "price": 1400.0,
+    "qty": 1,
+    "status": "pending_approval",
+    "seller_approved_by": null,
+    "seller_approved_at": null,
+    "buyer_approved_by": null,
+    "buyer_approved_at": null,
+    "approved_by": null,
+    "decided_at": null,
+    "created_at": "2026-10-26T05:51:36+00:00"
+  }
+}

@@ -193,6 +193,10 @@ async def run(smoke: Smoke) -> None:
     async with Client(init_timeout=30, transport=S.transport("broker")) as b:
         deal = await S.call(b, "broker", "request_deal_approval", {"negotiation_id": n1}, "ok", "agreed -> pending human approval")
         await S.call(b, "broker", "request_deal_approval", {"negotiation_id": n2}, "refused", "a walked-away negotiation can't become a deal", code="wrong_status")
+        await S.call(b, "broker", "save_turn_note", {"negotiation_id": n1, "side": "seller", "round": 1, "note": "Opened near the ask."},
+                     "ok", "a negotiator's private reason, shown only to its own company")
+        await S.call(b, "broker", "store_suggested_floor", {"listing_id": lid, "floor": 250}, "ok",
+                     "pricing agent's floor kept only if the seller has none (this listing already has one: not stored)")
         await S.call(b, "broker", "get_negotiation", {"negotiation_id": n3}, "ok", "round-cap negotiation shows status round_cap")
         for tool, args in [("list_listings", {"status": "flagged"}), ("list_needs", {"status": "open"}),
                            ("list_matches", {}), ("list_negotiations", {}), ("list_deals", {}),
@@ -200,9 +204,14 @@ async def run(smoke: Smoke) -> None:
             await S.call(b, "broker", tool, args, "ok", "dashboard view")
     deal_id = deal["deal"]["id"]
     async with Client(init_timeout=30, transport=S.transport("human_approver")) as h:
-        await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "seller_negotiator"}, "refused", "agent names can't approve", code="invalid_approver")
-        await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "Simrah Palla", "note": "smoke test"}, "ok", "a human approves: deal closes")
+        await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "seller_negotiator", "side": "seller"}, "refused", "agent names can't approve", code="invalid_approver")
+        await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "Simrah Palla", "side": "seller", "note": "smoke test"}, "ok", "the seller's person approves: still waiting for the buyer")
+        await S.call(h, "human_approver", "approve_deal", {"deal_id": deal_id, "approver": "Riverbend buyer", "side": "buyer"}, "ok", "the buyer's person approves too: deal closes")
         await S.call(h, "human_approver", "reject_deal", {"deal_id": deal_id, "approver": "Simrah Palla"}, "refused", "an approved deal can't be rejected afterwards", code="not_pending")
+        await S.call(h, "human_approver", "set_private_limit", {"company_id": 20, "need_id": 20, "value": 400}, "refused",
+                     "a company can't set another company's budget", code="not_yours")
+        await S.call(h, "human_approver", "set_private_limit", {"company_id": 39, "need_id": 20, "value": 400}, "ok",
+                     "Tidewater sets its own budget for need #20")
 
     # ---- system: token logging
     async with Client(init_timeout=30, transport=S.transport("system")) as y:
@@ -211,6 +220,16 @@ async def run(smoke: Smoke) -> None:
         await S.call(y, "system", "get_token_summary", {"run_id": "smoke"}, "ok", "token totals for a run")
         await S.call(y, "system", "list_companies", {}, "ok", "demo account switcher: companies with listings, needs, alerts")
         await S.call(y, "system", "get_marketplace_board", {}, "ok", "Marketplace: listings, needs (no max price), pairs, impact")
+        await S.call(y, "system", "get_negotiation_start", {"listing_id": 12, "need_id": 12, "company_id": 12}, "ok",
+                     "before starting: the seller's side, its own floor, free units")
+        await S.call(y, "system", "get_negotiation_start", {"listing_id": 12, "need_id": 12, "company_id": 20}, "refused",
+                     "a company that is neither side can't start it", code="not_yours")
+        await S.call(y, "system", "list_negotiable_pairs", {"company_id": 12}, "ok", "deals Summit could start")
+        await S.call(y, "system", "list_negotiations_for_company", {"company_id": 20}, "ok", "Riverbend's negotiations")
+        await S.call(y, "system", "get_negotiation_for_company", {"negotiation_id": 1, "company_id": 20}, "ok",
+                     "the buyer's view: its own budget, never the seller's floor")
+        await S.call(y, "system", "get_negotiation_for_company", {"negotiation_id": 1, "company_id": 12}, "refused",
+                     "a third company can't read the negotiation", code="not_your_negotiation")
         await S.call(y, "system", "mark_notifications_read", {"company_id": 39}, "ok", "a signed-in company opens its alerts")
         await S.call(y, "system", "submit_offer", {"action": "offer", "price": 1}, "refused", "role isolation: system can't negotiate", code="Unknown tool")
 

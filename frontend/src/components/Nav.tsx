@@ -132,7 +132,12 @@ function AccountSwitcher(props: { companies: Company[]; accountId: number; onCha
   )
 }
 
-function AlertsBell(props: { profile: CompanyProfile | null; onOpen: () => void }) {
+function AlertsBell(props: {
+  profile: CompanyProfile | null
+  onOpen: () => void
+  onStart: (t: { listingId: number; needId: number }) => void
+  onOpenNegotiations: () => void
+}) {
   const [open, setOpen] = useState(false)
   const ref = useOutsideClose(open, () => setOpen(false))
   const unread = props.profile?.unread_alerts ?? 0
@@ -158,9 +163,27 @@ function AlertsBell(props: { profile: CompanyProfile | null; onOpen: () => void 
                 <div>{a.message}</div>
                 <div className="alert-actions">
                   <span className="muted small">{a.kind.replace('_', ' ')}</span>
-                  {a.kind === 'new_match' && (
-                    <button className="btn ghost push" disabled title="Agent negotiation opens in Phase 6">
-                      Start negotiation · coming in Phase 6
+                  {a.kind === 'new_match' && !a.closed_reason && a.listing_id && a.need_id && (
+                    <button
+                      className="btn ghost push"
+                      onClick={() => {
+                        setOpen(false)
+                        props.onStart({ listingId: a.listing_id!, needId: a.need_id! })
+                      }}
+                    >
+                      Start negotiation
+                    </button>
+                  )}
+                  {a.kind === 'new_match' && a.closed_reason && <span className="muted small push">Closed: {a.closed_reason}</span>}
+                  {(a.kind === 'deal_pending' || a.kind === 'deal_approved' || a.kind === 'deal_rejected') && (
+                    <button
+                      className="btn ghost push"
+                      onClick={() => {
+                        setOpen(false)
+                        props.onOpenNegotiations()
+                      }}
+                    >
+                      Open negotiations
                     </button>
                   )}
                 </div>
@@ -187,6 +210,8 @@ export function Nav(props: {
   onOpenAlerts: () => void
   onReset: () => void
   resetting: boolean
+  onStartNegotiation: (t: { listingId: number; needId: number }) => void
+  onOpenNegotiations: () => void
 }) {
   return (
     <nav className="nav">
@@ -218,7 +243,12 @@ export function Nav(props: {
           {props.resetting ? 'Resetting…' : 'Reset demo'}
         </button>
         <AccountSwitcher companies={props.companies} accountId={props.accountId} onChange={props.onAccount} />
-        <AlertsBell profile={props.profile} onOpen={props.onOpenAlerts} />
+        <AlertsBell
+          profile={props.profile}
+          onOpen={props.onOpenAlerts}
+          onStart={props.onStartNegotiation}
+          onOpenNegotiations={props.onOpenNegotiations}
+        />
       </div>
     </nav>
   )
