@@ -511,7 +511,6 @@ async def session() -> dict:
         "impact": {"listings": len(impacts), "value_recovered": s("value_recovered"), "scrap_value": s("scrap_value_total"),
                    "kg_kept_out_of_scrap": s("kg_kept_out_of_scrap"), "est_kg_co2e_avoided": s("est_kg_co2e_avoided"),
                    "est_hazardous_disposal_avoided": s("est_hazardous_disposal_avoided"),
-                   "placeholder_factors": any(i.get("placeholder_factors") for i in impacts),
                    "method": impacts[0]["method"] if impacts else None},
     }
 

@@ -1305,7 +1305,7 @@ def get_negotiation_for_company(negotiation_id: int, company_id: int) -> dict:
                     "status": d["status"], "relative": rel, "i_approved": bool(d[f"{side}_approved_by"]),
                     "they_approved": bool(d[f"{other}_approved_by"]),
                     "impact": {k: imp.get(k) for k in ("value_recovered", "scrap_value_total", "kg_kept_out_of_scrap",
-                                                       "est_kg_co2e_avoided", "method")}}
+                                                       "est_kg_co2e_avoided", "est_hazardous_disposal_avoided", "method")}}
         cost = conn.execute("SELECT COALESCE(SUM(cost_usd),0), COALESCE(SUM(input_tokens+cached_tokens+output_tokens),0), "
                             "COALESCE(SUM(requests),0) FROM token_usage WHERE run_id=?", (n["run_id"],)).fetchone() if n["run_id"] else (0, 0, 0)
         return {
@@ -1501,9 +1501,11 @@ def get_token_summary(run_id: str | None = None) -> dict:
 
 # --------------------------------------------------------------------------- impact + accounts
 
-IMPACT_METHOD = ("Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family "
-                 "factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders "
-                 "until sourced values replace them.")
+IMPACT_METHOD = ("est. CO2e avoided = weight x material factor (or a per-unit factor for electronics) x a 0.5 reuse credit. "
+                 "Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); "
+                 "~12-14 kg per PLC module (Siemens product footprints). The 0.5 credit is conservative: remanufacturing "
+                 "studies find 46-93% lower emissions. Shipping of the used part is not subtracted; weights are estimated "
+                 "shipping weights. Chemicals: no CO2 claim, disposal cost avoided instead (~$242 per 55-gal drum, a public fee schedule).")
 
 
 def get_impact_estimate(listing_id: int, price: float | None = None, qty: int | None = None) -> dict:
@@ -1518,12 +1520,15 @@ def get_impact_estimate(listing_id: int, price: float | None = None, qty: int | 
         p = conn.execute("SELECT * FROM part_catalog WHERE part_number=?", (r["part_number"],)).fetchone()
         f = conn.execute("SELECT * FROM carbon_factors WHERE family=?", (p["family"],)).fetchone()
         today = _today(conn)
+        rc = conn.execute("SELECT value FROM exchange_meta WHERE key='reuse_credit'").fetchone()
+        reuse_credit = float(rc[0]) if rc else 0.5
     q = qty or r["qty"]
     unit = price if price is not None else r["asking_price"]
     kg = p["weight_kg"] * q
     co2 = None
-    if f:
-        co2 = f["kg_co2e_per_unit"] * q if f["kg_co2e_per_unit"] is not None else kg * (f["kg_co2e_per_kg"] or 0)
+    if f and (f["kg_co2e_per_unit"] is not None or f["kg_co2e_per_kg"] is not None):  # chemicals: no CO2 claim
+        base = f["kg_co2e_per_unit"] * q if f["kg_co2e_per_unit"] is not None else kg * f["kg_co2e_per_kg"]
+        co2 = base * reuse_credit
     disposal = None
     if p["category"] == "chemical" and f and f["disposal_cost_per_kg"]:
         expiring = bool(r["expiry_date"]) and r["expiry_date"] <= f"{int(today[:4]) + 1}{today[4:]}"
@@ -1538,8 +1543,8 @@ def get_impact_estimate(listing_id: int, price: float | None = None, qty: int | 
         "est_kg_co2e_avoided": round(co2, 1) if co2 is not None else None,
         "est_hazardous_disposal_avoided": disposal,
         "family": p["family"], "factor_kg_co2e_per_kg": f["kg_co2e_per_kg"] if f else None,
-        "factor_source": f["source"] if f else None,
-        "placeholder_factors": bool(f and str(f["source"]).startswith("PLACEHOLDER")),
+        "factor_kg_co2e_per_unit": f["kg_co2e_per_unit"] if f else None, "reuse_credit": reuse_credit,
+        "factor_source": f["source"] if f else None, "factor_notes": f["notes"] if f else None,
         "method": IMPACT_METHOD,
     }
 
@@ -1572,12 +1577,13 @@ def get_marketplace_board() -> dict:
         "pairs": pairs,
         "impact": {"deals": len(approved), "value_recovered": total("value_recovered"), "scrap_value": total("scrap_value_total"),
                    "kg_kept_out_of_scrap": total("kg_kept_out_of_scrap"), "est_kg_co2e_avoided": total("est_kg_co2e_avoided"),
-                   "method": IMPACT_METHOD, "placeholder_factors": True},
+                   "est_hazardous_disposal_avoided": total("est_hazardous_disposal_avoided"), "method": IMPACT_METHOD},
         "potential": {"listings": len(matched_ids),
                       "value_recovered": round(sum(i.get("value_recovered") or 0 for i in potential), 2),
                       "scrap_value": round(sum(i.get("scrap_value_total") or 0 for i in potential), 2),
                       "kg_kept_out_of_scrap": round(sum(i.get("kg_kept_out_of_scrap") or 0 for i in potential), 2),
                       "est_kg_co2e_avoided": round(sum(i.get("est_kg_co2e_avoided") or 0 for i in potential), 1),
+                      "est_hazardous_disposal_avoided": round(sum(i.get("est_hazardous_disposal_avoided") or 0 for i in potential), 2),
                       "note": "if every listing that fills a buy request sold at its ask (asks not stated count as $0)"},
     }
 

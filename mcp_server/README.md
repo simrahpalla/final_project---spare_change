@@ -25,7 +25,7 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 | `get_compatibility` | ✓ | ✓ | ✓ | ✓ | ✓ | Platforms a part fits, plus its substitutes |
 | `get_price_reference` | ✓ | ✓ | ✓ | ✓ | ✓ | New price, scrap value, other listings' asks, approved deals |
 | `get_listing` / `get_need` | ✓ | ✓ | ✓ | ✓ | ✓ | Public fields only. User text is returned as `*_text_untrusted` |
-| `get_impact_estimate` | ✓ | ✓ | ✓ | ✓ | ✓ | $ recovered vs scrap, kg kept out of scrap, est. kg CO2e, est. hazardous disposal avoided: **computed in code** from `weight_kg` and `carbon_factors` (placeholder factors) |
+| `get_impact_estimate` | ✓ | ✓ | ✓ | ✓ | ✓ | $ recovered vs scrap, kg kept out of scrap, est. kg CO2e, est. hazardous disposal avoided: **computed in code** from `weight_kg` and sourced `carbon_factors` × a 0.5 reuse credit; chemicals get disposal cost avoided instead of CO2 |
 | `list_companies` / `mark_notifications_read` | | | | ✓ (list) | ✓ | The demo account switcher and the alerts bell |
 | `get_marketplace_board` | | | | | ✓ | The Marketplace tab: available listings, buy requests (**never a max price**), the compatible pairs between them (same `_fill_reason` code as matching), and deal + potential impact |
 | `create_listing` | ✓ | | | | | Store a structured listing (`submitted`). Unknown part numbers are refused. Expiry is derived from the manufacture date in code |

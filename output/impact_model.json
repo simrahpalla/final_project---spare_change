@@ -1,0 +1,465 @@
+{
+  "what": "Illustrative impact for one mid-size plant. MEASURED = read from this app's evidence files; SOURCED = external (output/impact_sources.md); ASSUMPTION = stated guess with a range. ONE-TIME and PER-YEAR values are never added together.",
+  "measured": {
+    "suggested_ask_over_new_price": {
+      "value": 0.555,
+      "n": 21,
+      "range": [
+        0.277,
+        0.818
+      ],
+      "file": "phase3_stress.json",
+      "basis": "pricing agent's suggested ask \u00f7 catalog new price (coverage runs)"
+    },
+    "negotiated_price_over_new_price": {
+      "value": 0.418,
+      "n": 32,
+      "range": [
+        0.23,
+        0.642
+      ],
+      "file": "eval_negotiation.json",
+      "basis": "agreed price \u00f7 new price over every logged deal"
+    },
+    "kg_co2e_per_dollar_of_new_value": {
+      "value": 0.00576,
+      "n": 18,
+      "file": "data/exchange.db via get_impact_estimate",
+      "basis": "get_impact_estimate (sourced factors \u00d7 0.5 reuse credit) \u00f7 new value, over active non-chemical listings"
+    },
+    "app_cost_per_user_month_usd": {
+      "value": 0.02428,
+      "file": "tokenomics.json",
+      "basis": "real token logs \u00d7 stated usage"
+    },
+    "line_down_deals": {
+      "value": 8,
+      "of_deals": 33,
+      "file": "eval_negotiation.json",
+      "basis": "logged deals whose buyer request was marked line down (the only deals given a downtime value)"
+    },
+    "line_down_share_of_requests": {
+      "value": 0.143,
+      "n": 21,
+      "file": "data/exchange.db (synthetic demo data)",
+      "basis": "share of seeded buy requests marked line down"
+    }
+  },
+  "sourced": {
+    "idle_share": {
+      "mid": 0.22,
+      "low": 0.15,
+      "high": 0.22,
+      "source": "SPARETECH 2025 survey (22% unused 5+ years); low = ~15% obsolete (Reliable Plant)"
+    },
+    "carrying_cost_rate": {
+      "mid": 0.2,
+      "low": 0.15,
+      "high": 0.3,
+      "source": "industry range 15\u201330% of value per year"
+    },
+    "scrap_recovery": {
+      "mid": 0.1,
+      "low": 0.05,
+      "high": 0.15,
+      "source": "industrial liquidator benchmarks 5\u201315%"
+    },
+    "downtime_cost_per_hour": {
+      "value": 36000,
+      "source": "Siemens TCOD 2024, lowest-cost sector; lower bound"
+    }
+  },
+  "assumptions": {
+    "mro_inventory_usd": {
+      "mid": 3000000,
+      "low": 1500000,
+      "high": 6000000,
+      "why": "a mid-size plant's spare-parts inventory (research section 3)"
+    },
+    "sell_through": {
+      "mid": 0.5,
+      "low": 0.25,
+      "high": 0.75,
+      "why": "share of the idle stock that finds a buyer (the rest is still scrapped); not measured"
+    },
+    "line_down_purchases_per_year": {
+      "mid": 1,
+      "low": 0,
+      "high": 3,
+      "why": "line-down emergencies per year this plant fills with a surplus part; each counts 1 hour at $36k (lower bound). Only line-down purchases get a downtime value."
+    },
+    "users_per_plant": {
+      "mid": 1,
+      "low": 1,
+      "high": 3,
+      "why": "accounts one plant runs on the app"
+    }
+  },
+  "mid_scenario": {
+    "idle_inventory_usd": 660000,
+    "one_time": {
+      "recovered_if_all_scrapped_usd": 66000,
+      "recovered_with_spare_change_usd": 170940,
+      "extra_recovered_vs_scrap_usd": 104940,
+      "est_kg_co2e_avoided": 1901
+    },
+    "per_year": {
+      "carrying_cost_of_idle_stock_usd": 132000,
+      "carrying_cost_avoided_usd": 66000,
+      "buyer_downtime_value_usd": 36000,
+      "app_model_cost_usd": 0.29
+    }
+  },
+  "all_low": {
+    "idle_inventory_usd": 225000,
+    "one_time": {
+      "recovered_if_all_scrapped_usd": 11250,
+      "recovered_with_spare_change_usd": 31950,
+      "extra_recovered_vs_scrap_usd": 20700,
+      "est_kg_co2e_avoided": 324
+    },
+    "per_year": {
+      "carrying_cost_of_idle_stock_usd": 33750,
+      "carrying_cost_avoided_usd": 8438,
+      "buyer_downtime_value_usd": 0,
+      "app_model_cost_usd": 0.29
+    }
+  },
+  "all_high": {
+    "idle_inventory_usd": 1320000,
+    "one_time": {
+      "recovered_if_all_scrapped_usd": 198000,
+      "recovered_with_spare_change_usd": 463320,
+      "extra_recovered_vs_scrap_usd": 265320,
+      "est_kg_co2e_avoided": 5702
+    },
+    "per_year": {
+      "carrying_cost_of_idle_stock_usd": 396000,
+      "carrying_cost_avoided_usd": 297000,
+      "buyer_downtime_value_usd": 108000,
+      "app_model_cost_usd": 0.87
+    }
+  },
+  "sensitivity_one_at_a_time": [
+    {
+      "input": "MRO inventory",
+      "low": {
+        "value": 1500000,
+        "idle_inventory_usd": 330000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 33000,
+          "recovered_with_spare_change_usd": 85470,
+          "extra_recovered_vs_scrap_usd": 52470,
+          "est_kg_co2e_avoided": 950
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 66000,
+          "carrying_cost_avoided_usd": 33000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "mid": {
+        "value": 3000000,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "high": {
+        "value": 6000000,
+        "idle_inventory_usd": 1320000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 132000,
+          "recovered_with_spare_change_usd": 341880,
+          "extra_recovered_vs_scrap_usd": 209880,
+          "est_kg_co2e_avoided": 3802
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 264000,
+          "carrying_cost_avoided_usd": 132000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      }
+    },
+    {
+      "input": "Idle share",
+      "low": {
+        "value": 0.15,
+        "idle_inventory_usd": 450000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 45000,
+          "recovered_with_spare_change_usd": 116550,
+          "extra_recovered_vs_scrap_usd": 71550,
+          "est_kg_co2e_avoided": 1296
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 90000,
+          "carrying_cost_avoided_usd": 45000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "mid": {
+        "value": 0.22,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "high": {
+        "value": 0.22,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      }
+    },
+    {
+      "input": "Carrying cost rate",
+      "low": {
+        "value": 0.15,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 99000,
+          "carrying_cost_avoided_usd": 49500,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "mid": {
+        "value": 0.2,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "high": {
+        "value": 0.3,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 198000,
+          "carrying_cost_avoided_usd": 99000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      }
+    },
+    {
+      "input": "Scrap recovery",
+      "low": {
+        "value": 0.05,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 33000,
+          "recovered_with_spare_change_usd": 154440,
+          "extra_recovered_vs_scrap_usd": 121440,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "mid": {
+        "value": 0.1,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "high": {
+        "value": 0.15,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 99000,
+          "recovered_with_spare_change_usd": 187440,
+          "extra_recovered_vs_scrap_usd": 88440,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      }
+    },
+    {
+      "input": "Sell-through",
+      "low": {
+        "value": 0.25,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 118470,
+          "extra_recovered_vs_scrap_usd": 52470,
+          "est_kg_co2e_avoided": 950
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 33000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "mid": {
+        "value": 0.5,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "high": {
+        "value": 0.75,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 223410,
+          "extra_recovered_vs_scrap_usd": 157410,
+          "est_kg_co2e_avoided": 2851
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 99000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      }
+    },
+    {
+      "input": "Line-down purchases / year",
+      "low": {
+        "value": 0,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 0,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "mid": {
+        "value": 1,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 36000,
+          "app_model_cost_usd": 0.29
+        }
+      },
+      "high": {
+        "value": 3,
+        "idle_inventory_usd": 660000,
+        "one_time": {
+          "recovered_if_all_scrapped_usd": 66000,
+          "recovered_with_spare_change_usd": 170940,
+          "extra_recovered_vs_scrap_usd": 104940,
+          "est_kg_co2e_avoided": 1901
+        },
+        "per_year": {
+          "carrying_cost_of_idle_stock_usd": 132000,
+          "carrying_cost_avoided_usd": 66000,
+          "buyer_downtime_value_usd": 108000,
+          "app_model_cost_usd": 0.29
+        }
+      }
+    }
+  ],
+  "downtime_in_our_logged_deals": {
+    "line_down_deals_logged": 8,
+    "deals_logged": 33,
+    "downtime_value_lower_bound_usd": 288000,
+    "note": "only deals whose buyer request was marked line down; 1 hour each at $36k/hr (lower bound); other deals get $0"
+  },
+  "pilot": {
+    "status": "planned, not done",
+    "tests": [
+      "time to list a part and find 3 plausible buyers: today's process vs. Spare Change",
+      "whether the suggested floor/budget and matches make sense to a maintenance manager",
+      "a short quote"
+    ]
+  }
+}

@@ -257,26 +257,26 @@ Negotiation #1 · 6ES7315-2AG10-0AB0 × 1 · Hartwell (seller) ↔ Riverbend Foo
 |---|---|---|
 | **$ recovered vs scrap** | sale value = price × qty (suggested ask before a deal, agreed price after), compared with scrap = `scrap_value` × qty | `part_catalog`, `deals` |
 | **kg kept out of scrap** | `weight_kg` × qty | `part_catalog.weight_kg` (new column) |
-| **est. kg CO2e avoided** | `weight_kg` × qty × `carbon_factors.kg_co2e_per_kg` for the part's family (or `kg_co2e_per_unit` × qty when the factor is per unit) | `carbon_factors` (new table) |
-| **Hazardous waste disposal avoided** (chemicals that are hazmat or expire within 12 months) | containers × `disposal_cost_per_unit` | `carbon_factors.disposal_cost_per_unit` |
+| **est. kg CO2e avoided** (not for chemicals) | (`weight_kg` × qty × `kg_co2e_per_kg`, or `kg_co2e_per_unit` × qty for electronics) × 0.5 reuse credit | `carbon_factors`, `exchange_meta.reuse_credit` |
+| **Hazardous waste disposal avoided** (chemicals that are hazmat or expire within 12 months; shown instead of CO2) | `weight_kg` × qty × `disposal_cost_per_kg` | `carbon_factors.disposal_cost_per_kg` |
 
-- **Method (shown in the ⓘ tooltip):** "Estimated emissions from manufacturing one new part that this reuse replaces. It doesn't yet subtract shipping or refurbishment. Factors are placeholders until they're replaced with sourced values."
-- **New data (Phase 4 build, after approval):** `part_catalog.weight_kg`, and `carbon_factors(family, kg_co2e_per_kg, kg_co2e_per_unit, disposal_cost_per_unit, source, notes)`. The `source` column reads **"PLACEHOLDER: replace with sourced value in Phase 10"** for every row now.
+- **Method (shown in the ⓘ tooltip):** "est. CO2e avoided = weight × material factor (or a per-unit factor for electronics) × a 0.5 reuse credit. Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); ~12–14 kg per PLC module (Siemens product footprints). The 0.5 credit is conservative: remanufacturing studies find 46–93% lower emissions. Shipping of the used part is not subtracted; weights are estimated shipping weights. Chemicals: no CO2 claim, disposal cost avoided instead (~$242 per 55-gal drum, a public fee schedule)."
+- **New data (Phase 4 build, after approval):** `part_catalog.weight_kg`, and `carbon_factors(family, kg_co2e_per_kg, kg_co2e_per_unit, disposal_cost_per_unit, source, notes)`. Since Phase 10 every row holds a sourced factor, its source URL and notes (below).
 - **Computed by:** a new MCP tool, `get_impact_estimate(listing_id, price=None)`, plus a session total from the backend. Both are plain code.
 - **Rendering:** teal text on `#E6F4F1`, a 14 px leaf icon, "est." before every CO2 number, and a 1-decimal maximum (no false precision).
 
-**Placeholder factors (illustration only, to be replaced in Phase 10):**
+**Sourced factors (Phase 10, replacing the Phase 4 placeholders):**
 
-| Family | kg CO2e per kg | Note |
-|---|---|---|
-| PLC CPU / PLC I/O / Network | 60 | electronics-heavy |
-| VFD drive / Servo amplifier | 25 | electronics + metal |
-| Servo motor | 9 | copper + steel |
-| Pump / Pump spare | 6 | stainless + SiC |
-| Bearing | 3 | steel |
-| Chemicals / lubricants | 2–6 | by product |
+| Family | Factor | Basis | Source |
+|---|---|---|---|
+| PLC CPU | **14 kg CO2e per unit** | S7-300-class proxy within Siemens' compact-CPU range (12.4–14.4 kg cradle-to-gate) | Siemens product carbon footprints (S7-1200 G2 PCF; S7-1500 EPD) |
+| PLC I/O, power supply, network, VFD option / control unit, robot accessory | **12.4 kg CO2e per unit** | low end of the same Siemens range (conservative proxy for electronic modules) | same |
+| Bearings, pump spares, PLC chassis and accessories | **1.95 kg CO2e/kg** | ICE database, steel (cross-check: worldsteel 1.92 t/t) | ICE via HKUST ECO-CM table |
+| Motors and drives (VFD, servo amplifier, servo motor) | **1.95 kg CO2e/kg** on total weight | conservative: ignores the higher-carbon copper | same |
+| Pump (housing) | **1.86 kg CO2e/kg** | cast iron (Ecoinvent) | SciELO LCA paper |
+| Chemicals, lubricants | **no CO2 claim**; disposal avoided ≈ **$242 per 55-gal drum** ($1.34/kg at our ~180 kg drum fill) | hazardous or expiring within 12 months only | Alachua County FL public fee schedule (conservative) |
 
-Hazardous disposal (placeholder): $300 per 55-gal drum.
+**Reuse credit 0.5** on every CO2 figure (conservative: remanufactured industrial parts show 46–93% lower emissions than new). Every row's source URL and notes are stored in `carbon_factors.source` / `notes`; the full list is in `output/impact_sources.md`. Caveats: cradle-to-gate manufacturing factors; shipping of the used part is not subtracted; electronics factors vary by model; weights are estimated typical shipping weights.
 
 ## 6. UX rules
 

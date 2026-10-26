@@ -202,12 +202,24 @@ Every impact figure comes from the catalog through the MCP tool `get_impact_esti
 |---|---|---|
 | $ recovered vs scrap | suggested ask × qty, against `scrap_value` × qty | `part_catalog` |
 | kg kept out of scrap | `weight_kg` × qty | `part_catalog.weight_kg` (new) |
-| est. kg CO2e avoided | `weight_kg` × qty × `carbon_factors.kg_co2e_per_kg` for the part's family (or `kg_co2e_per_unit` × qty) | `carbon_factors` (new, 17 families) |
-| est. hazardous waste disposal avoided | `weight_kg` × qty × `disposal_cost_per_kg`, for chemicals that are hazardous or expire within 12 months | `carbon_factors.disposal_cost_per_kg` |
+| est. kg CO2e avoided (parts only) | (`weight_kg` × qty × `kg_co2e_per_kg`, or `kg_co2e_per_unit` × qty for electronics) × **0.5 reuse credit** | `carbon_factors` (17 families, sourced), `exchange_meta.reuse_credit` |
+| est. hazardous waste disposal avoided (chemicals, instead of CO2) | `weight_kg` × qty × `disposal_cost_per_kg`, for chemicals that are hazardous or expire within 12 months | `carbon_factors.disposal_cost_per_kg` ($242 per 55-gal drum) |
 
-- **Method (shown in every "est." tooltip):** emissions from manufacturing the new part(s) that this reuse replaces, as weight × a per-family factor. Shipping and refurbishment are not yet subtracted.
-- **All weights and factors are placeholders.** Every `carbon_factors.source` reads "PLACEHOLDER: replace with sourced value in Phase 10", and the UI says "placeholder factors" until then.
-- **Example (listing 1, 3× S7-300 CPU at $1,425):** recovers $4,275 vs. $137 scrap · 0.9 kg · est. 54 kg CO2e (0.3 kg × 3 × 60 kg CO2e/kg).
+- **Method (shown in every "est." tooltip):** est. CO2e avoided = weight × material factor (or a per-unit factor for electronics) × a 0.5 reuse credit. Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); ~12–14 kg per PLC module (Siemens product footprints). The 0.5 credit is conservative: remanufacturing studies find 46–93% lower emissions. Shipping of the used part is not subtracted; weights are estimated shipping weights. Chemicals: no CO2 claim, disposal cost avoided instead (~$242 per 55-gal drum, a public fee schedule).
+- **Factors (Phase 10, sourced; they replace the Phase 4 placeholders):**
+
+| Family | Factor | Basis | Source |
+|---|---|---|---|
+| PLC CPU | **14 kg CO2e per unit** | S7-300-class proxy within Siemens' compact-CPU range (12.4–14.4 kg cradle-to-gate) | Siemens product carbon footprints (S7-1200 G2 PCF; S7-1500 EPD) |
+| PLC I/O, power supply, network, VFD option / control unit, robot accessory | **12.4 kg CO2e per unit** | low end of the same Siemens range (conservative proxy for electronic modules) | same |
+| Bearings, pump spares, PLC chassis and accessories | **1.95 kg CO2e/kg** | ICE database, steel (cross-check: worldsteel 1.92 t/t) | ICE via HKUST ECO-CM table |
+| Motors and drives (VFD, servo amplifier, servo motor) | **1.95 kg CO2e/kg** on total weight | conservative: ignores the higher-carbon copper | same |
+| Pump (housing) | **1.86 kg CO2e/kg** | cast iron (Ecoinvent) | SciELO LCA paper |
+| Chemicals, lubricants | **no CO2 claim**; disposal avoided ≈ **$242 per 55-gal drum** ($1.34/kg at our ~180 kg drum fill) | hazardous or expiring within 12 months only | Alachua County FL public fee schedule (conservative) |
+
+**Reuse credit 0.5** on every CO2 figure (conservative: remanufactured industrial parts show 46–93% lower emissions than new). Every row's source URL and notes are stored in `carbon_factors.source` / `notes`; the full list is in `output/impact_sources.md`. Caveats: cradle-to-gate manufacturing factors; shipping of the used part is not subtracted; electronics factors vary by model; weights are estimated typical shipping weights.
+
+- **Example (listing 1, 3× S7-300 CPU at $1,425):** recovers $4,275 vs. $137 scrap · 0.9 kg kept out of scrap · est. 21 kg CO2e (3 × 14 kg × 0.5). Example chemical (listing 15, 4 drums of IPA 99%): no CO2 figure; est. $938 hazardous-waste disposal avoided (700 kg × $1.34/kg).
 
 ## 5. Dashboard (Phase 4)
 

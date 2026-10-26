@@ -418,7 +418,7 @@ class Exchange:
         if outreach:
             state.step("outreach", "drafted", **outreach)
 
-        # 8. Impact: computed in code from the catalog (weight x placeholder factor), never by the model.
+        # 8. Impact: computed in code from the catalog (weight x sourced factor x reuse credit), never by the model.
         impact = await self.call("get_impact_estimate", listing_id=listing_id, price=round(ask, 2))
         state.step("impact", "done", **{k: v for k, v in impact.items() if k != "ok"})
         late = await self._recheck_listing(state, listing_id, {(c["buyer_id"], (c.get("open_need") or {}).get("need_id"))

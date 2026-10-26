@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api, errorMessage, type Board } from '../api'
 import { condition, kg, money } from '../format'
 import { Leaf } from '../icons'
-import { InfoTip } from './Results'
+import { ImpactFacts, InfoTip } from './Results'
 import { urgencyLabel } from './BuyPage'
 
 type Sel = { kind: 'listing' | 'need'; id: number } | null
@@ -63,15 +63,21 @@ export function MarketplacePage({ ready, accountId, version }: { ready: boolean;
             <div className="board-impact-body">
               <div>
                 <b>{board.potential.listings}</b> listings fill a buy request. If they sell at their asks: <b>{money(board.potential.value_recovered)}</b>{' '}
-                recovered vs. {money(board.potential.scrap_value)} scrap · <b>{kg(board.potential.kg_kept_out_of_scrap)}</b> kept out of scrap ·
-                est. <b>{kg(board.potential.est_kg_co2e_avoided)} CO2e</b> avoided
+                recovered (one-time) vs. {money(board.potential.scrap_value)} scrap · <b>{kg(board.potential.kg_kept_out_of_scrap)}</b> kept out of scrap
+                <ImpactFacts co2={board.potential.est_kg_co2e_avoided} disposal={board.potential.est_hazardous_disposal_avoided} />
               </div>
               <div className="small teal-muted">
                 Closed deals: {board.impact.deals}
-                {board.impact.deals > 0
-                  ? ` · ${money(board.impact.value_recovered)} recovered · ${kg(board.impact.est_kg_co2e_avoided)} CO2e avoided`
-                  : ' (agent negotiation and approval open in Phase 6)'}{' '}
-                · placeholder factors
+                {board.impact.deals > 0 ? (
+                  <>
+                    {' '}
+                    · {money(board.impact.value_recovered)} recovered (one-time)
+                    <ImpactFacts co2={board.impact.est_kg_co2e_avoided} disposal={board.impact.est_hazardous_disposal_avoided} />
+                  </>
+                ) : (
+                  ' (none approved by both companies yet)'
+                )}{' '}
+                · sourced factors, 0.5 reuse credit
               </div>
             </div>
             <span className="push">

@@ -29,6 +29,7 @@ def load(name):
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 
+imp = load("impact_model.json")
 tok, pre, safety, em, en = load("tokenomics.json"), load("prefilter_experiment.json"), load("safety_tests.json"), load("eval_matching.json"), load("eval_negotiation.json")
 suite, p5, two, smoke, rev = load("negotiation_suite.json"), load("phase5_stress.json"), load("two_sided_test.json"), load("mcp_smoke.json"), load("eval_reverse.json")
 cost, conc, p3, mc, pair, extra = load("cost_check.json"), load("concurrency_test.json"), load("phase3_stress.json"), load("match_check_test.json"), load("eval_demo_pair.json"), load("safety_extra.json")
@@ -169,8 +170,16 @@ rows = [
     ("It works / reliability", "`output/phase6_stress.md`, `output/phase5_stress.md`, `output/two_sided_test.json`, `output/concurrency_test.json`, `output/phase3_stress.md`",
      "`phase5-alert`, `phase6-approval-alert`, `phase6-deal-approved`",
      f"Phase 6 suite {C['phase6_suite']}, Phase 5 stress {C['phase5_stress']}, two-sided {C['two_sided']}, Phase 3 stress {C['phase3_table']}"),
-    ("Impact", "`output/eval_negotiation.json` (deal impact), Marketplace potential impact; **Phase 10 pending** (real user, sourced factors)",
-     "`phase5-marketplace` (impact summary), `phase6-deal-approved` (impact line)", "carbon factors are placeholders until Phase 10"),
+    ("Impact", "`output/impact_model.md`/`.json` (one mid-size plant; inputs labelled measured / sourced / assumption), `output/impact_check.md` (Phase 10 consistency check), `output/impact_sources.md` "
+     "(every external number, link, confidence), `carbon_factors` (sourced), `output/timed_test_template.md` (author's timed test, to fill in)",
+     "`phase5-marketplace` (impact summary), `phase6-deal-approved` (impact line); to take: `phase10-impact`",
+     (f"mid case: {imp.get('mid_scenario', {}).get('extra_recovered_vs_scrap_usd', 0):,} USD more than scrap, "
+      f"{imp.get('mid_scenario', {}).get('carrying_cost_avoided_per_year_usd', 0):,} USD/yr carrying cost avoided, "
+      f"{imp.get('mid_scenario', {}).get('buyer_downtime_value_per_year_usd', 0):,} USD/yr buyer downtime value, "
+      f"est. {imp.get('mid_scenario', {}).get('est_kg_co2e_avoided', 0):,} kg CO2e, model cost "
+      f"{imp.get('mid_scenario', {}).get('app_running_cost_per_year_usd', 0)} USD/yr; measured recovery "
+      f"{imp.get('measured', {}).get('negotiated_price_over_new_price', {}).get('value', 0):.0%} of new price "
+      f"(n={imp.get('measured', {}).get('negotiated_price_over_new_price', {}).get('n')}); **no real user yet** (pilot planned)")),
     ("Design", "`output/design.md`, `output/design/` mockups", "`phase4-*`, `phase5-*`, `phase6-*`", "Workshop style; orange Sell / blue Buy"),
 ]
 LIMITS = [
@@ -182,7 +191,10 @@ LIMITS = [
     "Blocked moves are rare after the prompt fix; the blocked-move display is proven with a scripted rogue agent (`safety_extra.json`), not a natural run.",
     "The model call that crosses the per-run token cap is stopped but its tokens are not written to token_usage (at most one call per run).",
     "Account switching is a demo, not authentication; private limits never leave their owner's views (leak scans), and run results are owner-only since the fix found in the evidence re-runs.",
-    "Per-user cost uses stated assumptions (runs per month), not measured usage; carbon factors are placeholders until Phase 10.",
+    "Per-user cost uses stated assumptions (runs per month), not measured usage.",
+    "Impact: sourced carbon factors × a conservative 0.5 reuse credit on estimated shipping weights (no CO2 claim for chemicals); "
+    "the plant model is illustrative, with inventory size, sell-through and line-down purchases as labelled assumptions; downtime only for line-down purchases at $36k/hr (lower bound); one-time and per-year values never summed.",
+    "No real user yet: a pilot is planned; the only timing evidence will be the author's own timed test, labelled as such.",
     "`gpt-6-luna` ignores temperature (reasoning model); consistency is measured by repeat runs instead.",
 ]
 ok = all(c[1] for c in checks)

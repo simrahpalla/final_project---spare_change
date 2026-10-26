@@ -69,7 +69,13 @@ export type Listing = {
   hazmat: boolean | null
 }
 
-type ImpactTotals = { value_recovered: number; scrap_value: number; kg_kept_out_of_scrap: number; est_kg_co2e_avoided: number }
+type ImpactTotals = {
+  value_recovered: number
+  scrap_value: number
+  kg_kept_out_of_scrap: number
+  est_kg_co2e_avoided: number
+  est_hazardous_disposal_avoided: number
+}
 
 export type Board = {
   listings: Listing[]
@@ -137,7 +143,6 @@ export type Session = {
     kg_kept_out_of_scrap: number
     est_kg_co2e_avoided: number
     est_hazardous_disposal_avoided: number
-    placeholder_factors: boolean
     method: string | null
   }
 }
@@ -215,7 +220,14 @@ export type Deal = {
   relative: string
   i_approved: boolean
   they_approved: boolean
-  impact: { value_recovered: number | null; scrap_value_total: number; kg_kept_out_of_scrap: number; est_kg_co2e_avoided: number | null; method: string }
+  impact: {
+    value_recovered: number | null
+    scrap_value_total: number
+    kg_kept_out_of_scrap: number
+    est_kg_co2e_avoided: number | null
+    est_hazardous_disposal_avoided: number | null
+    method: string
+  }
 }
 
 export type NegotiationView = {

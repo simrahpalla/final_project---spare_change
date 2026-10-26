@@ -1,0 +1,347 @@
+{
+  "passed": 25,
+  "total": 25,
+  "checks": [
+    {
+      "item": 1,
+      "check": "listing 9, steel part: 20 \u00d7 Bearing 6312-2Z/C3",
+      "result": "PASS",
+      "detail": "hand 1.7 kg \u00d7 20 \u00d7 1.95 kg CO2e/kg \u00d7 0.5 = 33.1 kg; app 33.1 kg"
+    },
+    {
+      "item": 1,
+      "check": "listing 18, motor: 2 \u00d7 Servo motor A06B-0235-B605",
+      "result": "PASS",
+      "detail": "hand 18 kg \u00d7 2 \u00d7 1.95 kg CO2e/kg (steel on total weight) \u00d7 0.5 = 35.1 kg; app 35.1 kg"
+    },
+    {
+      "item": 1,
+      "check": "listing 2, PLC CPU: 2 \u00d7 1756-L61",
+      "result": "PASS",
+      "detail": "hand 2 units \u00d7 14 kg CO2e/unit \u00d7 0.5 (weight not used) = 14.0 kg; app 14.0 kg"
+    },
+    {
+      "item": 1,
+      "check": "electronics use the per-unit factor only (no weight term)",
+      "result": "PASS",
+      "detail": "7 per-unit families (PLC CPU, PLC I/O, PLC power supply, Network, VFD option, VFD control unit, Robot accessory) have kg_co2e_per_kg NULL; code uses per-unit \u00d7 qty when set"
+    },
+    {
+      "item": 1,
+      "check": "per-unit estimate ignores weight (weight \u00d710 on 1756-L61)",
+      "result": "PASS",
+      "detail": "still 14.0 kg"
+    },
+    {
+      "item": 1,
+      "check": "no implausibly large figure",
+      "result": "PASS",
+      "detail": "largest per unit: {'listing': 8, 'part': '3196-STX-PE', 'family': 'Pump spare', 'qty': 1, 'weight_kg': 60.0, 'kg_co2e': 58.5, 'per_unit': 58.5}; over 50 kg/unit: listing 8 3196-STX-PE 58.5 kg/unit (60.0 kg \u00d7 1.95 \u00d7 0.5, plausible for a Pump spare)"
+    },
+    {
+      "item": 2,
+      "check": "every factor and source URL matches impact_research.md",
+      "result": "PASS",
+      "detail": "17 families: steel 1.95/kg, cast iron 1.86/kg (research \u00a72), PLC CPU 14/unit and modules 12.4/unit (research: 12\u201315 kg per compact CPU), every URL found in impact_research.md"
+    },
+    {
+      "item": 2,
+      "check": "disposal factor = $242 per drum \u00f7 ~180 kg",
+      "result": "PASS",
+      "detail": "1.34 $/kg = 242 / 180 for Chemical and Lubricant"
+    },
+    {
+      "item": 2,
+      "check": "chemicals show disposal avoided, never CO2",
+      "result": "PASS",
+      "detail": "6 chemical listings: CO2 None for all; disposal shown for 5 (hazardous or expiring within 12 months)"
+    },
+    {
+      "item": 2,
+      "check": "every URL in impact_sources.md is in impact_research.md",
+      "result": "PASS",
+      "detail": "all present"
+    },
+    {
+      "item": 3,
+      "check": "the same function behind strip, deal card, Marketplace and impact_model",
+      "result": "PASS",
+      "detail": "impact strip (seller run \u2192 get_impact_estimate): yes, deal card: yes, Marketplace summary: yes, impact_model.json: yes, frontend does no CO2 maths: yes"
+    },
+    {
+      "item": 3,
+      "check": "Marketplace total = sum of the individual deals (3 approved deals on a scratch DB)",
+      "result": "PASS",
+      "detail": "board {$ 4920.0, 54.1 kg, $ 469.0 disposal} = sum {$ 4920.0, 54.1 kg, $ 469.0 disposal}"
+    },
+    {
+      "item": 3,
+      "check": "Reset demo clears impact totals",
+      "result": "PASS",
+      "detail": "before reset: 2 session impacts, 3 approved deals on the board; after /api/reset: 0 and 0"
+    },
+    {
+      "item": 4,
+      "check": "downtime only for line-down deals, $36k/hr lower bound",
+      "result": "PASS",
+      "detail": "8 of 33 logged deals were line down \u2192 $288,000; plant model: 1 line-down purchase/yr \u00d7 $36k"
+    },
+    {
+      "item": 4,
+      "check": "no $2.3M or $150k downtime rate in the model",
+      "result": "PASS",
+      "detail": "none found"
+    },
+    {
+      "item": 5,
+      "check": "one-time and per-year outputs kept apart and labelled",
+      "result": "PASS",
+      "detail": "one_time: ['recovered_if_all_scrapped_usd', 'recovered_with_spare_change_usd', 'extra_recovered_vs_scrap_usd', 'est_kg_co2e_avoided']; per_year: ['carrying_cost_of_idle_stock_usd', 'carrying_cost_avoided_usd', 'buyer_downtime_value_usd', 'app_model_cost_usd']; UI $ recovered labelled 'one-time' (strip, deal card, Marketplace, rail)"
+    },
+    {
+      "item": 5,
+      "check": "UI labels $ recovered as one-time",
+      "result": "PASS",
+      "detail": "5 labels in the frontend"
+    },
+    {
+      "item": 6,
+      "check": "change an evidence file \u2192 the output changes",
+      "result": "PASS",
+      "detail": "tokenomics cost/user-month $0.02428 \u2192 $0.243: model cost $0.29/yr \u2192 $2.91/yr; one deal price \u00d72 in eval_negotiation: recovery ratio 0.418 \u2192 0.433, extra recovered $104,940 \u2192 $109,890 (temp copies; real files untouched)"
+    },
+    {
+      "item": 7,
+      "check": "no invented user quotes, testimonials or pilot claims",
+      "result": "PASS",
+      "detail": "no hits"
+    },
+    {
+      "item": 7,
+      "check": "timed test template results still empty",
+      "result": "PASS",
+      "detail": "20 result cells, all blank"
+    },
+    {
+      "item": 8,
+      "check": "don't-claim: MRO market size",
+      "result": "PASS",
+      "detail": "only in the 'Not used' list of impact_sources.md"
+    },
+    {
+      "item": 8,
+      "check": "don't-claim: 50\u201360% obsolete",
+      "result": "PASS",
+      "detail": "only in the 'Not used' list of impact_sources.md"
+    },
+    {
+      "item": 8,
+      "check": "don't-claim: S7-300 installed count",
+      "result": "PASS",
+      "detail": "only in the 'Not used' list of impact_sources.md"
+    },
+    {
+      "item": 8,
+      "check": "don't-claim: $2.3M/hr",
+      "result": "PASS",
+      "detail": "only in the 'Not used' list of impact_sources.md"
+    },
+    {
+      "item": 8,
+      "check": "don't-claim: $150k/hr",
+      "result": "PASS",
+      "detail": "only in the 'Not used' list of impact_sources.md"
+    }
+  ],
+  "all_listings_co2": [
+    {
+      "listing": 1,
+      "part": "6ES7315-2AG10-0AB0",
+      "family": "PLC CPU",
+      "qty": 3,
+      "weight_kg": 0.3,
+      "kg_co2e": 21.0,
+      "per_unit": 7.0
+    },
+    {
+      "listing": 2,
+      "part": "1756-L61",
+      "family": "PLC CPU",
+      "qty": 2,
+      "weight_kg": 0.3,
+      "kg_co2e": 14.0,
+      "per_unit": 7.0
+    },
+    {
+      "listing": 3,
+      "part": "25B-D010N104",
+      "family": "VFD drive",
+      "qty": 4,
+      "weight_kg": 2.0,
+      "kg_co2e": 7.8,
+      "per_unit": 1.9
+    },
+    {
+      "listing": 4,
+      "part": "96416889",
+      "family": "Pump spare",
+      "qty": 6,
+      "weight_kg": 1.2,
+      "kg_co2e": 7.0,
+      "per_unit": 1.2
+    },
+    {
+      "listing": 5,
+      "part": "ACS580-01-039A-4",
+      "family": "VFD drive",
+      "qty": 1,
+      "weight_kg": 13.0,
+      "kg_co2e": 12.7,
+      "per_unit": 12.7
+    },
+    {
+      "listing": 6,
+      "part": "1756-IB16",
+      "family": "PLC I/O",
+      "qty": 10,
+      "weight_kg": 0.3,
+      "kg_co2e": 62.0,
+      "per_unit": 6.2
+    },
+    {
+      "listing": 7,
+      "part": "1747-L542",
+      "family": "PLC CPU",
+      "qty": 1,
+      "weight_kg": 0.25,
+      "kg_co2e": 7.0,
+      "per_unit": 7.0
+    },
+    {
+      "listing": 8,
+      "part": "3196-STX-PE",
+      "family": "Pump spare",
+      "qty": 1,
+      "weight_kg": 60.0,
+      "kg_co2e": 58.5,
+      "per_unit": 58.5
+    },
+    {
+      "listing": 9,
+      "part": "6312-2Z/C3",
+      "family": "Bearing",
+      "qty": 20,
+      "weight_kg": 1.7,
+      "kg_co2e": 33.1,
+      "per_unit": 1.7
+    },
+    {
+      "listing": 10,
+      "part": "A06B-6117-H209",
+      "family": "Servo amplifier",
+      "qty": 1,
+      "weight_kg": 3.5,
+      "kg_co2e": 3.4,
+      "per_unit": 3.4
+    },
+    {
+      "listing": 11,
+      "part": "BMXP342020",
+      "family": "PLC CPU",
+      "qty": 2,
+      "weight_kg": 0.3,
+      "kg_co2e": 14.0,
+      "per_unit": 7.0
+    },
+    {
+      "listing": 12,
+      "part": "1756-EN2T",
+      "family": "Network",
+      "qty": 3,
+      "weight_kg": 0.3,
+      "kg_co2e": 18.6,
+      "per_unit": 6.2
+    },
+    {
+      "listing": 13,
+      "part": "6ES7321-1BL00-0AA0",
+      "family": "PLC I/O",
+      "qty": 12,
+      "weight_kg": 0.3,
+      "kg_co2e": 74.4,
+      "per_unit": 6.2
+    },
+    {
+      "listing": 16,
+      "part": "ZCU-14",
+      "family": "VFD control unit",
+      "qty": 1,
+      "weight_kg": 0.5,
+      "kg_co2e": 6.2,
+      "per_unit": 6.2
+    },
+    {
+      "listing": 17,
+      "part": "20F11ND022AA0NNNNN",
+      "family": "VFD drive",
+      "qty": 1,
+      "weight_kg": 15.0,
+      "kg_co2e": 14.6,
+      "per_unit": 14.6
+    },
+    {
+      "listing": 18,
+      "part": "A06B-0235-B605",
+      "family": "Servo motor",
+      "qty": 2,
+      "weight_kg": 18.0,
+      "kg_co2e": 35.1,
+      "per_unit": 17.6
+    },
+    {
+      "listing": 19,
+      "part": "Q06UDEHCPU",
+      "family": "PLC CPU",
+      "qty": 1,
+      "weight_kg": 0.15,
+      "kg_co2e": 7.0,
+      "per_unit": 7.0
+    },
+    {
+      "listing": 20,
+      "part": "BMXDDI1602",
+      "family": "PLC I/O",
+      "qty": 8,
+      "weight_kg": 0.12,
+      "kg_co2e": 49.6,
+      "per_unit": 6.2
+    },
+    {
+      "listing": 22,
+      "part": "6207-2Z/C3",
+      "family": "Bearing",
+      "qty": 50,
+      "weight_kg": 0.29,
+      "kg_co2e": 14.1,
+      "per_unit": 0.3
+    },
+    {
+      "listing": 25,
+      "part": "1756-IB16",
+      "family": "PLC I/O",
+      "qty": 1,
+      "weight_kg": 0.3,
+      "kg_co2e": 6.2,
+      "per_unit": 6.2
+    },
+    {
+      "listing": 27,
+      "part": "1756-L61",
+      "family": "PLC CPU",
+      "qty": 5,
+      "weight_kg": 0.3,
+      "kg_co2e": 35.0,
+      "per_unit": 7.0
+    }
+  ]
+}

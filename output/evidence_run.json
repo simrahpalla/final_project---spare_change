@@ -1,13 +1,94 @@
 {
-  "finished_at": "2026-10-26T08:54:33+00:00",
-  "minutes": 1.4,
+  "finished_at": "2026-10-26T09:05:50+00:00",
+  "minutes": 1.1,
   "steps": [
     {
-      "step": "concurrency",
+      "step": "data_checks",
       "result": "PASS",
-      "seconds": 47,
-      "produces": "output/concurrency_test.json",
-      "last_line": "Wrote output/concurrency_test.json and the Concurrency section of output/phase3_stress.md"
+      "seconds": 2,
+      "produces": "data checks (mutation cases)",
+      "last_line": "8/8 mutation cases behave as expected."
+    },
+    {
+      "step": "data_report",
+      "result": "PASS",
+      "seconds": 1,
+      "produces": "output/data_report.md",
+      "last_line": "11/11 checks pass. Full report: output\\data_report.md"
+    },
+    {
+      "step": "mcp_smoke",
+      "result": "PASS",
+      "seconds": 59,
+      "produces": "output/mcp_smoke.json",
+      "last_line": "Server logged 32/32 refused calls in refused_calls."
+    },
+    {
+      "step": "stress_phase3",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/phase3_stress.json/.md (59 runs)"
+    },
+    {
+      "step": "match_check",
+      "result": "PASS",
+      "seconds": 3,
+      "produces": "output/match_check_test.json",
+      "last_line": "5/5 cases pass. Saved output/match_check_test.json"
+    },
+    {
+      "step": "eval_reverse",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/eval_reverse.json"
+    },
+    {
+      "step": "two_sided",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/two_sided_test.json"
+    },
+    {
+      "step": "stress_phase5",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/phase5_stress.json/.md"
+    },
+    {
+      "step": "negotiation_suite",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/negotiation_suite.json, phase6_stress.md"
+    },
+    {
+      "step": "demo_pair",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/eval_demo_pair.json"
+    },
+    {
+      "step": "prefilter_experiment",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/prefilter_experiment.json"
+    },
+    {
+      "step": "need_posts",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/need_post_runs.json"
+    },
+    {
+      "step": "safety_extra",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/safety_extra.json"
+    },
+    {
+      "step": "concurrency",
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/concurrency_test.json"
     },
     {
       "step": "cost_report",
@@ -21,14 +102,20 @@
       "result": "PASS",
       "seconds": 0,
       "produces": "output/safety_tests.json, eval_matching.json, eval_negotiation.json",
-      "last_line": "  narrow pairs before fix: 1.0 after: 1.0"
+      "last_line": "  narrow pairs before fix: 0.5 after: 1.0"
+    },
+    {
+      "step": "impact_model",
+      "result": "PASS",
+      "seconds": 0,
+      "produces": "output/impact_model.json/.md (one mid-size plant)",
+      "last_line": "| Output | All low | Mid | All high |"
     },
     {
       "step": "cost_check",
-      "result": "PASS",
-      "seconds": 35,
-      "produces": "output/cost_check.json/.md (hand-priced)",
-      "last_line": "**All checks match: True**"
+      "result": "skipped (model)",
+      "seconds": 0,
+      "produces": "output/cost_check.json/.md (hand-priced)"
     },
     {
       "step": "evidence_index",

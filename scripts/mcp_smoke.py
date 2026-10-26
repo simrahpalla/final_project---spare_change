@@ -96,7 +96,7 @@ async def run(smoke: Smoke) -> None:
         await S.call(b, "broker", "get_listing", {"listing_id": 1}, "ok", "public listing: no floor price in it")
         await S.call(b, "broker", "get_need", {"need_id": 1}, "ok", "public need: no ceiling price in it")
         await S.call(b, "broker", "get_company_profile", {"company_id": 20}, "ok", "buyer profile: runs 4x Siemens S7-300 (18 yrs)")
-        await S.call(b, "broker", "get_impact_estimate", {"listing_id": 1}, "ok", "impact in code: $ vs scrap, kg, est. CO2e (placeholder factors)")
+        await S.call(b, "broker", "get_impact_estimate", {"listing_id": 1}, "ok", "impact in code: $ vs scrap, kg, est. CO2e (sourced factors x 0.5 reuse credit)")
         await S.call(b, "broker", "get_impact_estimate", {"listing_id": 15, "price": 350}, "ok", "chemical: also est. hazardous disposal avoided")
 
         # ---- broker: a new listing end to end (fills the open CR 15 need #20 -> two-sided alert)

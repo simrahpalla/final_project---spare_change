@@ -274,19 +274,34 @@ export function PriceCards({ pricing }: { pricing: Step }) {
 
 // ------------------------------------------------------------------ impact
 
+// CO2 for parts (sourced factor x 0.5 reuse credit); chemicals show the disposal cost avoided instead of a CO2 figure.
+export function ImpactFacts({ co2, disposal }: { co2?: number | null; disposal?: number | null }) {
+  return (
+    <>
+      {co2 ? (
+        <>
+          {' '}
+          · est. <b>{kg(co2)} CO2e</b> avoided
+        </>
+      ) : null}
+      {disposal ? (
+        <>
+          {' '}
+          · est. <b>{money(disposal)}</b> hazardous-waste disposal avoided
+        </>
+      ) : null}
+    </>
+  )
+}
+
 export function ImpactStrip({ impact }: { impact: Step }) {
   return (
     <section className="impact section">
       <Leaf />
       <span>
-        Recovers <b>{money(impact.value_recovered)}</b> vs. {money(impact.scrap_value_total)} scrap · <b>{kg(impact.kg_kept_out_of_scrap)}</b>{' '}
-        kept out of scrap · est. <b>{kg(impact.est_kg_co2e_avoided)} CO2e</b> avoided
-        {impact.est_hazardous_disposal_avoided ? (
-          <>
-            {' '}
-            · hazardous waste disposal avoided: est. <b>{money(impact.est_hazardous_disposal_avoided)}</b>
-          </>
-        ) : null}
+        Recovers <b>{money(impact.value_recovered)}</b> one-time vs. {money(impact.scrap_value_total)} scrap · <b>{kg(impact.kg_kept_out_of_scrap)}</b>{' '}
+        kept out of scrap
+        <ImpactFacts co2={impact.est_kg_co2e_avoided} disposal={impact.est_hazardous_disposal_avoided} />
       </span>
       <span className="push">
         <InfoTip text={impact.method} />

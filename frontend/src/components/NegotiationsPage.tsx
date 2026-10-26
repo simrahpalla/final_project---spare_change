@@ -15,7 +15,7 @@ import {
 import { featured } from '../demo'
 import { condition, kg, money } from '../format'
 import { Ban, Check, Leaf, Lock } from '../icons'
-import { InfoTip } from './Results'
+import { ImpactFacts, InfoTip } from './Results'
 import { urgencyLabel } from './BuyPage'
 
 export type Target = { listingId: number; needId: number }
@@ -472,8 +472,9 @@ function Outcome(props: { v: NegotiationView; deciding: boolean; onDecide: (appr
         <div className="impact deal-impact">
           <Leaf />
           <span>
-            Recovers <b>{money(d.impact.value_recovered)}</b> vs. {money(d.impact.scrap_value_total)} scrap · <b>{kg(d.impact.kg_kept_out_of_scrap)}</b> kept out
-            of scrap · est. <b>{kg(d.impact.est_kg_co2e_avoided)} CO2e</b> avoided
+            Recovers <b>{money(d.impact.value_recovered)}</b> one-time vs. {money(d.impact.scrap_value_total)} scrap · <b>{kg(d.impact.kg_kept_out_of_scrap)}</b> kept out
+            of scrap
+            <ImpactFacts co2={d.impact.est_kg_co2e_avoided} disposal={d.impact.est_hazardous_disposal_avoided} />
           </span>
           <span className="push">
             <InfoTip text={d.impact.method} />

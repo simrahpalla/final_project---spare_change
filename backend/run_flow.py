@@ -110,7 +110,7 @@ def print_result(r: dict) -> None:
             print(f"  IMPACT      recovers {money(s.get('value_recovered'))} vs {money(s.get('scrap_value_total'))} scrap · "
                   f"{s.get('kg_kept_out_of_scrap')} kg kept out of scrap · est. {co2} kg CO2e"
                   + (f" · est. {money(haz)} hazardous disposal avoided" if haz else "")
-                  + (" (placeholder factors)" if s.get("placeholder_factors") else ""))
+                  )
         elif name == "outreach":
             print(f"  OUTREACH    to {s['to']}: \"{s['subject']}\"")
             for line in s["body"].splitlines():

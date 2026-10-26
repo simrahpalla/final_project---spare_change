@@ -39,6 +39,8 @@ STEPS = [
     ("concurrency", ["scripts/concurrency_test.py", "--modes", "backend", "--levels", "6"], True, "output/concurrency_test.json"),
     ("cost_report", ["scripts/cost_report.py"], False, "output/tokenomics.json/.md"),
     ("consolidate", ["scripts/consolidate_evals.py"], False, "output/safety_tests.json, eval_matching.json, eval_negotiation.json"),
+    ("impact_model", ["scripts/impact_model.py"], False, "output/impact_model.json/.md (one mid-size plant)"),
+    ("impact_check", ["scripts/check_impact.py"], False, "output/impact_check.json/.md (Phase 10 consistency check)"),
     ("cost_check", ["scripts/verify_costs.py"], True, "output/cost_check.json/.md (hand-priced)"),
     ("evidence_index", ["scripts/build_evidence_index.py"], False, "output/evidence_index.md (+ consistency checks)"),
 ]

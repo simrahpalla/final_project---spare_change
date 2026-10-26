@@ -83,11 +83,11 @@ CREATE TABLE part_catalog (
     hazmat_class TEXT,                -- e.g. 'UN1219 Class 3 flammable liquid'
     shelf_life_months INTEGER,        -- chemicals only
     obsolete INTEGER NOT NULL DEFAULT 0 CHECK (obsolete IN (0, 1)),  -- discontinued by the OEM
-    weight_kg REAL NOT NULL CHECK (weight_kg > 0)  -- shipping weight per unit (PLACEHOLDER until Phase 10)
+    weight_kg REAL NOT NULL CHECK (weight_kg > 0)  -- estimated typical shipping weight per unit (not individually sourced)
 );
 
 -- Impact factors by part family, for the sustainability numbers (computed in code, never by the model).
--- Every row is a PLACEHOLDER until it is replaced with a sourced value in Phase 10.
+-- Sourced factors (impact_research.md section 2); the source URL and notes are stored per row.
 CREATE TABLE carbon_factors (
     family TEXT PRIMARY KEY,
     kg_co2e_per_kg REAL,              -- avoided manufacturing emissions per kg of new product
@@ -485,7 +485,7 @@ CATALOG = [
     ("HYPO-125-55G", "Generic", "Chemical", "Sodium hypochlorite 12.5% solution, 55-gallon drum", C, 240, 0, 1, "UN1791 Class 8 corrosive", 6, 0, []),
 ]
 
-# Shipping weight per unit, kg. PLACEHOLDER estimates until sourced in Phase 10.
+# Shipping weight per unit, kg: estimated typical values for each product (not individually sourced).
 WEIGHT_KG = {
     "6ES7315-2AG10-0AB0": 0.3, "6ES7315-2EH14-0AB0": 0.3, "6ES7321-1BL00-0AA0": 0.3, "6ES7322-1BL00-0AA0": 0.3,
     "6ES7331-7KF02-0AB0": 0.3, "6ES7307-1EA01-0AA0": 0.6, "6ES7392-1AM00-0AA0": 0.05, "6ES7972-0BA12-0XA0": 0.03,
@@ -505,26 +505,36 @@ WEIGHT_KG = {
     "MOB-DTE25-55G": 190.0, "MOB-SHC630-5G": 18.0, "HYPO-125-55G": 260.0,
 }
 
-# (family, kg CO2e per kg, kg CO2e per unit, hazardous disposal $ per kg, notes). All PLACEHOLDERS.
-PLACEHOLDER_SOURCE = "PLACEHOLDER: replace with sourced value in Phase 10"
+# Sourced factors (impact_research.md section 2). est. CO2e avoided = weight x factor (or per-unit factor) x REUSE_CREDIT.
+# (family, kg CO2e per kg, kg CO2e per unit, disposal $ per kg, source, notes)
+ICE_STEEL = ("ICE database, steel general, cradle-to-gate: https://cejcheng.people.ust.hk/ec/carbonInventoryLocalized.html "
+             "(cross-check worldsteel 2023: 1.92 t CO2/t crude steel, https://worldsteel.org/?p=63833)")
+CAST_IRON = "Ecoinvent value via SciELO LCA paper: https://scielo.br/j/esa/a/8sZLksLQgRNPRCn9sfHPhHS/abstract/?lang=en"
+SIEMENS_PCF = ("Siemens product carbon footprints: S7-1200 G2 CPU 12.4-14.4 kg cradle-to-gate; S7-1500 CPU 1517 69.3 kg "
+               "(https://cache.industry.siemens.com/dl/files/794/109983794/att_1320577/v1/SIMATIC_S7-1500_CPU_6ES7517-3FQ10-0AB0_DI_FA_EPD00083.01.pdf; "
+               "https://xcelerator.siemens.com/global/en/all-offerings/products/s/sigreen.html)")
+DISPOSAL = ("Alachua County FL household hazardous waste fee schedule FY22-23, ~$242 per 55-gal drum: "
+            "https://www.alachuacounty.us/Depts/SolidWaste/hwc/Documents/ADACompliant/HHW%20FY22-23%20Fee%20Schedule.pdf")
+DISPOSAL_PER_KG = round(242 / 180, 2)  # $242 per drum / ~180 kg, the average fill of our 55-gal chemical drums -> $1.34/kg
+REUSE_CREDIT = 0.5  # conservative: remanufactured industrial parts show 46-93% lower emissions (impact_research.md section 2)
 CARBON_FACTORS = [
-    ("PLC CPU", 60, None, None, "electronics-heavy (PCBs, ICs)"),
-    ("PLC I/O", 60, None, None, "electronics-heavy"),
-    ("PLC power supply", 40, None, None, "electronics + transformer"),
-    ("PLC accessory", 10, None, None, "plastic + copper terminals"),
-    ("PLC chassis", 8, None, None, "mostly sheet metal backplane"),
-    ("Network", 60, None, None, "electronics-heavy"),
-    ("VFD drive", 25, None, None, "power electronics + aluminium heatsink"),
-    ("VFD option", 60, None, None, "electronics-heavy"),
-    ("VFD control unit", 60, None, None, "electronics-heavy"),
-    ("Servo amplifier", 30, None, None, "power electronics"),
-    ("Robot accessory", 40, None, None, "electronics + display"),
-    ("Servo motor", 9, None, None, "copper windings + steel + magnets"),
-    ("Pump", 6, None, None, "stainless steel"),
-    ("Pump spare", 6, None, None, "stainless steel + SiC faces"),
-    ("Bearing", 3, None, None, "bearing steel"),
-    ("Chemical", 2.5, None, 2.5, "solvent / adhesive production; hazardous disposal ~$2.50/kg"),
-    ("Lubricant", 1.5, None, 1.0, "base oil refining; used-oil disposal ~$1/kg"),
+    ("PLC CPU", None, 14.0, None, SIEMENS_PCF, "per unit: S7-300-class CPU proxy (~14 kg, compact-CPU range), est."),
+    ("PLC I/O", None, 12.4, None, SIEMENS_PCF, "per unit: electronic module proxy at the low end of Siemens' range (12.4 kg), est."),
+    ("PLC power supply", None, 12.4, None, SIEMENS_PCF, "per unit: electronic module proxy (12.4 kg), est."),
+    ("Network", None, 12.4, None, SIEMENS_PCF, "per unit: electronic module proxy (12.4 kg), est."),
+    ("VFD option", None, 12.4, None, SIEMENS_PCF, "per unit: plug-in electronics card, module proxy (12.4 kg), est."),
+    ("VFD control unit", None, 12.4, None, SIEMENS_PCF, "per unit: electronic module proxy (12.4 kg), est."),
+    ("Robot accessory", None, 12.4, None, SIEMENS_PCF, "per unit: teach pendant / electronics, module proxy (12.4 kg), est."),
+    ("PLC accessory", 1.95, None, None, ICE_STEEL, "small metal/plastic part: steel factor on weight (conservative)"),
+    ("PLC chassis", 1.95, None, None, ICE_STEEL, "rack/backplane: steel factor on weight (conservative vs. aluminium 9.16)"),
+    ("VFD drive", 1.95, None, None, ICE_STEEL, "motors and drives: steel factor on total weight (ignores higher-carbon copper)"),
+    ("Servo amplifier", 1.95, None, None, ICE_STEEL, "motors and drives: steel factor on total weight"),
+    ("Servo motor", 1.95, None, None, ICE_STEEL, "motors and drives: steel factor on total weight (ignores copper windings)"),
+    ("Pump", 1.86, None, None, CAST_IRON, "pump housing: cast iron"),
+    ("Pump spare", 1.95, None, None, ICE_STEEL, "seal kits, impellers, power ends: steel"),
+    ("Bearing", 1.95, None, None, ICE_STEEL, "bearing steel"),
+    ("Chemical", None, None, DISPOSAL_PER_KG, DISPOSAL, "no CO2 claim; hazardous-waste disposal cost avoided (conservative public rate)"),
+    ("Lubricant", None, None, DISPOSAL_PER_KG, DISPOSAL, "no CO2 claim; disposal cost avoided only if it would expire"),
 ]
 
 # (part_number, substitutes_for, platform, note): a valid stand-in part on the buyer's platform.
@@ -728,7 +738,7 @@ def build(db_path: Path) -> None:
     con = sqlite3.connect(db_path)
     con.executescript(SCHEMA)
     con.execute("INSERT INTO exchange_meta VALUES ('today', ?)", (EXCHANGE_TODAY,))
-    con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v4 (small test dataset, placeholder impact factors)')")
+    con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v5 (small test dataset, sourced impact factors)')")
     con.execute("INSERT INTO exchange_meta VALUES ('random_seed', ?)", (str(RANDOM_SEED),))
     con.executemany("INSERT INTO companies (id, name, type, city, state, industry) VALUES (?,?,?,?,?,?)", COMPANIES)
     # Demo accounts (featured in the switcher, or signed in by an example chip) negotiate their strong matches on their own.
@@ -742,7 +752,8 @@ def build(db_path: Path) -> None:
         con.execute("INSERT INTO compatibility (part_number, platform, relation, substitutes_for, note) "
                     "VALUES (?,?,'substitute',?,?)", (part, platform, replaces, note))
     con.executemany("INSERT INTO carbon_factors VALUES (?,?,?,?,?,?)",
-                    [(f, kg, unit, disp, PLACEHOLDER_SOURCE, note) for f, kg, unit, disp, note in CARBON_FACTORS])
+                    CARBON_FACTORS)
+    con.execute("INSERT INTO exchange_meta VALUES ('reuse_credit', ?)", (str(REUSE_CREDIT),))
 
     city = {c[0]: f"{c[3]}, {c[4]}" for c in COMPANIES}
     for l in LISTINGS:

@@ -98,6 +98,13 @@ Every number in the report comes from files in `output/`; **`output/evidence_ind
 
 Add `--no-model` to rebuild only the derived files (tokenomics, safety and eval summaries, the index) without calling the model.
 
+## Limits
+
+- **No real user has tried it yet.** A pilot with a plant maintenance manager is planned but hasn't happened: it would time listing a part and finding buyers against their current process and collect a short quote. The only timing evidence so far is the author's own timed test (`output/timed_test_template.md`), labelled as such.
+- **Synthetic data:** real part numbers, platforms and list prices; made-up companies, listings, requests and limits.
+- **Impact numbers are estimates:** sourced carbon factors × a conservative 0.5 reuse credit on estimated shipping weights (no CO2 claim for chemicals); the plant-level impact model is illustrative, with every assumption labelled (`output/impact_model.md`).
+- **Account switching is a demo, not authentication** (see above).
+
 ## How it's built
 
 | Part | What it does |

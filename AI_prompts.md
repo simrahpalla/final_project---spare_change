@@ -529,3 +529,78 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 > dont stop working - but just tell me - why are we running the phase 3 stress run again?
 
+> Commit the evidence consistency check to main.
+
+## Phase 10 — Impact
+
+### Initial prompt
+
+> Phase 10: impact. The real-user test isn't happening before submission. It might happen tomorrow, but put a pin in it for now: don't block anything on it, and don't add placeholder quotes or invented user feedback anywhere.
+>
+> 1. Read impact_research.md (sections 1–4). It's the sourced research for this phase.
+>
+> 2. Carbon factors: replace the placeholder values in carbon_factors with the sourced values in section 2 (store the source URL and notes for each), set the reuse credit to 0.5, recompute CO2 figures, and update the tooltip text plus the method description in design.md and harness.md. Chemicals show disposal cost avoided instead of a CO2 figure.
+>
+> 3. Impact model: build scripts/impact_model.py → output/impact_model.json and output/impact_model.md for one mid-size plant using section 3:
+>    - Inputs clearly labeled as assumptions vs. sourced vs. measured.
+>    - Use MEASURED values from our app wherever possible: average suggested ask ÷ new price across the catalog, average negotiated deal price from eval_negotiation.json, and cost per user per month from tokenomics.json.
+>    - Outputs: $ recovered vs. scrap, carrying cost avoided per year, buyer-side downtime value (at the $36k/hr lowest-sector rate from Siemens), est. CO2e avoided, and the app's running cost for that plant.
+>    - Show the sensitivity: low / mid / high for the key assumptions.
+>
+> 4. Timed self-test for the "own tests" evidence: create output/timed_test_template.md for me to fill in. For 2 items, record the time to do it manually (write a listing, look up compatibility, find 3 plausible buyers) vs. in the app. Label it "measured by the author, not an independent user." I'll fill in the times myself. Don't make up numbers.
+>
+> 5. Real user: add a "Planned pilot" section to output/impact_model.md and a line in the README's limits: what the session would test (time to list and find buyers vs. today's process, plus a quote) and that it hasn't happened yet.
+>
+> 6. Write output/impact_sources.md listing every external number we use, with its source link and confidence level, to paste into the report's Impact and Motivation sections. Don't use anything from the "don't claim" list in impact_research.md.
+>
+> At the checkpoint, list the evidence files and remind me to fill in the timed test and screenshot the impact strip and Marketplace impact summary (phase10-impact). Also remind me of the agent design trace. Log this prompt in AI_prompts.md.
+
+### What was missing
+
+- **Factors for families the research doesn't list:** non-CPU electronic modules (I/O, power supplies, network, VFD option and control units, teach pendant) use 12.4 kg per unit, the low end of Siemens' range; PLC chassis and accessories use steel (conservative vs. aluminium); lubricants are treated like chemicals (no CO2 claim).
+- **Converting $242 per drum to our per-kg model:** $1.34/kg at the ~180 kg average fill of our 55-gal drums.
+- **Part weights:** not in the research; they stay as estimated shipping weights and are labelled that way.
+- **Two assumptions the model needs that section 3 didn't state:** sell-through (not all idle stock finds a buyer; the rest is still scrapped) and downtime hours avoided per year; both are labelled assumptions with ranges.
+- **The README had no Limits section;** one was added.
+
+### Follow-up prompt(s)
+
+> hi there - explain to me in a short summary what you did for phase 10
+> and also explain to me what I need to do
+
+> give me detailed instructions on what I need to do for the timed test and give me the link to the webpage so i can take the screenshot
+
+> here are the screenshots
+>
+> for the manual test - I am not a supply chain person so I dont know what to write up or how to identify good buyers - is there a way you can help me with this? Maybe you give me the writeup and the manual test is about finding buyers?
+
+(Answer: the manual answers were not supplied, so the manual time stays real; instead the template got a step-by-step how-to: a fill-in listing template, search queries for compatibility, and job postings as evidence a plant runs a system, with a 15-minute cap per step.)
+
+
+## Phase 10 consistency check
+
+### Initial prompt
+
+> Phase 10 consistency check (no new features):
+>
+> 1. Recompute est. CO2e by hand for 3 items (one steel part, one aluminium or motor, one PLC CPU) and confirm they match the app. Check units, and make sure electronics use the per-unit factor only, not weight too. Flag any figure that looks implausibly large.
+> 2. Confirm every carbon factor and source URL matches impact_research.md, and that chemicals show disposal cost avoided, not CO2.
+> 3. Confirm the impact strip, deal card, Marketplace summary, and impact_model.json all use the same function, and that the Marketplace total equals the sum of individual deals. Confirm Reset demo clears impact totals.
+> 4. Downtime value: only count it for deals where the buyer's need was marked urgent (line down), using $36k/hr as a lower bound. Don't apply it to every deal, and never use the $2.3M/hr automotive figure.
+> 5. Label one-time values ($ recovered) vs. annual values (carrying cost avoided) everywhere. Don't sum them without labels.
+> 6. Confirm measured inputs are read from evidence files, not hardcoded: change one input and show the output changes.
+> 7. Search the repo and UI for any invented user quotes, testimonials, or pilot claims and remove them. Confirm the timed test template is still empty.
+> 8. Confirm nothing from the "don't claim" list in impact_research.md is used.
+>
+> Report PASS/FAIL with fixes, then regenerate impact_model.json/.md and impact_sources.md. Log this in AI_prompts.md.
+>
+> important: if you already ran any of these tests, dont run them again just let me know
+
+### What was missing
+
+- **No family uses aluminium** (motors and drives use steel on total weight, per the research), so the "aluminium or motor" item used a servo motor.
+- **impact_model.py had its own CO2 loop** over the catalog instead of the app's `get_impact_estimate` (0.00766 vs. 0.00576 kg CO2e per $). It now calls the shared function; mid-case CO2e went from 2,528 to 1,901 kg.
+- **Downtime was applied as "hours avoided per year" with a $150k/hr high case.** It is now only line-down purchases × 1 hour × $36k (lower bound); the logged deals show 8 of 33 were line down ($288,000 lower bound). The $150k and $2.3M rates were removed from the model and `impact_sources.md`.
+- **One-time vs. per-year:** the model outputs are now split into `one_time` and `per_year`; the UI's "$ recovered" is labelled "one-time" on the strip, deal card, Marketplace and rail.
+- **Repeatable check:** `scripts/check_impact.py` → `output/impact_check.md` (25/25 PASS; scratch DB, no model calls), added to `run_all_evidence.py`.
+- **Not rerun (already done earlier):** the S7-300 CPU hand check (21 kg), the IPA disposal check ($938), and the reset-restores-the-DB stress test.

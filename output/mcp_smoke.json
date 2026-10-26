@@ -1,6 +1,6 @@
 {
   "description": "Smoke test of the surplus-exchange MCP server over the real MCP protocol (stdio): one server process per role, on a scratch copy of data/exchange.db. Each call states the expected outcome.",
-  "tested_at": "2026-10-26T07:20:09+00:00",
+  "tested_at": "2026-10-26T09:05:45+00:00",
   "server": "mcp_server/server.py (FastMCP, stdio)",
   "max_negotiation_rounds": 6,
   "tools_by_role": {
@@ -824,7 +824,7 @@
         "listing_id": 1
       },
       "expect": "ok",
-      "why": "impact in code: $ vs scrap, kg, est. CO2e (placeholder factors)",
+      "why": "impact in code: $ vs scrap, kg, est. CO2e (sourced factors x 0.5 reuse credit)",
       "expected_code": null,
       "passed": true,
       "result": {
@@ -837,13 +837,15 @@
         "scrap_value_total": 136.92,
         "uplift_vs_scrap": 4138.08,
         "kg_kept_out_of_scrap": 0.9,
-        "est_kg_co2e_avoided": 54.0,
+        "est_kg_co2e_avoided": 21.0,
         "est_hazardous_disposal_avoided": null,
         "family": "PLC CPU",
-        "factor_kg_co2e_per_kg": 60.0,
-        "factor_source": "PLACEHOLDER: replace with sourced value in Phase 10",
-        "placeholder_factors": true,
-        "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+        "factor_kg_co2e_per_kg": null,
+        "factor_kg_co2e_per_unit": 14.0,
+        "reuse_credit": 0.5,
+        "factor_source": "Siemens product carbon footprints: S7-1200 G2 CPU 12.4-14.4 kg cradle-to-gate; S7-1500 CPU 1517 69.3 kg (https://cache.industry.siemens.com/dl/files/794/109983794/att_1320577/v1/SIMATIC_S7-1500_CPU_6ES7517-3FQ10-0AB0_DI_FA_EPD00083.01.pdf; \u2026",
+        "factor_notes": "per unit: S7-300-class CPU proxy (~14 kg, compact-CPU range), est.",
+        "method": "est. CO2e avoided = weight x material factor (or a per-unit factor for electronics) x a 0.5 reuse credit. Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); ~12-14 kg per PLC module (Siemens pr\u2026"
       }
     },
     {
@@ -868,13 +870,15 @@
         "scrap_value_total": 0.0,
         "uplift_vs_scrap": 1400.0,
         "kg_kept_out_of_scrap": 700.0,
-        "est_kg_co2e_avoided": 1750.0,
-        "est_hazardous_disposal_avoided": 1750.0,
+        "est_kg_co2e_avoided": null,
+        "est_hazardous_disposal_avoided": 938.0,
         "family": "Chemical",
-        "factor_kg_co2e_per_kg": 2.5,
-        "factor_source": "PLACEHOLDER: replace with sourced value in Phase 10",
-        "placeholder_factors": true,
-        "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+        "factor_kg_co2e_per_kg": null,
+        "factor_kg_co2e_per_unit": null,
+        "reuse_credit": 0.5,
+        "factor_source": "Alachua County FL household hazardous waste fee schedule FY22-23, ~$242 per 55-gal drum: https://www.alachuacounty.us/Depts/SolidWaste/hwc/Documents/ADACompliant/HHW%20FY22-23%20Fee%20Schedule.pdf",
+        "factor_notes": "no CO2 claim; hazardous-waste disposal cost avoided (conservative public rate)",
+        "method": "est. CO2e avoided = weight x material factor (or a per-unit factor for electronics) x a 0.5 reuse credit. Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); ~12-14 kg per PLC module (Siemens pr\u2026"
       }
     },
     {
@@ -1016,7 +1020,7 @@
             "fits_platforms": [
               "Grundfos CR 15"
             ],
-            "created_at": "2026-10-26T07:19:41+00:00",
+            "created_at": "2026-10-26T09:05:11+00:00",
             "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea",
             "why_it_fits": "96525458 is a pump spare that fits the buyer's Grundfos CR 15"
           }
@@ -1059,7 +1063,7 @@
           "fits_platforms": [
             "Grundfos CR 15"
           ],
-          "created_at": "2026-10-26T07:19:41+00:00",
+          "created_at": "2026-10-26T09:05:11+00:00",
           "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea"
         },
         "candidate_count": 6,
@@ -1936,7 +1940,7 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:47+00:00",
+            "created_at": "2026-10-26T09:05:19+00:00",
             "message_untrusted": "Pulled working, ships today."
           }
         ],
@@ -2459,7 +2463,7 @@
           "buyer_approved_at": null,
           "approved_by": null,
           "decided_at": null,
-          "created_at": "2026-10-26T07:20:02+00:00"
+          "created_at": "2026-10-26T09:05:38+00:00"
         }
       }
     },
@@ -2553,7 +2557,7 @@
             "action": "offer",
             "price": 2875.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:58+00:00",
+            "created_at": "2026-10-26T09:05:33+00:00",
             "message_untrusted": ""
           },
           {
@@ -2562,7 +2566,7 @@
             "action": "offer",
             "price": 2000.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:59+00:00",
+            "created_at": "2026-10-26T09:05:34+00:00",
             "message_untrusted": ""
           },
           {
@@ -2571,7 +2575,7 @@
             "action": "offer",
             "price": 2850.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:59+00:00",
+            "created_at": "2026-10-26T09:05:34+00:00",
             "message_untrusted": ""
           },
           "... 4 more"
@@ -2755,7 +2759,7 @@
             "reason": "Exact CR 15 HQQE seal kit for Tidewater's CIP pump",
             "direction": "buyer_to_seller",
             "run_id": "smoke",
-            "created_at": "2026-10-26T07:19:41+00:00",
+            "created_at": "2026-10-26T09:05:11+00:00",
             "buyer_name": "Tidewater Dairy"
           }
         ]
@@ -2793,7 +2797,7 @@
                 "action": "offer",
                 "price": 1400.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:47+00:00",
+                "created_at": "2026-10-26T09:05:19+00:00",
                 "message_untrusted": "Pulled working, ships today."
               },
               {
@@ -2802,7 +2806,7 @@
                 "action": "offer",
                 "price": 1100.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:47+00:00",
+                "created_at": "2026-10-26T09:05:19+00:00",
                 "message_untrusted": "Line is down; can pay fast."
               },
               {
@@ -2811,7 +2815,7 @@
                 "action": "offer",
                 "price": 1300.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:47+00:00",
+                "created_at": "2026-10-26T09:05:19+00:00",
                 "message_untrusted": "Meet me at [price]."
               },
               "... 2 more"
@@ -2838,7 +2842,7 @@
                 "action": "offer",
                 "price": 1149.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:52+00:00",
+                "created_at": "2026-10-26T09:05:25+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2847,7 +2851,7 @@
                 "action": "offer",
                 "price": 650.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:53+00:00",
+                "created_at": "2026-10-26T09:05:26+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2856,7 +2860,7 @@
                 "action": "walk_away",
                 "price": 0.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:53+00:00",
+                "created_at": "2026-10-26T09:05:26+00:00",
                 "message_untrusted": "Too far apart."
               }
             ],
@@ -2882,7 +2886,7 @@
                 "action": "offer",
                 "price": 2875.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:58+00:00",
+                "created_at": "2026-10-26T09:05:33+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2891,7 +2895,7 @@
                 "action": "offer",
                 "price": 2000.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:59+00:00",
+                "created_at": "2026-10-26T09:05:34+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2900,7 +2904,7 @@
                 "action": "offer",
                 "price": 2850.0,
                 "qty": 1,
-                "created_at": "2026-10-26T07:19:59+00:00",
+                "created_at": "2026-10-26T09:05:34+00:00",
                 "message_untrusted": ""
               },
               "... 4 more"
@@ -2937,7 +2941,7 @@
             "buyer_approved_at": null,
             "approved_by": null,
             "decided_at": null,
-            "created_at": "2026-10-26T07:20:02+00:00",
+            "created_at": "2026-10-26T09:05:38+00:00",
             "part_number": "6ES7315-2AG10-0AB0",
             "seller_name": "Hartwell Precision Components",
             "buyer_name": "Riverbend Foods"
@@ -2970,7 +2974,7 @@
             "run_id": "smoke",
             "read": 0,
             "closed_reason": null,
-            "created_at": "2026-10-26T07:19:41+00:00",
+            "created_at": "2026-10-26T09:05:11+00:00",
             "company_name": "Tidewater Dairy"
           }
         ]
@@ -3378,16 +3382,17 @@
           "value_recovered": 1250.0,
           "scrap_value": 45.64,
           "kg_kept_out_of_scrap": 0.3,
-          "est_kg_co2e_avoided": 18.0,
-          "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them.",
-          "placeholder_factors": true
+          "est_kg_co2e_avoided": 7.0,
+          "est_hazardous_disposal_avoided": 0,
+          "method": "est. CO2e avoided = weight x material factor (or a per-unit factor for electronics) x a 0.5 reuse credit. Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); ~12-14 kg per PLC module (Siemens pr\u2026"
         },
         "potential": {
           "listings": 18,
           "value_recovered": 40021.0,
           "scrap_value": 1540.76,
           "kg_kept_out_of_scrap": 899.95,
-          "est_kg_co2e_avoided": 4192.0,
+          "est_kg_co2e_avoided": 370.2,
+          "est_hazardous_disposal_avoided": 954.08,
           "note": "if every listing that fills a buy request sold at its ask (asks not stated count as $0)"
         }
       }
@@ -3516,7 +3521,7 @@
             "price": 1250.0,
             "needs_my_approval": false,
             "run_id": null,
-            "created_at": "2026-10-26T07:19:41+00:00"
+            "created_at": "2026-10-26T09:05:12+00:00"
           }
         ]
       }
@@ -3569,7 +3574,7 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:47+00:00",
+            "created_at": "2026-10-26T09:05:19+00:00",
             "message_untrusted": "Pulled working, ships today."
           },
           {
@@ -3578,7 +3583,7 @@
             "action": "offer",
             "price": 1100.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:47+00:00",
+            "created_at": "2026-10-26T09:05:19+00:00",
             "message_untrusted": "Line is down; can pay fast."
           },
           {
@@ -3587,7 +3592,7 @@
             "action": "offer",
             "price": 1300.0,
             "qty": 1,
-            "created_at": "2026-10-26T07:19:47+00:00",
+            "created_at": "2026-10-26T09:05:19+00:00",
             "message_untrusted": "Meet me at [price]."
           },
           "... 2 more"
@@ -3599,19 +3604,19 @@
         "my_notes": [],
         "my_blocked": [
           {
-            "at": "2026-10-26T07:19:47+00:00",
+            "at": "2026-10-26T09:05:19+00:00",
             "code": "not_your_turn",
             "price": 1000,
             "text": "Your agent tried to move out of turn, and the rules blocked it."
           },
           {
-            "at": "2026-10-26T07:19:47+00:00",
+            "at": "2026-10-26T09:05:19+00:00",
             "code": "wrong_direction",
             "price": 1050,
             "text": "Your agent tried to lower its offer to $1,050.00 after a higher one, and the rules blocked it."
           },
           {
-            "at": "2026-10-26T07:19:47+00:00",
+            "at": "2026-10-26T09:05:20+00:00",
             "code": "outside_your_limit",
             "price": 2000,
             "text": "Your agent tried to offer $2,000.00 above your budget, and the rules blocked it."
@@ -3630,8 +3635,9 @@
             "value_recovered": 1250.0,
             "scrap_value_total": 45.64,
             "kg_kept_out_of_scrap": 0.3,
-            "est_kg_co2e_avoided": 18.0,
-            "method": "Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders until sourced values replace them."
+            "est_kg_co2e_avoided": 7.0,
+            "est_hazardous_disposal_avoided": null,
+            "method": "est. CO2e avoided = weight x material factor (or a per-unit factor for electronics) x a 0.5 reuse credit. Cradle-to-gate manufacturing factors: steel 1.95 and cast iron 1.86 kg CO2e/kg (ICE / Ecoinvent); ~12-14 kg per PLC module (Siemens pr\u2026"
           }
         },
         "explanation": null,

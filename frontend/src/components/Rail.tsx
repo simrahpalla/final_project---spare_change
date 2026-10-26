@@ -82,7 +82,7 @@ function SessionImpact({ session }: { session: Session | null }) {
       ) : (
         <>
           <div className="kv">
-            <span>Value recovered</span>
+            <span>Value recovered (one-time)</span>
             <b>{money(i.value_recovered)}</b>
           </div>
           <div className="kv">
@@ -93,12 +93,14 @@ function SessionImpact({ session }: { session: Session | null }) {
             <span>Kept out of scrap</span>
             <span>{kg(i.kg_kept_out_of_scrap)}</span>
           </div>
-          <div className="kv">
-            <span>CO2e avoided</span>
-            <span>
-              est. {kg(i.est_kg_co2e_avoided)} <InfoTip text={i.method ?? ''} />
-            </span>
-          </div>
+          {i.est_kg_co2e_avoided > 0 && (
+            <div className="kv">
+              <span>CO2e avoided</span>
+              <span>
+                est. {kg(i.est_kg_co2e_avoided)} <InfoTip text={i.method ?? ''} />
+              </span>
+            </div>
+          )}
           {i.est_hazardous_disposal_avoided > 0 && (
             <div className="kv">
               <span>Hazardous disposal avoided</span>
@@ -106,8 +108,7 @@ function SessionImpact({ session }: { session: Session | null }) {
             </div>
           )}
           <p className="small teal-muted">
-            {i.listings} listing{i.listings > 1 ? 's' : ''}
-            {i.placeholder_factors && ' · placeholder factors'}
+            {i.listings} listing{i.listings > 1 ? 's' : ''} · sourced factors, 0.5 reuse credit
           </p>
         </>
       )}
