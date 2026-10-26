@@ -40,7 +40,7 @@ export const FEATURED: Featured[] = [
     whatToTry: 'Click Find buyers. The agents list your S7-300 CPUs and rank Riverbend Foods first, because its line is down.',
     post: SIEMENS,
     negotiate:
-      'Sample negotiations with Riverbend Foods: the SM 321 input cards (a deal after several rounds; Riverbend posts its request on Buy first) or the S7-300 CPU (a quick deal: their line is down). Then switch to Riverbend to approve its side.',
+      'Sample negotiations with Riverbend Foods: the SM 321 input cards (Riverbend posts its request on Buy and confirms its budget first) or the S7-300 CPU (a quick deal: their line is down). Then switch to Riverbend to approve its side.',
   },
   {
     id: 12,

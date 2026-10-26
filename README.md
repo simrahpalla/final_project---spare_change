@@ -1,6 +1,6 @@
 # Spare Change
 
-> **Turn spare parts into spare change.**
+> **From one plant's shelf to another plant's line.**
 
 **An AI-agent marketplace for industrial surplus.** A plant pastes a messy description of a spare part it no longer needs. Agents turn it into a clean listing, check it for safety and compliance, find buyers whose installed equipment is compatible with it, suggest a fair price, and negotiate the deal. A human approves every deal.
 
@@ -10,9 +10,9 @@ MGT 409 (AI Foundations for Managers), Yale SOM, final project by Simrah Palla.
 
 ---
 
-## Run it (about 5 minutes)
+## Run it (about 5 minutes, most of it installing packages)
 
-You need **Python 3.11+** and the course **`PORTKEY_API_KEY`**. Node is **not** needed: the built dashboard (`frontend/dist`) is committed.
+You need **Python 3.11+** (tested on 3.14) and the course **`PORTKEY_API_KEY`**. Node is **not** needed: the built dashboard (`frontend/dist`) is committed.
 
 ### 1. Get the code
 
@@ -31,7 +31,7 @@ The app looks for `.env` in **this repo folder first**, then in **the folder one
 PORTKEY_API_KEY=your-key-here
 ```
 
-See `.env.example` for the optional run caps. Never commit `.env`.
+Only `PORTKEY_API_KEY` is used (all agents call `gpt-6-luna` through Portkey); an `OPENAI_API_KEY` line in the same file is fine and ignored. See `.env.example` for the optional run caps. Never commit `.env`.
 
 ### 3. Install
 
@@ -65,9 +65,22 @@ It prints where the key was found (`repo folder` or `parent folder`), a one-line
 
 Open **http://localhost:8000**. For the first few seconds a banner says **"Starting up… loading marketplace tools"**: the backend starts its tool servers once, in the background, and every request reuses them afterwards. When the banner disappears and **Find buyers** is enabled, click **Find buyers**: the box is already filled in with the demo seller's post. Then try the other examples under **Try:** (each one signs in as the company that would post it), for example **Expired solvent** or **Injection test**, to see the safety checks block a listing. The right rail shows each agent working, the cost of the run, and the impact. Use the **account switcher** in the top bar (a demo stand-in for logging in): five featured demo accounts, sellers and buyers, each with a one-line "what to try", plus all 50 companies under "Show all companies". Each account sees its own posts and alerts.
 
-**Two-sided matching (Phase 5).** Buyers post what they need on **Buy**: switch to **Riverbend Foods** or **Tidewater Dairy** (their sample need is pre-filled, with a private max price) and click **Find**. The same compliance guard, SQL pre-filter and matching agent run in reverse, and code sends alerts (score 70+, top 3, never twice) to both sides. To see an alert arrive, run the **Siemens PLC** example as Hartwell on Sell, then switch to Riverbend and open the bell. **Marketplace** shows everything available and wanted side by side, with match badges; click an item to see what it matches. A buyer's max price never appears in alerts, on the Marketplace, or in any seller view. **Reset demo** in the top bar restores the seeded data, so every grader starts clean.
+**Two-sided matching (Phase 5).** Buyers post what they need on **Buy**: switch to **Riverbend Foods** or **Tidewater Dairy** (their sample request is pre-filled) and click **Find**. Code then suggests a private budget for the request; click **Confirm budget** (only your agent ever sees it). The same compliance guard, SQL pre-filter and matching agent run in reverse, and code sends alerts (score 70+, top 3, never twice) to both sides. To see an alert arrive, run the **Siemens PLC** example as Hartwell on Sell, then switch to Riverbend and open the bell. **Marketplace** shows everything available and wanted side by side, with match badges; click an item to see what it matches. A buyer's max price never appears in alerts, on the Marketplace, or in any seller view. **Reset demo** in the top bar restores the seeded data, so every grader starts clean.
 
-**Negotiation (Phase 6).** You confirm your private limit once (the pricing agent suggests a floor when you list; a budget is suggested when you post a request; only your agent sees it). With **Auto-negotiate my matches** on (default for the demo accounts), a strong match then starts a negotiation by itself; otherwise start one from **Ready to start**, a match alert in the bell, or a match on Sell/Buy. Two agents then negotiate turn by turn within code-enforced limits; you see your own limit, your own agent's private reasons and any move the rules blocked, never the other side's. A deal closes only when **both** companies approve it (switch accounts to approve the other side). Sample negotiations: Hartwell ↔ Riverbend on the SM 321 input cards (both demo accounts; post Riverbend's sample request on Buy first; a deal after about 5 rounds), Hartwell → Riverbend on the S7-300 CPU (quick deal), Hartwell → Prairie Packaging (narrow), Summit → Ironclad (clear), Redwood → Coastal Electronics (narrow), **Cascade Paper & Board** → Northwoods Pulp (walk-away). Three negotiations run at once; more wait as **Queued**.
+**Negotiation (Phase 6).** You confirm your private limit once (the pricing agent suggests a floor when you list; a budget is suggested when you post a request; only your agent sees it). With **Auto-negotiate my matches** on (default for the demo accounts), a strong match then starts a negotiation by itself; otherwise start one from **Ready to start**, a match alert in the bell, or a match on Sell/Buy. Two agents then negotiate turn by turn within code-enforced limits; you see your own limit, your own agent's private reasons and any move the rules blocked, never the other side's. A deal closes only when **both** companies approve it (switch accounts to approve the other side). Sample negotiations: Hartwell ↔ Riverbend on the SM 321 input cards (both demo accounts: post Riverbend's sample request on Buy and confirm its budget, and the negotiation starts by itself; or start it as Riverbend from **Negotiations → Ready to start**), Hartwell → Riverbend on the S7-300 CPU (quick deal), Hartwell → Prairie Packaging (narrow), Summit → Ironclad (clear), Redwood → Coastal Electronics (narrow), **Cascade Paper & Board** → Northwoods Pulp (walk-away). Three negotiations run at once; more wait as **Queued**.
+
+### Demo accounts and test cases
+
+| Account (switcher) | Role | Try this | You should see |
+|---|---|---|---|
+| **Hartwell Precision Components** | Seller | **Sell → Find buyers** (post pre-filled) | Listing, compliance passed, Riverbend Foods ranked first (line down), suggested price and private floor |
+| **Riverbend Foods** | Buyer, line down | **Buy → Find**, then **Confirm budget**; open the bell after Hartwell's run | A ranked match to Hartwell's SM 321 cards; alerts for Hartwell's listings; then a negotiation to approve on **Negotiations** (approve as Hartwell too) |
+| **Summit Automation Surplus** | Seller, distributor | **Sell → Find buyers** | Ironclad Castings matched: the EN2T replaces its discontinued ENBT |
+| **Redwood Coatings** | Seller | **Sell → Find buyers** | Blocked by code: the solvent is expired (no model call) |
+| **Tidewater Dairy** | Buyer | **Buy → Find** | No surplus yet: the matching agent is skipped (no model call) |
+| any account | Safety | **Sell → Try: Injection test → Find buyers** | Blocked before any AI reads it: $0.00 and 0 tokens on the cost meter |
+
+**Reset demo** (top bar) restores the seeded data at any time.
 
 > **Account switching is a demo, not real authentication.** There are no passwords: anyone can pick any company. It shows what each company would see, and the server only ever returns an account's own alerts and private terms, but a real deployment would need sign-in (see Limits in the report).
 
