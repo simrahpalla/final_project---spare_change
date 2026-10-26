@@ -4627,5 +4627,210 @@
     "action": "run_end",
     "result": "{\"run_id\": \"33a614951b86\", \"kind\": \"seller_flow\", \"requests\": 0, \"input_tokens\": 0, \"cached_tokens\": 0, \"cache_write_tokens\": 0, \"output_tokens\": 0, \"total_tokens\": 0, \"cost_usd\": 0.0}",
     "stop_reason": "blocked: prompt injection (code pre-screen, no model call)"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:47.715+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 8.8, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:49.351+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "seller:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 1
+    }
+  },
+  {
+    "timestamp": "2026-10-26T03:39:51.445+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-26T03:39:53.290+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T03:39:53.324+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 8, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:53.351+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T03:39:53.372+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1195,
+      "output_tokens": 95,
+      "cost_usd": 0.00035265
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Seller states the CPUs were pulled working; MMCs are not included.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:53.441+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 860
+    }
+  },
+  {
+    "timestamp": "2026-10-26T03:39:55.226+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T03:39:55.250+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 674,
+      "cached_tokens": 0,
+      "output_tokens": 22,
+      "cost_usd": 7.84e-05
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:55.313+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2054
+    }
+  },
+  {
+    "timestamp": "2026-10-26T03:39:57.669+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T03:39:57.703+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 318,
+      "cost_usd": 0.00032535
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"need_id\": 1, \"score\": 100, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 CPU for a line-down S7-300; $12k/day downtime. Runs 4x S7-300 (18 yrs); needs 1, and listing has 3.\"}, {\"buyer_id\": 32, \"need_id\": null, \"score\": 62, \"reason\": \"No open need; runs 5x Siemens …"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:57.780+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 443
+    }
+  },
+  {
+    "timestamp": "2026-10-26T03:39:58.209+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T03:39:58.252+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 617,
+      "cached_tokens": 0,
+      "output_tokens": 198,
+      "cost_usd": 0.0001607
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 997.5, \"rationale\": \"At 1,425 per unit, the seller\\u2019s ask is reasonable: it is within the used-working range of 40\\u201355% of the 2,966 new price (about 1,186\\u20131,631). The part is obsolete, supporting a position toward the upper end, and the only active …"
+  },
+  {
+    "timestamp": "2026-10-26T03:39:58.304+00:00",
+    "run_id": "76878b4b8a41",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"76878b4b8a41\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1669, \"cached_tokens\": 1195, \"cache_write_tokens\": 3374, \"output_tokens\": 633, \"total_tokens\": 6871, \"cost_usd\": 0.000917}",
+    "stop_reason": "listed and matched"
   }
 ]

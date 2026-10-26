@@ -233,3 +233,22 @@ textarea:focus, .btn:focus-visible, .chip:focus-visible { outline: 2px solid var
 .menu-more { display: block; width: calc(100% - 28px); margin: 6px 14px 8px; background: #fff; border: 1px dashed var(--line);
   border-radius: 8px; padding: 7px; color: var(--ink-2); cursor: pointer; }
 .menu-more:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* ---------------------------------------------------------------- Option B (approved): white work area, gray sidebar */
+/* The main column is the only white surface; the right rail is one gray panel that reads as supporting info. */
+.layout { padding: 0 0 0 24px; gap: 24px; }
+.main { padding: 24px 0 32px; }
+.rail { top: 56px; align-self: stretch; align-content: start; min-height: calc(100vh - 56px); gap: 0;
+  background: #f1f4f8; border-left: 1px solid #c9d2de; padding: 24px 20px; }
+.rail-card:not(.impactbox) { background: transparent; border: 0; border-radius: 0; padding: 0 0 18px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line); }
+.rail .bar { background: #e3e8ef; }
+/* Firmer edges on the cards that carry the answer */
+.card.key, .card.input { border-color: #a9b4c3; }
+.card.key h2 { font-size: 16px; }
+.price.suggested { border-color: var(--orange); }
+@media (min-width: 1500px) { .layout { grid-template-columns: minmax(0, 1060px) 360px; } }
+@media (max-width: 1100px) {
+  .layout { padding: 0 24px; }
+  .rail { min-height: 0; border-left: 0; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 24px; }
+}

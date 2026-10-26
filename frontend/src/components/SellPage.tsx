@@ -82,7 +82,7 @@ export function SellPage(props: {
       <CompanyStrip profile={props.profile} role="seller" />
       {tip && <p className="try-line">{tip}</p>}
 
-      <section className="card">
+      <section className="card input">
         <label className="sr-only" htmlFor="post">
           Describe the part
         </label>

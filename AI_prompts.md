@@ -261,3 +261,7 @@ This file records the prompts I used while building my MGT 409 final project, Su
 > Yes: 5 featured demo accounts at the top of the switcher, each with its own pre-filled post and a one-line 'what to try', chips that switch to the right account, and the other companies behind 'Show all companies'.
 
 > here you go - save these screenshots and commit phase 4
+
+> Everything looks great, just on the design front. I worry that the whole page is white and it's not intuitive or easy to track what the most important information is. So I'm thinking maybe for the agent activity and cost this run on the side, those maybe can have like a background of beige or gray, so that the stuff on the left is the only stuff that has a white background so that it's more noticeable. And maybe like a few darker borders in some places or something. Can you make a mock-up of just what that would look like and show it to me before making any actual changes?
+
+> Go with Option B (gray sidebar panel + firmer borders on the key cards) and apply it to the app.

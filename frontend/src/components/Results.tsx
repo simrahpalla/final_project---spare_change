@@ -38,7 +38,7 @@ export function ListingCard({ listing, draft, status }: { listing?: any; draft?:
       </span>
     ) : null
   return (
-    <section className="card section">
+    <section className="card section key">
       <div className="row">
         <h2>Listing</h2>
         <span className="push">{badge}</span>
@@ -173,7 +173,7 @@ export function BuyerMatches({ matching, companies }: { matching: Step; companie
   }
   if (matching.status === 'no_candidates' || !matching.ranked?.length) {
     return (
-      <section className="card section">
+      <section className="card section key">
         <h2>Top buyers</h2>
         <div className="empty">
           No plant on Spare Change runs this part yet. Your listing is live, and you'll get an alert when a matching need is
@@ -183,7 +183,7 @@ export function BuyerMatches({ matching, companies }: { matching: Step; companie
     )
   }
   return (
-    <section className="card section">
+    <section className="card section key">
       <div className="row">
         <h2>Top buyers</h2>
         <span className="small muted">
@@ -213,7 +213,7 @@ export function BuyerMatches({ matching, companies }: { matching: Step; companie
 
 export function PriceCards({ pricing }: { pricing: Step }) {
   return (
-    <section className="card section">
+    <section className="card section key">
       <h2>Price</h2>
       <div className="prices">
         <div className="price">

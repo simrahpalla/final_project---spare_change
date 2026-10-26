@@ -134,6 +134,8 @@ There are no logins, so the nav has an account switcher that works like signing 
 
 ### Right rail
 
+**Contrast decision (after Phase 4 review, Option B):** the main column is the only white surface. The rail is **one gray sidebar panel** (`#F1F4F8`, 1 px `#C9D2DE` left edge, full height) whose sections are separated by thin rules, so it reads as supporting information. The cards that carry the answer (paste box, Listing, Top buyers, Price) get a **firmer border** (`#A9B4C3`), and the suggested-price card a full orange outline. Option A (beige rail cards) was rejected: beige would have been a fourth tint next to navy, orange and teal. Mockups: `output/design/phase4-contrast-*.png`.
+
 1. **Agent activity:** one row per step, in run order. Each row: icon + agent name + a short result, e.g. "✓ Matching agent · 3 buyers" or "⊘ Compliance rules · blocked: expired". Code steps are labelled "(code)" so you can see where no model was called. States: spinner (working), ✓ gray-green (done), ⊘ red (blocked), – gray (skipped).
 2. **Cost meter:**
    - **This run:** $ cost, tokens (input / cached / output), % cached, and requests.
