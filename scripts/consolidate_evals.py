@@ -10,6 +10,7 @@ Each entry names the file it comes from, so every number can be traced to a real
 """
 
 import json
+import re
 import statistics
 from pathlib import Path
 
@@ -31,7 +32,6 @@ extra = {r["id"]: r for r in (load("safety_extra.json") or {}).get("results", []
 smoke = load("mcp_smoke.json") or {}
 mc = load("match_check_test.json") or {}
 two = load("two_sided_test.json") or {}
-auto = load("eval_negotiation_autoflow.json") or {}
 
 
 def p3row(*keys):
@@ -99,7 +99,8 @@ safety = [
       "code compliance rules before any model call (review for the counterfeit pattern)", p3row("4a", "4b"), "phase3_stress.md #4a/#4b"),
     # ---- malfunction
     T("M1", "malfunction", "Made-up facts: unknown part number; every match reason checked against the database",
-      "unknown parts refused in code; reasons fact-checked", p3row(3), "phase3_stress.md #3"),
+      "unknown parts refused in code; reasons fact-checked", p3row(3), "phase3_stress.md #3",
+      "phase4-sell-result.webp ('Fact-checked: every reason below matches...')"),
     T("M2", "malfunction", "Matching agent mixed up two buyers (real incident in the UI)",
       "code fact-check -> retry once -> rules-only fallback",
       ("PASS" if mc.get("passed") == mc.get("cases") else "FAIL", f"{mc.get('passed')}/{mc.get('cases')} regression cases"),
@@ -120,12 +121,13 @@ safety = [
       "unique alert index; idempotent need; code re-check after save", (("PASS" if p5c(3)[0] == p5c(9)[0] == "PASS" else "FAIL"),
                                                                        "phase5_stress #3 and #9"), "phase5_stress.md"),
     # ---- overspending
-    T("O1", "overspending", "Session budget reached", "the backend refuses new runs before any model call", ex("8.O1"), "safety_extra.json 8.O1"),
+    T("O1", "overspending", "Session budget reached", "the backend refuses new runs before any model call", ex("8.O1"), "safety_extra.json 8.O1",
+      "phase4-sell-result.webp (session spend vs. the $2.00 budget in the cost meter)"),
     T("O2", "overspending", "Per-run token cap", "token budget passed into every agent call; run stops", ex("8.O2"), "safety_extra.json 8.O2"),
     T("O3", "overspending", "Per-run model-request cap and negotiation round cap", "MAX_MODEL_REQUESTS / MAX_NEGOTIATION_ROUNDS",
       p3row(7), "phase3_stress.md #7"),
     T("O4", "overspending", "Per-negotiation cost cap", "NEGOTIATION_MAX_COST_USD stops a negotiation with a plain explanation",
-      s6("cost cap"), "phase6_stress.md section 6"),
+      s6("cost cap"), "phase6_stress.md section 6", "phase6-negotiation-live.webp ('Cost of this negotiation' in the rail)"),
     T("O5", "overspending", "Code before models: blocked posts and requests with no compatible listing make no model call",
       "code pre-screen, rules and SQL pre-filter", p3row("4b"), "phase3_stress.md #4b + eval_reverse.json"),
     T("O6", "overspending", "Many negotiations at once", "3 concurrent slots, the rest queued", s6("started at once"), "phase6_stress.md section 4"),
@@ -141,10 +143,11 @@ pre = load("prefilter_experiment.json") or {}
 sym = (load("phase5_stress.json") or {}).get("symmetry", [])
 messy = [r for r in p3["table"] if r["test"].startswith("Messy")][0]
 matching = {
-    "listing_extraction": {"result": "126/126 fields correct over 21 extracted listings (part number, qty, condition, ask, expiry, SDS)",
-                           "source": "phase3_stress.md #1"},
+    "listing_extraction": {"result": (re.search(r"fields (\d+/\d+) correct over \d+ extracted listings", cov["evidence"]) or [None, "?"])[1]
+                           + " fields correct (part number, qty, condition, ask, expiry, SDS)", "source": "phase3_stress.md #1"},
     "messy_inputs": {"result": messy["result"], "evidence": messy["evidence"], "source": "phase3_stress.md #2"},
-    "forward_matching": {"top1": "18/18", "top3": "21/21", "evidence": cov["evidence"], "source": "phase3_stress.md #1 (coverage)"},
+    "forward_matching": {"top1": re.search(r"top-1 (\d+/\d+)", cov["evidence"]).group(1), "top3": re.search(r"top-3 (\d+/\d+)", cov["evidence"]).group(1),
+                         "evidence": cov["evidence"], "source": "phase3_stress.md #1 (coverage)"},
     "reverse_matching": {"correct": f"{rev.get('passed')}/{rev.get('cases')}",
                          "no_candidate_needs_with_zero_matching_calls": rev.get("matching_calls_on_no_candidate_needs") == 0,
                          "source": "eval_reverse.json"},
@@ -175,12 +178,12 @@ for g in p3["groups"]["negotiation"]["pairs"]:
     l, n = map(int, g["pair"].split("/"))
     for i, st in enumerate(g["statuses"]):
         price = g["agreed_prices"][i] if st == "agreed" and i < len(g["agreed_prices"]) else None
-        logged.append({"source": "phase3_stress (before the Phase 6 prompt fix)", "pair": g["pair"], "type": g["type"], "status": st,
+        logged.append({"source": "phase3_stress (final code)", "pair": g["pair"], "type": g["type"], "status": st,
                        "rounds": g["rounds"][i], "price": price, "floor": g["floor"], "ceiling": g["ceiling"], "cost_usd": g["cost_usd"][i]})
-for nrec in suite.get("negotiations", []) + auto.get("negotiations", []):
+for nrec in suite.get("negotiations", []):
     if "cost cap" in nrec["label"]:
         continue
-    logged.append({"source": "phase6 suite" if nrec in suite.get("negotiations", []) else "phase6 auto-negotiate run", "pair": f"{nrec['listing']}/{nrec['need']}",
+    logged.append({"source": "phase6 suite", "pair": f"{nrec['listing']}/{nrec['need']}",
                    "type": pairtype.get((nrec["listing"], nrec["need"]), "new post"), "status": nrec["status"], "rounds": nrec["rounds"],
                    "price": nrec["price"], "floor": nrec["floor"], "ceiling": nrec["ceiling"], "cost_usd": nrec["cost_usd"], "label": nrec["label"]})
 
@@ -198,27 +201,37 @@ def agg(rows):
 by_type = {}
 for r in logged:
     by_type.setdefault(r["type"], []).append(r)
-phase3_narrow = [r for r in logged if r["source"].startswith("phase3") and r["type"] == "barely_overlapping"]
-phase6_narrow = [r for r in logged if not r["source"].startswith("phase3") and r["type"] == "barely_overlapping"]
+# Before the Phase 6 "last offer" prompt fix: the Phase 3 negotiations as first recorded (kept in phase3_stress_pre_phase6.json)
+old = load("phase3_stress_pre_phase6.json") or {}
+phase3_narrow = []
+for g in old.get("groups", {}).get("negotiation", {}).get("pairs", []):
+    if g["type"] == "barely_overlapping":
+        for i, st in enumerate(g["statuses"]):
+            phase3_narrow.append({"status": st, "rounds": g["rounds"][i], "floor": g["floor"], "ceiling": g["ceiling"], "cost_usd": g["cost_usd"][i],
+                                  "price": g["agreed_prices"][i] if st == "agreed" and i < len(g["agreed_prices"]) else None})
+phase6_narrow = [r for r in logged if r["type"] == "barely_overlapping"]  # every narrow-overlap run on the final code
 negotiation = {
     "overall": agg(logged),
     "by_pair_type": {t: agg(rows) for t, rows in by_type.items()},
     "expectations": {"walk_away_pairs_never_close": all(r["status"] not in ("agreed", "approved") for r in by_type.get("walk_away", [])),
                      "deal_likely_pairs_close": agg(by_type.get("deal_likely", [])).get("deal_rate")},
-    "prompt_fix_effect": {"what": "Narrow-overlap pairs before vs. after the Phase 6 'last offer' prompt fix",
+    "prompt_fix_effect": {"what": "Narrow-overlap pairs before (phase3_stress_pre_phase6.json, recorded 2026-10-26 01:49 UTC) vs. after "
+                                  "(final code) the Phase 6 'last offer' prompt fix",
                           "before_phase6_fix": agg(phase3_narrow), "after_phase6_fix": agg(phase6_narrow)},
     "phase6_checks": [c for c in S6], "demo_pair_repeat": load("eval_demo_pair.json"),
-    "auto_negotiate_e2e": {"checks": len(auto.get("checks", [])), "pass": sum(c["result"] == "PASS" for c in auto.get("checks", []))},
+    "auto_negotiate_e2e": {"checks": sum(1 for c in S6 if c["section"] == 1),
+                           "pass": sum(1 for c in S6 if c["section"] == 1 and c["result"] == "PASS"),
+                           "source": "negotiation_suite.json section 1 (list -> confirm floor -> auto-negotiate -> both approve -> sold)"},
     "price_position_note": "0 = deal at the seller's floor, 1 = deal at the buyer's budget (where the price landed inside the overlap).",
     "logged_negotiations": logged,
-    "sources": ["phase3_stress.json", "negotiation_suite.json", "eval_negotiation_autoflow.json", "eval_demo_pair.json"],
+    "sources": ["phase3_stress.json", "negotiation_suite.json", "eval_demo_pair.json"],
 }
 (OUT / "eval_negotiation.json").write_text(json.dumps(negotiation, indent=2, default=str), encoding="utf-8")
 
 print("safety_tests.json:", json.dumps(summary))
 fails = [t["id"] + " " + t["result"] for t in safety if t["result"] != "PASS"]
 print("  not passing:", fails or "none")
-print("eval_matching.json: forward 18/18 top-1, reverse", matching["reverse_matching"]["correct"], "| pre-filter top-1",
+print("eval_matching.json: forward", matching["forward_matching"]["top1"], "top-1, reverse", matching["reverse_matching"]["correct"], "| pre-filter top-1",
       matching["prefilter_vs_all_companies"]["with_prefilter_top1"], "vs", matching["prefilter_vs_all_companies"]["no_prefilter_top1"])
 o = negotiation["overall"]
 print(f"eval_negotiation.json: {o['negotiations']} negotiations, {o['deals']} deals, {o['limit_violations']} limit violations, "

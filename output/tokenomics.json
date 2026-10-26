@@ -11,20 +11,20 @@
       "what": "Seller flow: post -> listing agent -> compliance -> matching -> pricing -> outreach",
       "source": "phase3_stress.json coverage runs that were listed",
       "runs": 21,
-      "avg_cost_usd": 0.000727,
-      "median_cost_usd": 0.000729,
-      "min_cost_usd": 0.00041,
-      "max_cost_usd": 0.000935,
-      "avg_tokens": 6033,
-      "avg_input_tokens": 5286,
-      "avg_output_tokens": 747,
-      "cached_share_of_input": 0.435,
-      "avg_model_requests": 4.9,
+      "avg_cost_usd": 0.000991,
+      "median_cost_usd": 0.000909,
+      "min_cost_usd": 0.000408,
+      "max_cost_usd": 0.001551,
+      "avg_tokens": 7172,
+      "avg_input_tokens": 6215,
+      "avg_output_tokens": 957,
+      "cached_share_of_input": 0.31,
+      "avg_model_requests": 5.2,
       "by_agent_avg_cost_usd": {
-        "listing_agent": 0.000158,
-        "compliance_guard": 9.3e-05,
-        "matching_agent": 0.000322,
-        "pricing_agent": 0.000185
+        "listing_agent": 0.000188,
+        "compliance_guard": 9.4e-05,
+        "matching_agent": 0.000404,
+        "pricing_agent": 0.000229
       },
       "blocked_posts": {
         "runs": 6,
@@ -60,15 +60,15 @@
       "what": "Negotiation (both agents, until deal / walk-away / cap)",
       "source": "phase3_stress.json (18) + negotiation_suite.json (Phase 6)",
       "runs": 42,
-      "avg_cost_usd": 0.001901,
-      "median_cost_usd": 0.002051,
+      "avg_cost_usd": 0.001886,
+      "median_cost_usd": 0.002057,
       "min_cost_usd": 0.000652,
-      "max_cost_usd": 0.002914,
-      "avg_tokens": 17055,
-      "avg_input_tokens": 20345,
-      "avg_output_tokens": 1490,
-      "cached_share_of_input": 0.389,
-      "avg_model_requests": 6.7
+      "max_cost_usd": 0.002832,
+      "avg_tokens": 19594,
+      "avg_input_tokens": 26348,
+      "avg_output_tokens": 1412,
+      "cached_share_of_input": 0.575,
+      "avg_model_requests": 7.5
     }
   },
   "assumptions_per_user_month": {
@@ -76,24 +76,24 @@
     "buy_requests": 4,
     "negotiations": 6
   },
-  "cost_per_user_month_usd": 0.02173,
+  "cost_per_user_month_usd": 0.02428,
   "at_scale": [
     {
       "users": 1,
       "per_month_usd": 0.02,
-      "per_year_usd": 0.26,
+      "per_year_usd": 0.29,
       "model_runs_per_month": 20
     },
     {
       "users": 100,
-      "per_month_usd": 2.17,
-      "per_year_usd": 26.08,
+      "per_month_usd": 2.43,
+      "per_year_usd": 29.14,
       "model_runs_per_month": 2000
     },
     {
       "users": 10000,
-      "per_month_usd": 217.3,
-      "per_year_usd": 2607.6,
+      "per_month_usd": 242.8,
+      "per_year_usd": 2913.6,
       "model_runs_per_month": 200000
     }
   ],
@@ -137,7 +137,7 @@
     },
     {
       "trick": "Prompt caching (Portkey / OpenAI)",
-      "evidence": "44% of seller-flow input tokens were served from cache (billed at $0.01 / 1M instead of $0.10 / 1M)."
+      "evidence": "31% of seller-flow input tokens were served from cache (billed at $0.01 / 1M instead of $0.10 / 1M)."
     },
     {
       "trick": "Code suggests the buyer's budget",

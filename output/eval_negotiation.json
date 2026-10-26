@@ -1,12 +1,12 @@
 {
   "overall": {
-    "negotiations": 44,
-    "deals": 32,
-    "deal_rate": 0.727,
+    "negotiations": 42,
+    "deals": 33,
+    "deal_rate": 0.786,
     "limit_violations": 0,
-    "avg_rounds": 4.59,
-    "avg_price_position_in_overlap": 0.582,
-    "avg_cost_usd": 0.001887
+    "avg_rounds": 4.98,
+    "avg_price_position_in_overlap": 0.647,
+    "avg_cost_usd": 0.001886
   },
   "by_pair_type": {
     "deal_likely": {
@@ -15,30 +15,30 @@
       "deal_rate": 1.0,
       "limit_violations": 0,
       "avg_rounds": 3.06,
-      "avg_price_position_in_overlap": 0.712,
-      "avg_cost_usd": 0.001227
+      "avg_price_position_in_overlap": 0.703,
+      "avg_cost_usd": 0.001156
     },
     "barely_overlapping": {
       "negotiations": 14,
-      "deals": 11,
-      "deal_rate": 0.786,
+      "deals": 14,
+      "deal_rate": 1.0,
       "limit_violations": 0,
-      "avg_rounds": 5.5,
-      "avg_price_position_in_overlap": 0.405,
-      "avg_cost_usd": 0.002193
+      "avg_rounds": 6.14,
+      "avg_price_position_in_overlap": 0.598,
+      "avg_cost_usd": 0.002288
     },
     "walk_away": {
       "negotiations": 9,
       "deals": 0,
       "deal_rate": 0.0,
       "limit_violations": 0,
-      "avg_rounds": 6.33,
+      "avg_rounds": 7,
       "avg_price_position_in_overlap": null,
-      "avg_cost_usd": 0.002789
+      "avg_cost_usd": 0.002704
     },
     "new post": {
-      "negotiations": 4,
-      "deals": 4,
+      "negotiations": 2,
+      "deals": 2,
       "deal_rate": 1.0,
       "limit_violations": 0,
       "avg_rounds": 4,
@@ -51,7 +51,7 @@
     "deal_likely_pairs_close": 1.0
   },
   "prompt_fix_effect": {
-    "what": "Narrow-overlap pairs before vs. after the Phase 6 'last offer' prompt fix",
+    "what": "Narrow-overlap pairs before (phase3_stress_pre_phase6.json, recorded 2026-10-26 01:49 UTC) vs. after (final code) the Phase 6 'last offer' prompt fix",
     "before_phase6_fix": {
       "negotiations": 6,
       "deals": 3,
@@ -62,13 +62,13 @@
       "avg_cost_usd": 0.002351
     },
     "after_phase6_fix": {
-      "negotiations": 8,
-      "deals": 8,
+      "negotiations": 14,
+      "deals": 14,
       "deal_rate": 1.0,
       "limit_violations": 0,
-      "avg_rounds": 5.5,
-      "avg_price_position_in_overlap": 0.297,
-      "avg_cost_usd": 0.002073
+      "avg_rounds": 6.14,
+      "avg_price_position_in_overlap": 0.598,
+      "avg_cost_usd": 0.002288
     }
   },
   "phase6_checks": [
@@ -719,23 +719,24 @@
     "prices_inside_both_limits": true,
     "leak_scan": {
       "section": 2,
-      "check": "Leak scan (section 7): 50 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "check": "Leak scan (section 7): 48 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
       "result": "PASS",
       "detail": {
         "leaks": [],
         "third_party": []
       }
     },
-    "spend_usd": 0.0081
+    "spend_usd": 0.008075
   },
   "auto_negotiate_e2e": {
-    "checks": 13,
-    "pass": 13
+    "checks": 12,
+    "pass": 12,
+    "source": "negotiation_suite.json section 1 (list -> confirm floor -> auto-negotiate -> both approve -> sold)"
   },
   "price_position_note": "0 = deal at the seller's floor, 1 = deal at the buyer's budget (where the price landed inside the overlap).",
   "logged_negotiations": [
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "1/1",
       "type": "deal_likely",
       "status": "agreed",
@@ -743,10 +744,10 @@
       "price": 1400.0,
       "floor": 905.0,
       "ceiling": 1890.0,
-      "cost_usd": 0.000844
+      "cost_usd": 0.000662
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "1/1",
       "type": "deal_likely",
       "status": "agreed",
@@ -754,10 +755,10 @@
       "price": 1400.0,
       "floor": 905.0,
       "ceiling": 1890.0,
-      "cost_usd": 0.000844
+      "cost_usd": 0.000662
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "1/1",
       "type": "deal_likely",
       "status": "agreed",
@@ -765,172 +766,172 @@
       "price": 1400.0,
       "floor": 905.0,
       "ceiling": 1890.0,
-      "cost_usd": 0.000844
+      "cost_usd": 0.000662
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "2/17",
       "type": "barely_overlapping",
-      "status": "walked_away",
-      "rounds": 6,
-      "price": null,
+      "status": "agreed",
+      "rounds": 7,
+      "price": 2690.0,
       "floor": 2610.0,
       "ceiling": 2690.0,
-      "cost_usd": 0.002652
+      "cost_usd": 0.002675
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "2/17",
       "type": "barely_overlapping",
-      "status": "walked_away",
-      "rounds": 6,
-      "price": null,
+      "status": "agreed",
+      "rounds": 7,
+      "price": 2690.0,
       "floor": 2610.0,
       "ceiling": 2690.0,
-      "cost_usd": 0.002652
+      "cost_usd": 0.002451
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "2/17",
       "type": "barely_overlapping",
-      "status": "walked_away",
-      "rounds": 6,
-      "price": null,
+      "status": "agreed",
+      "rounds": 7,
+      "price": 2690.0,
       "floor": 2610.0,
       "ceiling": 2690.0,
-      "cost_usd": 0.002652
+      "cost_usd": 0.002451
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "3/3",
       "type": "walk_away",
-      "status": "walked_away",
-      "rounds": 6,
+      "status": "round_cap",
+      "rounds": 7,
       "price": null,
       "floor": 1010.0,
       "ceiling": 715.0,
-      "cost_usd": 0.002914
+      "cost_usd": 0.002758
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "3/3",
       "type": "walk_away",
-      "status": "walked_away",
-      "rounds": 6,
+      "status": "round_cap",
+      "rounds": 7,
       "price": null,
       "floor": 1010.0,
       "ceiling": 715.0,
-      "cost_usd": 0.002914
+      "cost_usd": 0.002531
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "3/3",
       "type": "walk_away",
-      "status": "walked_away",
-      "rounds": 6,
+      "status": "round_cap",
+      "rounds": 7,
       "price": null,
       "floor": 1010.0,
       "ceiling": 715.0,
-      "cost_usd": 0.002914
+      "cost_usd": 0.002531
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "5/5",
       "type": "barely_overlapping",
       "status": "agreed",
-      "rounds": 5,
-      "price": 2300.0,
+      "rounds": 7,
+      "price": 2340.0,
       "floor": 2210.0,
       "ceiling": 2340.0,
-      "cost_usd": 0.002051
+      "cost_usd": 0.00262
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "5/5",
       "type": "barely_overlapping",
       "status": "agreed",
-      "rounds": 5,
-      "price": 2300.0,
+      "rounds": 7,
+      "price": 2340.0,
       "floor": 2210.0,
       "ceiling": 2340.0,
-      "cost_usd": 0.002051
+      "cost_usd": 0.00262
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "5/5",
       "type": "barely_overlapping",
       "status": "agreed",
-      "rounds": 5,
-      "price": 2300.0,
+      "rounds": 7,
+      "price": 2340.0,
       "floor": 2210.0,
       "ceiling": 2340.0,
-      "cost_usd": 0.002051
+      "cost_usd": 0.00262
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "11/11",
       "type": "walk_away",
-      "status": "walked_away",
-      "rounds": 6,
+      "status": "round_cap",
+      "rounds": 7,
       "price": null,
       "floor": 655.0,
       "ceiling": 640.0,
-      "cost_usd": 0.002688
+      "cost_usd": 0.002738
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "11/11",
       "type": "walk_away",
-      "status": "walked_away",
-      "rounds": 6,
+      "status": "round_cap",
+      "rounds": 7,
       "price": null,
       "floor": 655.0,
       "ceiling": 640.0,
-      "cost_usd": 0.002688
+      "cost_usd": 0.002738
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "11/11",
       "type": "walk_away",
-      "status": "walked_away",
-      "rounds": 6,
+      "status": "round_cap",
+      "rounds": 7,
       "price": null,
       "floor": 655.0,
       "ceiling": 640.0,
-      "cost_usd": 0.002688
+      "cost_usd": 0.002738
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "12/12",
       "type": "deal_likely",
       "status": "agreed",
       "rounds": 5,
-      "price": 985.0,
+      "price": 975.0,
       "floor": 790.0,
       "ceiling": 985.0,
-      "cost_usd": 0.002279
+      "cost_usd": 0.002057
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "12/12",
       "type": "deal_likely",
       "status": "agreed",
       "rounds": 5,
-      "price": 985.0,
+      "price": 975.0,
       "floor": 790.0,
       "ceiling": 985.0,
-      "cost_usd": 0.002279
+      "cost_usd": 0.002057
     },
     {
-      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "source": "phase3_stress (final code)",
       "pair": "12/12",
       "type": "deal_likely",
       "status": "agreed",
       "rounds": 5,
-      "price": 985.0,
+      "price": 975.0,
       "floor": 790.0,
       "ceiling": 985.0,
-      "cost_usd": 0.002279
+      "cost_usd": 0.002057
     },
     {
       "source": "phase6 suite",
@@ -1219,36 +1220,11 @@
       "ceiling": 640.0,
       "cost_usd": 0.002832,
       "label": "sample run 3: Cascade -> Northwoods (walk-away)"
-    },
-    {
-      "source": "phase6 suite",
-      "pair": "28/20",
-      "type": "new post",
-      "status": "agreed",
-      "rounds": 2,
-      "price": 330.0,
-      "floor": 230.0,
-      "ceiling": 415.0,
-      "cost_usd": 0.000794,
-      "label": "e2e Prairie -> Tidewater (auto)"
-    },
-    {
-      "source": "phase6 suite",
-      "pair": "13/22",
-      "type": "new post",
-      "status": "agreed",
-      "rounds": 6,
-      "price": 180.0,
-      "floor": 122.0,
-      "ceiling": 238.0,
-      "cost_usd": 0.002394,
-      "label": "buyer-side auto Riverbend <- Hartwell"
     }
   ],
   "sources": [
     "phase3_stress.json",
     "negotiation_suite.json",
-    "eval_negotiation_autoflow.json",
     "eval_demo_pair.json"
   ]
 }

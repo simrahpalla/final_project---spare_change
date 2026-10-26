@@ -88,6 +88,16 @@ Buyer side (a buy request, matched in reverse):
 
 Each run prints every step with its tokens and cost (a full run costs well under $0.01) and is saved to `output/runs/`. Add `--reset` to start from a clean database.
 
+## Evidence (tests, costs, safety)
+
+Every number in the report comes from files in `output/`; **`output/evidence_index.md`** maps each report section to its evidence files, screenshots and headline numbers, with consistency checks. To regenerate all of it on the current code (scratch databases only; about 40 minutes and about $0.30 of model calls):
+
+```bash
+.venv/Scripts/python.exe scripts/run_all_evidence.py
+```
+
+Add `--no-model` to rebuild only the derived files (tokenomics, safety and eval summaries, the index) without calling the model.
+
 ## How it's built
 
 | Part | What it does |

@@ -34,7 +34,7 @@ Overnight run, 2026-10-26, about 00:50–02:50. Branch **`phase6`** (since merge
 | 6. Message with own limit blocked; other limit and figures scrubbed; cost cap stops safely | 3/3 |
 | MCP smoke (46 tools, all roles) | **100/100** |
 | Regression: Phase 5 stress / two-sided / match check / data checks | 9/9 · 17/17 · 5/5 · 8/8 |
-| Regression: Phase 3 concurrency (27 jobs at 6 at once, incl. 4 negotiations) → `output/phase6_regression_phase3.json` | 27/27, 0 crashes |
+| Regression: Phase 3 concurrency (27 jobs at 6 at once, incl. 4 negotiations) → `output/concurrency_test.json` | 27/27, 0 crashes |
 
 **Spend:** about **$0.26 and ~2.2M tokens** for the whole overnight session (estimated from each test's logged spend; the full Phase 6 suite was $0.038 / 312k tokens). Far below the $2.00 / 10M cap, so no test was skipped.
 

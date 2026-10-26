@@ -499,3 +499,33 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 > sorry i had to restart my laptop - please resume
 
+> tell me more about the cost cutting experiment - if it really worked so well at no cost to the quality of the work then why dont we implement it?
+
+> okay anything you need from me before you commit
+
+> what is the agent design trace
+
+## Evidence consistency check (before Phase 10)
+
+### Initial prompt
+
+> before phase 10,
+>
+> do a consistency check on all evidence (no new features):
+> 1. Recalculate one seller run and one negotiation cost by hand from token_usage using gpt-6-luna prices ($0.10 input, $0.01 cached, $0.125 cache write, $0.50 output per 1M) and confirm they match the cost meter and tokenomics.json.
+> 2. Confirm tokenomics.json states per-user assumptions and that the 100 and 10,000 user totals follow from them. Confirm the pre-filter experiment reports both tokens and accuracy.
+> 3. Confirm safety_tests.json covers attacks, malfunction, and overspending, each with at least one passing test, and list which screenshot proves each.
+> 4. Rerun any evidence generated before the Phase 6 and auto-negotiate changes so everything reflects the final code. Add scripts/run_all_evidence.py that regenerates all of it in one command.
+> 5. Make sure every metric is identical everywhere it appears, and that sample sizes and failures are stated honestly.
+> 6. Output output/evidence_index.md: one table mapping each report section → evidence files → screenshots → headline numbers.
+> Log this in AI_prompts.md.
+
+### What was missing
+
+- **Which files count as "before the final code":** the Phase 3 stress test (59 runs, source of seller-flow costs, matching accuracy and ~10 safety tests), the reverse-matching eval, the demo-pair test and the concurrency test were re-run; the separate auto-negotiate evidence files were retired because Phase 6 suite section 1 runs the same checks on the final code.
+- **How to keep numbers identical:** the headline numbers are generated into one file (`evidence_index.md`) with automatic consistency checks, and the prose docs point to it instead of repeating numbers; dated records (decisions log, morning summary, Phase 3 history) keep the numbers of their time on purpose.
+
+### Follow-up prompt(s)
+
+> dont stop working - but just tell me - why are we running the phase 3 stress run again?
+

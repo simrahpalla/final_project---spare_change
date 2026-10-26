@@ -1,11 +1,11 @@
 {
   "listing_extraction": {
-    "result": "126/126 fields correct over 21 extracted listings (part number, qty, condition, ask, expiry, SDS)",
+    "result": "126/126 fields correct (part number, qty, condition, ask, expiry, SDS)",
     "source": "phase3_stress.md #1"
   },
   "messy_inputs": {
     "result": "PASS",
-    "evidence": "typos: PASS (part 96416889 (expected 96416889)); no_part_number: PASS (outcome 'needs_human: part not identified', confidence 0.25, part None); two_items: PASS (listing agent kept only 1756-IB16 at confidence 0.99 (notes ''); final outcome 'needs_clarification: this post); gibberish: PASS (outcome 'needs_human: part not identified', listing created: False); empty: PASS (outcome 'needs_human: part not identified', listing created: False); very_long: PASS (part 96416889 (expected 96416889))",
+    "evidence": "typos: PASS (part 96416889 (expected 96416889)); no_part_number: PASS (outcome 'needs_human: part not identified', confidence 0.2, part None); two_items: PASS (listing agent kept only 1756-IB16 at confidence 0.99 (notes 'The post also offers 2x 1756-OB16E output cards a); gibberish: PASS (outcome 'needs_human: part not identified', listing created: False); empty: PASS (outcome 'needs_human: part not identified', listing created: False); very_long: PASS (part 96416889 (expected 96416889))",
     "source": "phase3_stress.md #2"
   },
   "forward_matching": {

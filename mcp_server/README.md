@@ -16,7 +16,7 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 
 `MAX_NEGOTIATION_ROUNDS` (default 6) sets the round cap.
 
-## Tools by role (46 tools)
+## Tools by role (48 tools)
 
 | Tool | broker | seller_agent | buyer_agent | human_approver | system | What it does |
 |---|:-:|:-:|:-:|:-:|:-:|---|
@@ -44,12 +44,14 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 | `end_negotiation` | ✓ | | | | | Broker safety stop for a stuck negotiation (status `stopped`) |
 | `get_company_profile` | ✓ | own only | own only | | ✓ | Installed equipment (platform, qty, years), open needs, active listings |
 | `request_deal_approval` | ✓ | | | | | Agreed → deal `pending_approval` (needs both companies' approval) |
+| `auto_negotiate_pairs` | ✓ | | | | | Code decides which strong matches may start a negotiation by themselves (both companies on, both limits confirmed, units free) |
 | `save_turn_note` | ✓ | | | | | A negotiator's private reason for its move, shown **only to its own company** |
 | `store_suggested_floor` | ✓ | | | | | Keeps the pricing agent's suggested floor as a new listing's starting floor, only if the seller has none |
 | `get_my_private_terms` | | ✓ (floor) | ✓ (ceiling) | | | **Only that side's** limit |
 | `submit_offer` | | ✓ | ✓ | | | Offer or accept, with the code rules below |
 | `walk_away` | | ✓ | ✓ | | | Decline and end the negotiation (same turn and no-leak rules) |
 | `approve_deal` / `reject_deal` | | | | ✓ | | **Human only**, refuses agent-like names. Each company approves **its own side**; the deal closes only when both have. Either side can reject |
+| `set_auto_negotiate` | | | | ✓ | | A company turns "Auto-negotiate my matches" on or off (its own setting) |
 | `set_private_limit` | | | | ✓ | | A company sets **its own** floor or budget (never another's); locked while a negotiation uses it |
 | `get_negotiation_for_company` / `list_negotiations_for_company` | | | | | ✓ | A negotiation **as one company sees it**: public offers + its own limit, private notes and blocked moves; never the other side's. A third company is refused |
 | `get_negotiation_start` / `list_negotiable_pairs` | | | | | ✓ | Before starting: side, own limit, free units, blocker; deals a company could start |
@@ -81,4 +83,4 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 .venv/Scripts/python.exe scripts/mcp_smoke.py
 ```
 
-It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (100 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **100/100 as expected, 46/46 tools called.**
+It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (102 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **102/102 as expected, 48/48 tools called.**

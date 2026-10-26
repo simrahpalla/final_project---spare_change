@@ -30,3 +30,6 @@ Thumbs.db
 # SQLite WAL side files of the working copy (merged back into exchange_new.db when connections close)
 data/*.db-wal
 data/*.db-shm
+
+# per-step logs of scripts/run_all_evidence.py (regenerated each run)
+output/evidence_logs/

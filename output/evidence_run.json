@@ -1,0 +1,42 @@
+{
+  "finished_at": "2026-10-26T08:54:33+00:00",
+  "minutes": 1.4,
+  "steps": [
+    {
+      "step": "concurrency",
+      "result": "PASS",
+      "seconds": 47,
+      "produces": "output/concurrency_test.json",
+      "last_line": "Wrote output/concurrency_test.json and the Concurrency section of output/phase3_stress.md"
+    },
+    {
+      "step": "cost_report",
+      "result": "PASS",
+      "seconds": 0,
+      "produces": "output/tokenomics.json/.md",
+      "last_line": "- `SESSION_BUDGET_USD` = 2.0"
+    },
+    {
+      "step": "consolidate",
+      "result": "PASS",
+      "seconds": 0,
+      "produces": "output/safety_tests.json, eval_matching.json, eval_negotiation.json",
+      "last_line": "  narrow pairs before fix: 1.0 after: 1.0"
+    },
+    {
+      "step": "cost_check",
+      "result": "PASS",
+      "seconds": 35,
+      "produces": "output/cost_check.json/.md (hand-priced)",
+      "last_line": "**All checks match: True**"
+    },
+    {
+      "step": "evidence_index",
+      "result": "PASS",
+      "seconds": 0,
+      "produces": "output/evidence_index.md (+ consistency checks)",
+      "last_line": "20/20 consistency checks pass. Saved output/evidence_index.md"
+    }
+  ],
+  "logs": "output/evidence_logs/<step>.log"
+}

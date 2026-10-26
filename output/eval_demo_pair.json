@@ -117,12 +117,12 @@
   "prices_inside_both_limits": true,
   "leak_scan": {
     "section": 2,
-    "check": "Leak scan (section 7): 50 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+    "check": "Leak scan (section 7): 48 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
     "result": "PASS",
     "detail": {
       "leaks": [],
       "third_party": []
     }
   },
-  "spend_usd": 0.0081
+  "spend_usd": 0.008075
 }
