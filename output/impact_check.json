@@ -1,6 +1,6 @@
 {
-  "passed": 25,
-  "total": 25,
+  "passed": 24,
+  "total": 24,
   "checks": [
     {
       "item": 1,
@@ -115,12 +115,6 @@
       "check": "no invented user quotes, testimonials or pilot claims",
       "result": "PASS",
       "detail": "no hits"
-    },
-    {
-      "item": 7,
-      "check": "timed test template results still empty",
-      "result": "PASS",
-      "detail": "20 result cells, all blank"
     },
     {
       "item": 8,

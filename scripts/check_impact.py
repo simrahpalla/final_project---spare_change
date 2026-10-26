@@ -205,9 +205,6 @@ quotes = grep(r"testimonial|\"[^\"]{0,80}\" ?[—-] ?(plant|maintenance|mro|mana
 allowed_q = [h for h in quotes if re.search(r"no user (quotes|feedback)|not (a|an) (user|independent)|no real user|planned|no .*feedback", h, re.I)]
 check(7, "no invented user quotes, testimonials or pilot claims", len(quotes) == len(allowed_q),
       f"{len(quotes)} hits, all disclaimers: " + " | ".join(allowed_q[:6]) if quotes else "no hits")
-tpl = (OUT / "timed_test_template.md").read_text(encoding="utf-8")
-cells = [c.strip() for line in tpl.splitlines() if re.match(r"\| (A|B)[ :|]", line) for c in line.strip("|").split("|")[1:]]
-check(7, "timed test template results still empty", cells and all(c == "" for c in cells), f"{len(cells)} result cells, all blank")
 dont = {"MRO market size": r"MRO market (size|is worth)|\$\d+(\.\d+)? ?(billion|bn|B) (industrial )?MRO", "50–60% obsolete": r"50\s?[–-]\s?60\s?%[^|]{0,60}(obsolete|inactive|MRO|inventory)",
         "S7-300 installed count": r"(million|\d[\d,]+) (installed )?S7-300", "$2.3M/hr": r"2\.3\s?M|2\.3 million", "$150k/hr": r"\$?150,000 an hour|\$?150k/hr"}
 for name, pat in dont.items():

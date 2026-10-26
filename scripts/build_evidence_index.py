@@ -171,7 +171,7 @@ rows = [
      "`phase5-alert`, `phase6-approval-alert`, `phase6-deal-approved`",
      f"Phase 6 suite {C['phase6_suite']}, Phase 5 stress {C['phase5_stress']}, two-sided {C['two_sided']}, Phase 3 stress {C['phase3_table']}"),
     ("Impact", "`output/impact_model.md`/`.json` (one mid-size plant; inputs labelled measured / sourced / assumption), `output/impact_check.md` (Phase 10 consistency check), `output/impact_sources.md` "
-     "(every external number, link, confidence), `carbon_factors` (sourced), `output/timed_test_template.md` (author's timed test, to fill in)",
+     "(every external number, link, confidence), `carbon_factors` (sourced)",
      "`phase5-marketplace` (impact summary), `phase6-deal-approved` (impact line), `phase10-impact-strip`, `phase10-impact-marketplace`, `phase11-deal-approved`, `phase11-marketplace-after`",
      (f"mid case: {imp['mid_scenario']['one_time']['extra_recovered_vs_scrap_usd']:,} USD more than scrap (one-time), "
       f"{imp['mid_scenario']['per_year']['carrying_cost_avoided_usd']:,} USD/yr carrying cost avoided, "
@@ -194,7 +194,7 @@ LIMITS = [
     "Per-user cost uses stated assumptions (runs per month), not measured usage.",
     "Impact: sourced carbon factors × a conservative 0.5 reuse credit on estimated shipping weights (no CO2 claim for chemicals); "
     "the plant model is illustrative, with inventory size, sell-through and line-down purchases as labelled assumptions; downtime only for line-down purchases at $36k/hr (lower bound); one-time and per-year values never summed.",
-    "No real user yet: a pilot is planned; the only timing evidence will be the author's own timed test, labelled as such.",
+    "No real user yet: a timed pilot with real users is the next step.",
     "`gpt-6-luna` ignores temperature (reasoning model); consistency is measured by repeat runs instead.",
 ]
 ok = all(c[1] for c in checks)

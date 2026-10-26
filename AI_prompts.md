@@ -774,3 +774,14 @@ This file records the prompts I used while building my MGT 409 final project, Su
 - **The narrow-overlap run needed a human edit:** the pricing agent suggested a $185.50 floor, above Prairie Packaging's $131 budget, so Hartwell lowered its floor to $122 when confirming it (a real human touchpoint). The run was driven through the real UI with Playwright (using the installed Chrome) so every screenshot comes from one in-app run. The agents bargained for 6 rounds; no blocked offer happened naturally, so that defense stays evidenced by the scripted rogue-agent test.
 - **Walk-away figure:** `eval_negotiation.json` has outcomes but not offers, so the chart reads pair 3/3's offers from `phase3_stress.json` (same runs).
 - **"10,000 users" is shown as plants** to match the per-plant usage assumption.
+
+## Timed self-test dropped
+
+### Initial prompt
+
+> I have decided to skip this test - for various reasons. Remove what we have done of it so far and remove it from anywhere in the documents and files as well. you can include it as a next step to try (with real users, not me) in the report
+
+### What was missing
+
+- Removed `output/timed_test_template.md` (including the one recorded step), the report §7 placeholder, the slide 9 placeholder, the README and `impact_model.md` mentions, the evidence-index rows, and the template check in `check_impact.py` (now 24/24). Report §8 and slide 10 now list a **timed pilot with real users** (maintenance or MRO managers, today's process vs. Spare Change) as the first next step.
+- Kept: this prompt log's earlier entries about the test, since `AI_prompts.md` is a verbatim record of what was asked.

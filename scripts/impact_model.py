@@ -230,7 +230,6 @@ def main() -> int:
            "- **Time** to list one surplus part and find 3 plausible buyers: their current process vs. Spare Change.",
            "- **Trust:** whether the suggested floor / budget, the compatibility matches and the compliance checks make sense to them.",
            "- **A short quote** about the experience.", "",
-           "Until then, the only timing evidence is the author's own timed test (`output/timed_test_template.md`), labelled as such. "
            "No user quotes or feedback appear anywhere in this project."]
     (od / "impact_model.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print(f"Saved {od / 'impact_model.json'} and .md · mid: extra {usd(mid['one_time']['extra_recovered_vs_scrap_usd'])} one-time, "

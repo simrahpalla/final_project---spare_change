@@ -101,14 +101,13 @@ Note: Attacks: prompt injection, limit extraction, tools outside a role. Malfunc
 <div><span class="big-num">{{imp_carry}}</span><span>carrying cost avoided per year (model)</span></div>
 <div><span class="big-num">{{imp_co2}} kg</span><span>est. CO2e avoided, one-time (model)</span></div>
 </div>
-<p class="todo">[TODO: Simrah to fill timed test] manual vs. Spare Change, measured by the author</p>
 <p class="src">Deals: output/impact_model.json ({{pd_n}} of {{ds_logged}} logged test deals, synthetic market). Plant model: sourced inputs (Siemens, SPARETECH, Maas, ICE) + labelled assumptions. One-time and yearly values never added.</p>
 Note: Deals closed at {{recovery}} of new price versus {{scrap_range}} for scrap. Downtime is counted only for line-down purchases, at the {{tcod_hour}}-an-hour lower bound. CO2e uses sourced factors and a conservative reuse credit.
 ---
 <h2>What's next</h2>
 <div class="cols2">
-<div><h3>Limits today</h3><ul><li>Synthetic data, demo accounts</li><li>No company dashboard yet</li><li>No payments or part verification</li><li>No independent user yet</li></ul></div>
-<div><h3>Next</h3><ul><li>Pilot with a maintenance manager</li><li>Start with discontinued PLCs and drives</li><li>Internal exchange across one manufacturer's sites</li></ul></div>
+<div><h3>Limits today</h3><ul><li>Synthetic data, demo accounts</li><li>No company dashboard yet</li><li>No payments or part verification</li><li>No user test yet</li></ul></div>
+<div><h3>Next</h3><ul><li>Timed pilot with real maintenance managers: today's way vs. Spare Change</li><li>Start with discontinued PLCs and drives</li><li>Internal exchange across one manufacturer's sites</li></ul></div>
 </div>
 <p class="closer">Your next spare part is someone's spare change.</p>
 Note: The company dashboard would show all of a company's listings, requests, negotiations, statuses and deal history in one view. Business challenges: getting both sides on board, scattered equipment data, trust and counterfeits, thin margins.

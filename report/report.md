@@ -217,10 +217,6 @@ One honest gap: the model call that crosses the per-run token cap is stopped, bu
 
 **How CO2e is estimated.** est. CO2e avoided = part weight × a material factor (steel {{f_steel}} kg CO2e/kg; cast iron {{f_iron}}), or a per-unit factor for electronics ({{f_cpu}} kg per PLC CPU, {{f_module}} per module, from Siemens product footprints), × a {{reuse}} reuse credit. The credit is conservative: remanufacturing studies find {{reman_range}} lower emissions. Chemicals get no CO2 claim; instead the app shows disposal cost avoided (about {{drum}} per 55-gallon drum). Downtime is valued only for purchases that fill a request marked line down ({{ld_deals}} of the {{ld_of}} test deals were), and only in the plant model, at one hour each.
 
-**Timed test (measured by the author, not an independent user).**
-
-<div class="todo">[TODO: Simrah to fill timed test] Item A (S7-300 CPU) and Item B (1756-EN2T): manual listing + compatibility + 3 buyers (mm:ss) vs. Spare Change (mm:ss), and the quality check, from output/timed_test_template.md.</div>
-
 **Sources for every external number.**
 
 | Number | Source | Confidence |
@@ -246,13 +242,13 @@ One honest gap: the model call that crosses the per-run token cap is stopped, bu
 - **No payments, shipping, or part verification.** A deal ends at approval.
 - **The carbon method is simplified:** cradle-to-gate factors, estimated weights, shipping not subtracted.
 - **No company dashboard yet:** one view of all your listings, requests, negotiations, statuses and deal history.
-- **No independent user test yet.** The only timing evidence is my own timed test.
+- **No user test yet.** Nobody outside the project has used the app, so there is no measured time saving against today's process.
 - **Known errors:** the compliance guard wrongly flagged {{req_flagged}} of {{req_n}} real buy requests; matching was tuned on a small market.
 
 **Business challenges.** Getting buyers and sellers on at the same time (a marketplace's chicken-and-egg problem); equipment data is scattered and private, and matching depends on it; trust and counterfeits (a used PLC needs its revision and firmware checked); and small transactions earn thin margins.
 
 **Next steps.**
-1. **Pilot** with a plant maintenance manager: time listing a part and finding three buyers, today's way versus Spare Change, and ask whether the matches and suggested limits make sense.
+1. **Timed pilot with real users:** plant maintenance or MRO managers list a surplus part and find three plausible buyers, timed with their current process and with Spare Change; then they judge whether the matches, compliance checks and suggested limits make sense.
 2. **Start narrow:** discontinued PLCs and drives, where downtime is costly and compatibility is well defined.
 3. **First customer: an internal exchange** between the sites of one large manufacturer, which shares one equipment database and avoids the trust problem.
 4. **Verification:** firmware and revision checks, photos, and seller ratings before deals close.

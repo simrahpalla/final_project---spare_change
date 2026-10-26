@@ -58,7 +58,6 @@ table.cmp tr.us td { background: #FFF7ED; color: #C2410C; font-weight: 800; font
 .stats span:last-child { font-size: 0.6em; color: #5B6575; display: block; }
 .stats.teal div { border-color: #0F766E; } .stats.teal .big-num { color: #0F766E; font-size: 1.5em; }
 .callout { background: #F5F7FA; border-left: 6px solid #F97316; padding: 12px 18px; font-size: 0.8em; margin-top: 0.8em !important; }
-.todo { border: 3px dashed #B91C1C; color: #B91C1C; padding: 8px 14px; font-weight: 700; font-size: 0.65em; display: inline-block; }
 .lab { font-size: 0.6em; font-weight: 700; margin: 0 0 4px !important; } .lab.sell { color: #C2410C; } .lab.buy { color: #2563EB; }
 table.tok { margin-top: 0.5em; font-size: 22px; }
 .cmp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }

@@ -83,4 +83,4 @@ No real user has tried Spare Change yet. A planned session with a plant maintena
 - **Trust:** whether the suggested floor / budget, the compatibility matches and the compliance checks make sense to them.
 - **A short quote** about the experience.
 
-Until then, the only timing evidence is the author's own timed test (`output/timed_test_template.md`), labelled as such. No user quotes or feedback appear anywhere in this project.
+No user quotes or feedback appear anywhere in this project.

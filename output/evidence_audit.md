@@ -62,5 +62,5 @@ The numbers now live in one generated place, **`output/evidence_index.md`** (wit
 
 ## 4. Still open after this pass
 - **Agent design trace** write-up of one real run (see above). Optional: a fresh Sell screenshot in the final design.
-- **Impact (Phase 10):** sourced carbon factors and the plant impact model are done (`impact_model.md`, `impact_sources.md`); a real user and the author's timed test are still open.
+- **Impact (Phase 10):** sourced carbon factors and the plant impact model are done (`impact_model.md`, `impact_sources.md`); a real-user test is still open (now a next step).
 - **Report and slides (Phase 11)** that cite these files.

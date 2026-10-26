@@ -176,7 +176,6 @@ figure.pair > div { flex: 1 1 0; text-align: center; font-size: 8.5pt; color: %(
 figure.pair figcaption { flex-basis: 100%%; }
 figure.diagram svg { width: 100%%; height: auto; }
 .offers { font-family: Consolas, Menlo, monospace; font-size: 9.5pt; background: #F5F7FA; border-left: 3pt solid #F97316; padding: 5pt 9pt; }
-.todo { border: 2pt dashed %(red)s; color: %(red)s; background: #FEF2F2; padding: 8pt 10pt; margin: 6pt 0; font-weight: 600; break-inside: avoid; }
 b.teal, .teal { color: %(teal)s; }
 @media print { body { padding: 0; } .titlebar { margin: 0 0 10pt; } a { color: %(navy)s; } }
 """ % COLORS

@@ -1,6 +1,6 @@
 # Phase 10 impact consistency check
 
-`scripts/check_impact.py` (no model calls, scratch database). **25 / 25 PASS.**
+`scripts/check_impact.py` (no model calls, scratch database). **24 / 24 PASS.**
 
 | # | Check | Result | Detail |
 |---|---|---|---|
@@ -23,7 +23,6 @@
 | 5 | UI labels $ recovered as one-time | PASS | 5 labels in the frontend |
 | 6 | change an evidence file → the output changes | PASS | tokenomics cost/user-month $0.02428 → $0.243: model cost $0.29/yr → $2.91/yr; one deal price ×2 in eval_negotiation: recovery ratio 0.42 → 0.436, extra recovered $105,600 → $110,880 (temp copies; real files untouched) |
 | 7 | no invented user quotes, testimonials or pilot claims | PASS | no hits |
-| 7 | timed test template results still empty | PASS | 20 result cells, all blank |
 | 8 | don't-claim: MRO market size | PASS | only in the 'Not used' list of impact_sources.md |
 | 8 | don't-claim: 50–60% obsolete | PASS | only in the 'Not used' list of impact_sources.md |
 | 8 | don't-claim: S7-300 installed count | PASS | only in the 'Not used' list of impact_sources.md |
