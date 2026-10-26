@@ -52,10 +52,10 @@ Overnight run, 2026-10-26, about 00:50–02:50. Branch **`phase6`** (not merged,
    - `git checkout main` then `git merge phase6`
 2. **Start the app**, then click **Reset demo**.
 3. **Screenshots** (`output/screenshots/`):
-   - **phase6-negotiation-live:** as Hartwell, Negotiations → Ready to start → Prairie Packaging → Start. Capture while the bubbles are appearing (it takes about 20 s, 5–6 rounds).
-   - **phase6-seller-view** and **phase6-buyer-view**, the same negotiation: when it ends, capture Hartwell's view ("Your floor $122"), then switch to **Prairie Packaging** (account menu → Show all companies) and capture its view ("Your budget $131"). Each shows only its own limit and private reasons.
-   - **phase6-deal-approved:** approve as Prairie Packaging, switch back to Hartwell, approve → "Deal closed · Both companies approved".
-   - **phase6-offer-blocked:** see below.
+   - **phase6-negotiation-live:** as **Riverbend**, go to Buy → Find (posts the sample input-card request). Switch to **Hartwell** → Negotiations → Ready to start → "Sell to Riverbend Foods" (SM 321 cards) → Start. Capture while the bubbles appear (about 5 rounds; tested 3/3 deals at $150).
+   - **phase6-seller-view** and **phase6-buyer-view:** the same negotiation from Hartwell ("Your floor $122") and Riverbend ("Your budget $180"). Both are demo accounts, so no hunting in "Show all companies".
+   - **phase6-deal-approved:** approve as Hartwell, switch to Riverbend, approve → "Deal closed · Both companies approved".
+   - **phase6-offer-blocked:** skipped (your call; see item 4).
 4. **About phase6-offer-blocked:** the display is built and tested. Blocked moves come from the server's refusal log and are shown only to the blocked side. But after the prompt fix the agents stayed inside their limits in every final run: 0 blocked moves in 24 negotiations. Options:
    - (a) Run a few narrow negotiations (Prairie Packaging, Coastal Electronics) and capture one if it happens.
    - (b) Use the automated evidence instead: `phase6_stress.md` section 6, where a message containing the agent's own floor is refused by code.

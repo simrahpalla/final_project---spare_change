@@ -41,7 +41,7 @@ export const FEATURED: Featured[] = [
     whatToTry: 'Click Find buyers. The agents list your S7-300 CPUs and rank Riverbend Foods first, because its line is down.',
     post: SIEMENS,
     negotiate:
-      'Sample negotiations: start one with Riverbend Foods (S7-300 CPU: a clear deal, their line is down) or Prairie Packaging (SM 321 input cards: a narrow deal). Then switch to the buyer to approve its side.',
+      'Sample negotiations with Riverbend Foods: the SM 321 input cards (a deal after several rounds; Riverbend posts its request on Buy first) or the S7-300 CPU (a quick deal: their line is down). Then switch to Riverbend to approve its side.',
   },
   {
     id: 12,
@@ -65,7 +65,7 @@ export const FEATURED: Featured[] = [
       'On Buy, click Find to post the sample request. To get an alert for your line-down CPU need, run the Siemens PLC example as Hartwell, then open the bell.',
     post: null,
     need: RIVERBEND_NEED,
-    negotiate: 'Sample negotiation: start one with Hartwell on the S7-300 CPU (a clear deal: your line is down, so your agent moves fast). Approve your side when it lands.',
+    negotiate: 'Sample negotiations with Hartwell: post your input-card request on Buy, then start one on Hartwell’s SM 321 cards (a deal after several rounds), or on the S7-300 CPU (quick: your line is down). Approve your side when it lands.',
   },
   {
     id: 39,

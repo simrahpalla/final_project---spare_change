@@ -1193,9 +1193,12 @@ def get_negotiation_for_company(negotiation_id: int, company_id: int) -> dict:
         deal = None
         if d:
             diff = (d["price"] - mine) if side == "seller" else (mine - d["price"])
-            amt = f"${abs(diff):,.0f}" if abs(diff) >= 100 else f"${abs(diff):,.2f}"
-            rel = (f"{amt} {'above' if diff >= 0 else 'below'} your floor" if side == "seller"
-                   else f"{amt} {'under' if diff >= 0 else 'over'} your budget")
+            amt = f"${abs(diff):,.0f}" if abs(diff) >= 100 or float(abs(diff)).is_integer() else f"${abs(diff):,.2f}"
+            if abs(diff) < 0.005:  # the deal landed exactly on this company's limit
+                rel = "right at your floor" if side == "seller" else "right at your budget"
+            else:
+                rel = (f"{amt} {'above' if diff >= 0 else 'below'} your floor" if side == "seller"
+                       else f"{amt} {'under' if diff >= 0 else 'over'} your budget")
             imp = get_impact_estimate(d["listing_id"], price=d["price"], qty=d["qty"])
             other = "buyer" if side == "seller" else "seller"
             deal = {"deal_id": d["id"], "price": d["price"], "qty": d["qty"], "total": round(d["price"] * d["qty"], 2),

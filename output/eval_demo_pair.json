@@ -1,0 +1,128 @@
+{
+  "pair": "Hartwell listing 13 (floor $122) vs Riverbend sample request (budget $180)",
+  "runs": [
+    {
+      "run": 1,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 150.0,
+      "qty": 4,
+      "offers": [
+        [
+          "seller",
+          "offer",
+          190.0
+        ],
+        [
+          "buyer",
+          "offer",
+          130.0
+        ],
+        [
+          "seller",
+          "offer",
+          170.0
+        ],
+        [
+          "buyer",
+          "offer",
+          150.0
+        ],
+        [
+          "seller",
+          "accept",
+          150.0
+        ]
+      ],
+      "deal_status_after_approvals": "approved",
+      "seller_sees": "$28.00 above your floor",
+      "buyer_sees": "$30.00 under your budget"
+    },
+    {
+      "run": 2,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 150.0,
+      "qty": 4,
+      "offers": [
+        [
+          "seller",
+          "offer",
+          190.0
+        ],
+        [
+          "buyer",
+          "offer",
+          130.0
+        ],
+        [
+          "seller",
+          "offer",
+          170.0
+        ],
+        [
+          "buyer",
+          "offer",
+          150.0
+        ],
+        [
+          "seller",
+          "accept",
+          150.0
+        ]
+      ],
+      "deal_status_after_approvals": "approved",
+      "seller_sees": "$28.00 above your floor",
+      "buyer_sees": "$30.00 under your budget"
+    },
+    {
+      "run": 3,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 150.0,
+      "qty": 4,
+      "offers": [
+        [
+          "seller",
+          "offer",
+          190.0
+        ],
+        [
+          "buyer",
+          "offer",
+          130.0
+        ],
+        [
+          "seller",
+          "offer",
+          170.0
+        ],
+        [
+          "buyer",
+          "offer",
+          150.0
+        ],
+        [
+          "seller",
+          "accept",
+          150.0
+        ]
+      ],
+      "deal_status_after_approvals": "approved",
+      "seller_sees": "$28.00 above your floor",
+      "buyer_sees": "$30.00 under your budget"
+    }
+  ],
+  "deals_closed": "3/3",
+  "prices_inside_both_limits": true,
+  "leak_scan": {
+    "section": 2,
+    "check": "Leak scan (section 7): 111 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+    "result": "PASS",
+    "detail": {
+      "leaks": [],
+      "third_party": []
+    }
+  },
+  "spend_usd": 0.008105
+}

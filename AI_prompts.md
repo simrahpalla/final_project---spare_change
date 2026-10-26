@@ -429,5 +429,9 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 ### Follow-up prompt(s)
 
-> None.
+> give me the link to open it
+
+> Here are the screenshots for what you have asked. It generally looks good. One concern that I have is that the images you asked me to do, that was a deal between Hartwell and Prairie, but Prairie is not part of the demo account, so I had to hunt and go down to look for it. And so, at least in the demo that my professor is going to take, I wonder if it makes sense to either bring that up to also one of the demo accounts, or if there's another alternative example amongst the demo accounts itself that works. If that's the case, then let's do it. Like, just tell me what that is. I don't want you to make any changes. I'm just asking you. I'm looking at the items you have marked as Q at the moment. And I don't quite understand the phase 6 offer blocked screenshot. But is that necessary, or can I skip that? And finally, the impact research MD is going to come in handy in phase, like, I don't know, phase 10. So we can think about it then. Keep ignoring it for now.
+
+> yes
 

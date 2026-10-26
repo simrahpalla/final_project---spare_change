@@ -9500,5 +9500,542 @@
     "action": "run_end",
     "result": "{\"run_id\": \"18e7d9b82731\", \"kind\": \"negotiation\", \"requests\": 18, \"input_tokens\": 3284, \"cached_tokens\": 13165, \"cache_write_tokens\": 8804, \"output_tokens\": 1545, \"total_tokens\": 26798, \"cost_usd\": 0.002333}",
     "stop_reason": "walked_away"
+  },
+  {
+    "timestamp": "2026-10-26T06:54:12.622+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 4.4, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T06:55:58.651+00:00",
+    "run_id": "reset-3f805be1",
+    "agent": "system",
+    "depth": 0,
+    "action": "reset",
+    "result": "working copy restored from the original"
+  },
+  {
+    "timestamp": "2026-10-26T06:56:48.383+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "listing:13/need:13",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 13,
+      "need_id": 13,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:56:55.103+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 478
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:56:58.718+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T06:56:58.773+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 13, \"qty\": 6, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:56:58.827+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 220,
+      "message": "We can supply the six working modules and are open to a reasonable discussion."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:56:58.890+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 1, \"action\": \"offer\", \"price\": 220.0, \"status\": \"open\", \"rounds_left\": 5, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:56:58.946+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T06:56:59.002+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2300,
+      "output_tokens": 192,
+      "cost_usd": 0.00032793
+    },
+    "result": "{\"move\": \"offer\", \"price\": 220.0, \"reasoning\": \"Opened at $220 per unit to leave room for a fair negotiated middle while recognizing the buyer's normal urgency.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:56:59.139+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 595
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:01.775+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T06:57:01.803+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 13, \"qty\": 6, \"ceiling_price\": 131.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 900.0}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:01.838+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 110,
+      "message": "We’re interested in the modules and can move forward at a price that reflects their used condition."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:01.871+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 2, \"action\": \"offer\", \"price\": 110.0, \"status\": \"open\", \"rounds_left\": 4, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:01.908+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T06:57:01.943+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2427,
+      "output_tokens": 231,
+      "cost_usd": 0.00036219
+    },
+    "result": "{\"move\": \"offer\", \"price\": 110.0, \"reasoning\": \"Opened at $110 per unit to reflect the used condition while preserving room to negotiate within our purchasing limit.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:02.018+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 762
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.006+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.040+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 13, \"qty\": 6, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.078+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 185,
+      "message": "We can make a meaningful adjustment while keeping the price aligned with the value of working modules. Let me know if you can come closer."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.114+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 3, \"action\": \"offer\", \"price\": 185.0, \"status\": \"open\", \"rounds_left\": 3, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.151+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.183+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2432,
+      "output_tokens": 217,
+      "cost_usd": 0.00035312
+    },
+    "result": "{\"move\": \"offer\", \"price\": 185.0, \"reasoning\": \"Countered at $185 to make a substantial concession from the opening ask while preserving room for a fair agreement.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:03.285+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 971
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.131+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.160+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 13, \"qty\": 6, \"ceiling_price\": 131.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 900.0}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.192+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 120,
+      "message": "We can improve our offer for the six modules, while keeping the price consistent with their used condition. Let us know if this brings us closer."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.225+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 4, \"action\": \"offer\", \"price\": 120.0, \"status\": \"open\", \"rounds_left\": 2, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.258+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.292+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2599,
+      "output_tokens": 223,
+      "cost_usd": 0.00036979
+    },
+    "result": "{\"move\": \"offer\", \"price\": 120.0, \"reasoning\": \"Raised to $120 because urgency is normal and the seller still has substantial room to reduce its price.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:04.445+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1184
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:05.687+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T06:57:05.750+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 13, \"qty\": 6, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:05.811+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 122,
+      "message": "This is our strongest price for the six working modules, and we can proceed at this level."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:05.877+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 5, \"action\": \"offer\", \"price\": 122.0, \"status\": \"open\", \"rounds_left\": 1, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:05.951+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T06:57:06.024+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2624,
+      "output_tokens": 207,
+      "cost_usd": 0.00036067
+    },
+    "result": "{\"move\": \"offer\", \"price\": 122.0, \"reasoning\": \"Offered $122, our floor, as the strongest price with one seller offer left and a deal still possible.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:06.156+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1345
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.136+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.193+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 13, \"qty\": 6, \"ceiling_price\": 131.0, \"urgency\": \"normal\", \"downtime_cost_per_day\": 900.0}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.246+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "We can proceed at your current price for the six modules."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.293+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 6, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 122.0, \"end_reason\": \"buyer accepted $122.00\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.344+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.387+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2775,
+      "output_tokens": 280,
+      "cost_usd": 0.00041668
+    },
+    "result": "{\"move\": \"accept\", \"price\": 122.0, \"reasoning\": \"Accepted $122 per unit because it is within our limit and the seller described it as their strongest price, with no counteroffers remaining.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T06:57:07.541+00:00",
+    "run_id": "7737d3257a48",
+    "subject": "negotiation:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"7737d3257a48\", \"kind\": \"negotiation\", \"requests\": 18, \"input_tokens\": 2268, \"cached_tokens\": 15157, \"cache_write_tokens\": 9096, \"output_tokens\": 1350, \"total_tokens\": 27871, \"cost_usd\": 0.00219}",
+    "stop_reason": "agreed"
+  },
+  {
+    "timestamp": "2026-10-26T07:08:59.061+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.3, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
   }
 ]
