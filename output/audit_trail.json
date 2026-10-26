@@ -10837,5 +10837,834 @@
     "depth": 0,
     "action": "reset",
     "result": "working copy restored from the original"
+  },
+  {
+    "timestamp": "2026-10-26T07:28:38.377+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.5, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:32.081+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "listing:1/need:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 1,
+      "need_id": 1,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:31:38.236+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 473
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.242+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.280+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 1, \"qty\": 1, \"floor_price\": 905.0, \"public_asking_price\": 1425.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.310+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1400,
+      "message": "We can support a prompt resolution and are prepared to work toward a practical agreement."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.343+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 1, \"action\": \"offer\", \"price\": 1400.0, \"status\": \"open\", \"rounds_left\": 5, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.372+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.396+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2315,
+      "output_tokens": 195,
+      "cost_usd": 0.00033082
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1400.0, \"reasoning\": \"Opened at $1,400, just below the public ask, with room to make meaningful concessions over the remaining rounds.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:41.468+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 603
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.485+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.521+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 1, \"qty\": 1, \"ceiling_price\": 1890.0, \"urgency\": \"line_down\", \"downtime_cost_per_day\": 12000.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.560+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "We accept and are ready to proceed promptly."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.602+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 2, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 1400.0, \"end_reason\": \"buyer accepted $1,400.00\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.636+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.693+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2448,
+      "output_tokens": 179,
+      "cost_usd": 0.00033103
+    },
+    "result": "{\"move\": \"accept\", \"price\": 1400.0, \"reasoning\": \"Accepted $1,400 because the line is down, making a prompt agreement more valuable than further bargaining.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:31:43.832+00:00",
+    "run_id": "ce9c49bfdfe3",
+    "subject": "negotiation:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"ce9c49bfdfe3\", \"kind\": \"negotiation\", \"requests\": 6, \"input_tokens\": 756, \"cached_tokens\": 4763, \"cache_write_tokens\": 2813, \"output_tokens\": 374, \"total_tokens\": 8706, \"cost_usd\": 0.000662}",
+    "stop_reason": "agreed"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:17.926+00:00",
+    "run_id": "reset-99170f36",
+    "agent": "system",
+    "depth": 0,
+    "action": "reset",
+    "result": "working copy restored from the original"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:27.740+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 20
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:27.836+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 283
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.436+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Siemens S7-300 SM 321 32-point digital input card",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.472+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Siemens S7-300 SM 321 32-point digital input card\", \"count\": 1, \"parts\": [{\"part_number\": \"6ES7321-1BL00-0AA0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC I/O\", \"description\": \"S7-300 SM 321 digital input 32 x 24 V DC\", \"category\": \"spare_part\", \"new_price\": 530.0, \"scrap_value\": 7.84, \"h…"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.502+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "6ES7321-1BL00-0AA0"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.530+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"6ES7321-1BL00-0AA0\", \"fits_platforms\": [\"Siemens S7-300\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.572+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.604+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2117,
+      "cached_tokens": 0,
+      "output_tokens": 159,
+      "cost_usd": 0.00042283
+    },
+    "result": "{\"part_number\": \"6ES7321-1BL00-0AA0\", \"platform\": \"Siemens S7-300\", \"family\": \"PLC I/O\", \"qty\": 4, \"urgency\": \"low\", \"downtime_cost_per_day\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Requested as spares, so urgency is low despite the line's input issue.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.653+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 338
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.939+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:34:29.984+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 488,
+      "cached_tokens": 0,
+      "output_tokens": 103,
+      "cost_usd": 0.0001003
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:30.047+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1216
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:33.156+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:34:33.174+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 341,
+      "cost_usd": 0.00034635
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 94, \"reason\": \"Exact part 6ES7321-1BL00-0AA0 for Siemens S7-300; used, working; 12 units cover the 4 needed. Public ask not listed. Riverbend Foods has a high-urgency Line 3 need with $4,000/day downtime cost.\"}], \"outreach_s…"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:33.197+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:33.254+00:00",
+    "run_id": "6cbb6a27c39b",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"6cbb6a27c39b\", \"kind\": \"need_flow\", \"requests\": 5, \"input_tokens\": 2731, \"cached_tokens\": 0, \"cache_write_tokens\": 2359, \"output_tokens\": 603, \"total_tokens\": 5693, \"cost_usd\": 0.000869}",
+    "stop_reason": "posted and matched"
+  },
+  {
+    "timestamp": "2026-10-26T07:34:49.942+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "listing:13/need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 13,
+      "need_id": 22,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:34:54.221+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 475
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:03.883+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:35:03.922+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 13, \"qty\": 4, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:03.951+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 200,
+      "message": "We can supply the quantity in working condition and are ready to move quickly. Please share your best price."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:03.985+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 1, \"action\": \"offer\", \"price\": 200.0, \"status\": \"open\", \"rounds_left\": 5, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:04.016+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:35:04.036+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2302,
+      "output_tokens": 226,
+      "cost_usd": 0.00034957
+    },
+    "result": "{\"move\": \"offer\", \"price\": 200.0, \"reasoning\": \"Opened at $200 to anchor above the minimum while leaving room for meaningful concessions over the remaining rounds.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:04.087+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 622
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:10.936+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:35:10.957+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 22, \"qty\": 4, \"ceiling_price\": 180.0, \"urgency\": \"high\", \"downtime_cost_per_day\": 4000.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:10.974+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 180,
+      "message": "We need to keep the line moving and can proceed promptly at this level. Please confirm if you can make that work."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:10.991+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 2, \"action\": \"offer\", \"price\": 180.0, \"status\": \"open\", \"rounds_left\": 4, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:11.008+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:35:11.024+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2442,
+      "output_tokens": 382,
+      "cost_usd": 0.00045772
+    },
+    "result": "{\"move\": \"offer\", \"price\": 180.0, \"reasoning\": \"Offered $180 to get a high-urgency part secured promptly while staying within our purchasing limit.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:11.066+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 803
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:20.905+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:35:20.949+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 13, \"qty\": 4, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:20.974+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 190,
+      "message": "We can make a modest adjustment and are prepared to move quickly. Let me know if this works for your team."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:21.006+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 3, \"action\": \"offer\", \"price\": 190.0, \"status\": \"open\", \"rounds_left\": 3, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:21.037+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:35:21.066+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2456,
+      "output_tokens": 320,
+      "cost_usd": 0.00041873
+    },
+    "result": "{\"move\": \"offer\", \"price\": 190.0, \"reasoning\": \"Countered at $190 because the buyer's $180 offer was close to our opening and their urgency supports a prompt midpoint agreement.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:21.136+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 980
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.292+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.325+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 22, \"qty\": 4, \"ceiling_price\": 180.0, \"urgency\": \"high\", \"downtime_cost_per_day\": 4000.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.366+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 180,
+      "message": "We can proceed promptly at this level; please confirm if you can make it work."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.411+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 4, \"action\": \"offer\", \"price\": 180.0, \"status\": \"open\", \"rounds_left\": 2, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.474+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.519+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2616,
+      "output_tokens": 223,
+      "cost_usd": 0.00037046
+    },
+    "result": "{\"move\": \"offer\", \"price\": 180.0, \"reasoning\": \"Held at $180 because the seller's $190 counter exceeds our ceiling, while a prompt deal remains valuable given high urgency.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:26.660+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1126
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.007+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.041+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 13, \"qty\": 4, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.083+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "We can confirm at this level and proceed promptly. Please send the order details so we can coordinate fulfillment."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.116+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 5, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 180.0, \"end_reason\": \"seller accepted $180.00\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.147+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.181+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2616,
+      "output_tokens": 268,
+      "cost_usd": 0.00039796
+    },
+    "result": "{\"move\": \"accept\", \"price\": 180.0, \"reasoning\": \"Accepted $180 per unit because the buyer repeated its offer and the price is comfortably above our floor.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:35:32.285+00:00",
+    "run_id": "1511fc3643f8",
+    "subject": "negotiation:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"1511fc3643f8\", \"kind\": \"negotiation\", \"requests\": 15, \"input_tokens\": 1890, \"cached_tokens\": 12432, \"cache_write_tokens\": 7773, \"output_tokens\": 1419, \"total_tokens\": 23514, \"cost_usd\": 0.001994}",
+    "stop_reason": "agreed"
   }
 ]

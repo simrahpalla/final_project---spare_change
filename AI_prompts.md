@@ -465,3 +465,37 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 > None.
 
+> Commit these changes to main.
+
+## Phases 7–9 — Evidence audit (tokenomics, safety, quality)
+
+### Initial prompt
+
+> Phase 6 is done. Before writing anything new, audit the evidence we already have for Phases 7, 8 and 9.
+>
+> 1. Map every existing file in output/ (stress tests, screenshots, token_usage, audit trail, answer-key scores) to the report section it supports: tokenomics, safety (attacks / malfunction / overspending), agent design trace, quality.
+> 2. List the GAPS only, meaning what each section still needs to get full credit under the "evidence earns full credit" rules in CLAUDE.md.
+> 3. Then fill the gaps in one pass:
+>    - Phase 7: scripts/cost_report.py → output/tokenomics.json (avg of real runs per seller flow, need flow and negotiation; per user per month with stated assumptions; 100 and 10,000 users), plus the pre-filter vs. no pre-filter experiment (tokens and accuracy).
+>    - Phase 8: consolidate all attack, malfunction and overspending tests into output/safety_tests.json, adding any missing ones (budget cap stop, approve_deal called by an agent, negotiation floor leak).
+>    - Phase 9: consolidate into output/eval_matching.json and output/eval_negotiation.json.
+> 4. List which screenshots I still need to take.
+>
+> Don't redo tests that already passed. Log this prompt in AI_prompts.md.
+
+### What was missing
+
+- **Which "missing" tests were really missing:** `approve_deal` by an agent and the negotiation floor leak were already covered (Phase 3 #8a and #6, Phase 6 leak scans), so they were cited, not redone; the session budget cap, the per-run token cap and a rogue looping agent were new.
+- **Enough real buy-request runs to average:** only 3 were logged, so 21 real buy requests were measured (`need_post_runs.json`, $0.016).
+- **Phase 6 leftovers first:** the user paused the audit to finish Phase 6 (screenshots with an edited budget, re-runs, morning summary); the re-runs found a privacy gap in run results, fixed before the audit continued.
+
+### Follow-up prompt(s)
+
+> wait did we have anything left for phase 6 before moving on
+
+> I went to go take the screenshots, but the Hartwell Riverbend pair negotiation doesn't really negotiate. It just accepts it in the first go. So amongst our existing demo accounts, is there another deal that might be a better one for me to take screenshots of? Or is it worth bringing Prairie packaging into the core demo accounts, maybe? Make no changes, just tell me what you think.
+
+> Okay, I made that change. From 450 to 180. And then I took the screenshots. And gave them to you. Now use whichever screenshots you need. Once you've done that, rerun the rest of the phase 6 suite. Rerun the phase 3 and 5 regressions. Do that, and update the morning summary. And once you've done all of that, go ahead and do the seven-to-nine audit. That I asked you to do. As well as the steps. I asked you to do.
+
+> sorry i had to restart my laptop - please resume
+

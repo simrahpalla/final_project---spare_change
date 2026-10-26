@@ -1,6 +1,15 @@
 # Phase 6: morning summary
 
-Overnight run, 2026-10-26, about 00:50–02:50. Branch **`phase6`** (not merged, nothing pushed). Phase 6 itself took about 1 hour 5 minutes of the 4-hour timebox (started 01:43). **The LLM buyer works reliably, so the rule-based fallback was not needed.**
+> **Status update (2026-10-26, after the follow-ups): everything below is done.** `phase6` was merged into `main`, plus two follow-ups on main:
+> - **Limits captured up front + auto-negotiate:** the pricing agent suggests the seller's floor and code suggests the buyer's budget; each company confirms its own limit once; with "Auto-negotiate my matches" on, a strong match starts the negotiation by itself; both companies still approve every deal.
+> - **Privacy fix found by the re-runs:** run results (`/api/runs/{id}`) now return the suggested floor/budget only to the company that posted.
+> - **Re-run on the current code:** Phase 6 suite **34/34**, auto-negotiate end to end + leak scan **13/13**, Phase 5 stress **9/9**, two-sided **17/17**, match check **5/5**, data checks **8/8**, Phase 3 concurrency **27/27**, MCP smoke **102/102**.
+> - **Screenshots taken** (Hartwell ↔ Riverbend input cards, Riverbend's suggested $450 budget edited to $180): `phase6-confirm-limit`, `phase6-negotiation-live` (buyer view), `phase6-seller-view`, `phase6-deal-pending`, `phase6-approval-alert`, `phase6-deal-approved`. `phase6-offer-blocked` skipped; the blocked-move display is proven by `safety_extra.json` (rogue agent test).
+> - Phases 7–9 evidence: see `output/evidence_audit.md`.
+>
+> The original overnight summary follows.
+
+Overnight run, 2026-10-26, about 00:50–02:50. Branch **`phase6`** (since merged into `main`). Phase 6 itself took about 1 hour 5 minutes of the 4-hour timebox (started 01:43). **The LLM buyer works reliably, so the rule-based fallback was not needed.**
 
 ## What works
 

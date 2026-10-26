@@ -1,0 +1,97 @@
+{
+  "listing_extraction": {
+    "result": "126/126 fields correct over 21 extracted listings (part number, qty, condition, ask, expiry, SDS)",
+    "source": "phase3_stress.md #1"
+  },
+  "messy_inputs": {
+    "result": "PASS",
+    "evidence": "typos: PASS (part 96416889 (expected 96416889)); no_part_number: PASS (outcome 'needs_human: part not identified', confidence 0.25, part None); two_items: PASS (listing agent kept only 1756-IB16 at confidence 0.99 (notes ''); final outcome 'needs_clarification: this post); gibberish: PASS (outcome 'needs_human: part not identified', listing created: False); empty: PASS (outcome 'needs_human: part not identified', listing created: False); very_long: PASS (part 96416889 (expected 96416889))",
+    "source": "phase3_stress.md #2"
+  },
+  "forward_matching": {
+    "top1": "18/18",
+    "top3": "21/21",
+    "evidence": "fields 126/126 correct over 21 extracted listings; top-1 18/18; top-3 21/21; 0 failure(s): none",
+    "source": "phase3_stress.md #1 (coverage)"
+  },
+  "reverse_matching": {
+    "correct": "23/23",
+    "no_candidate_needs_with_zero_matching_calls": true,
+    "source": "eval_reverse.json"
+  },
+  "symmetry": {
+    "pairs": 6,
+    "max_gap": 5,
+    "pairs_detail": [
+      {
+        "listing": 1,
+        "need": 1,
+        "seller_side_score": 100,
+        "buyer_side_score": 100,
+        "gap": 0
+      },
+      {
+        "listing": 2,
+        "need": 2,
+        "seller_side_score": 97,
+        "buyer_side_score": 92,
+        "gap": 5
+      },
+      {
+        "listing": 4,
+        "need": 4,
+        "seller_side_score": 96,
+        "buyer_side_score": 95,
+        "gap": 1
+      },
+      {
+        "listing": 7,
+        "need": 7,
+        "seller_side_score": 100,
+        "buyer_side_score": 98,
+        "gap": 2
+      },
+      {
+        "listing": 10,
+        "need": 10,
+        "seller_side_score": 98,
+        "buyer_side_score": 100,
+        "gap": 2
+      },
+      {
+        "listing": 12,
+        "need": 12,
+        "seller_side_score": 92,
+        "buyer_side_score": 91,
+        "gap": 1
+      }
+    ],
+    "source": "phase5_stress.json"
+  },
+  "fact_check": {
+    "result": "5/5",
+    "incident": "1 mixed-up answer in 15 recorded UI runs before the fix; 0 false alarms on 19 real answers after",
+    "source": "match_check_test.json, harness.md section 6"
+  },
+  "prefilter_vs_all_companies": {
+    "with_prefilter_top1": 18,
+    "no_prefilter_top1": 18,
+    "token_reduction": 0.76,
+    "source": "prefilter_experiment.json"
+  },
+  "buy_requests_as_new_posts": {
+    "runs": 21,
+    "posted_and_matched": 19,
+    "posted_no_surplus_yet": 1,
+    "flagged_by_guard": [
+      21
+    ],
+    "note": "a flagged request here is a false positive: every seeded request is legitimate",
+    "source": "need_post_runs.json"
+  },
+  "caveats": [
+    "Synthetic data: 50 companies, 27 listings, 21 needs.",
+    "Every seeded need has exactly one compatible listing, so reverse matching shows correct grounding, not fine ranking.",
+    "Top-1 accuracy is measured against hand-written answer keys (data/answer_keys.json)."
+  ]
+}

@@ -186,7 +186,8 @@ export const api = {
     post<{ run_id: string }>('/api/seller-flow/start', { text, seller_id: sellerId }),
   startNeedFlow: (body: NeedInput) => post<{ run_id: string }>('/api/need-flow/start', body),
   marketplace: () => request<Board>('/api/marketplace'),
-  run: (runId: string) => request<RunStatus>(`/api/runs/${runId}`),
+  run: (runId: string, companyId?: number) =>
+    request<RunStatus>(`/api/runs/${runId}${companyId !== undefined ? `?company_id=${companyId}` : ''}`),
   session: () => request<Session>('/api/session'),
   reset: () => post<{ ok: boolean; message: string }>('/api/reset'),
   llmCheck: () => post<LlmCheck>('/api/llm-check'),

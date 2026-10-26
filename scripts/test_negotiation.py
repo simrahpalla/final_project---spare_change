@@ -12,7 +12,8 @@ Sections run in priority order, so the most important evidence exists even if a 
   5. Consistency: the demo samples (clear deal, narrow deal, walk-away) x 3 runs each
   6. Safety in code: message with own limit blocked, other side's limit / money figures scrubbed; per-negotiation cost cap
 Each section starts its own backend on a scratch copy of the database (port 8768/8769).
-Writes output/eval_negotiation.json and output/phase6_stress.md.
+Writes output/negotiation_suite.json (raw) and output/phase6_stress.md; scripts/consolidate_evals.py folds them into
+output/eval_negotiation.json.
 """
 
 import argparse
@@ -107,12 +108,13 @@ class Backend:
         return status, data
 
     async def flow(self, path: str, body: dict) -> dict:
-        status, started = await self.call("POST", path, body)
+        owner = body.get("seller_id") or body.get("buyer_id")  # the posting company reads its own run (its private limit)
+        status, started = await self.call("POST", path, body, viewer=owner)
         if status != 200:
             return {"outcome": f"http {status}", "steps": []}
         while True:
             await asyncio.sleep(0.7)
-            _, r = await ahttp("GET", f"{self.base}/api/runs/{started['run_id']}")
+            _, r = await ahttp("GET", f"{self.base}/api/runs/{started['run_id']}" + (f"?company_id={owner}" if owner else ""))
             if r.get("status") == "done":
                 return r["result"]
 
@@ -380,6 +382,9 @@ async def consistency(rounds: int = 3) -> None:
         for k in range(rounds):
             if over_budget():
                 break
+            if k:  # scan each round before the reset wipes it (negotiation ids are reused after a reset)
+                await leak_scan(b, 5)
+                b.seen.clear()
             b.account_spend()  # the reset below clears token_usage: count this round's spend first
             await b.call("POST", "/api/reset")
             starts = await asyncio.gather(*[b.start(s["listing"], s["need"], s["by"]) for s in SAMPLES])
@@ -449,7 +454,7 @@ async def safety() -> None:
 
 def write_report(started: float) -> None:
     RESULTS["seconds"] = round(time.time() - started)
-    (REPO / "output" / "eval_negotiation.json").write_text(json.dumps(RESULTS, indent=2, default=str), encoding="utf-8")
+    (REPO / "output" / "negotiation_suite.json").write_text(json.dumps(RESULTS, indent=2, default=str), encoding="utf-8")
     passed = sum(c["result"] == "PASS" for c in RESULTS["checks"])
     md = ["# Phase 6 stress test: negotiation", "",
           f"`scripts/test_negotiation.py`, real backend API on scratch databases. {passed}/{len(RESULTS['checks'])} checks pass. "
@@ -470,7 +475,7 @@ def write_report(started: float) -> None:
                   f"${n['floor']:,.0f} | ${n['ceiling']:,.0f} | {blocked} | ${n['cost_usd']:.5f} |")
     (REPO / "output" / "phase6_stress.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print(f"\n{passed}/{len(RESULTS['checks'])} checks pass. Spend ${RESULTS['spend']['cost_usd']:.4f}. "
-          "Saved output/eval_negotiation.json and output/phase6_stress.md")
+          "Saved output/negotiation_suite.json and output/phase6_stress.md")
 
 
 async def main(only: list[int]) -> int:

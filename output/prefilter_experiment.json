@@ -1,0 +1,665 @@
+{
+  "what": "Same matching agent, same 18 labelled listings: with the SQL pre-filter (A) vs. every company (B)",
+  "with_prefilter": {
+    "listings": 18,
+    "top1_correct": 18,
+    "top1_accuracy": 1.0,
+    "ungrounded_picks": 0,
+    "avg_candidates_sent": 2.6,
+    "avg_input_tokens": 1584,
+    "avg_output_tokens": 390,
+    "avg_total_tokens": 1974,
+    "avg_cost_usd": 0.00039,
+    "total_cost_usd": 0.007016
+  },
+  "no_prefilter": {
+    "listings": 18,
+    "top1_correct": 18,
+    "top1_accuracy": 1.0,
+    "ungrounded_picks": 0,
+    "avg_candidates_sent": 49.0,
+    "avg_input_tokens": 7664,
+    "avg_output_tokens": 553,
+    "avg_total_tokens": 8217,
+    "avg_cost_usd": 0.001231,
+    "total_cost_usd": 0.022162
+  },
+  "tokens_saved_per_matching_call": 6243,
+  "token_reduction": 0.76,
+  "cost_reduction": 0.683,
+  "accuracy_change": 0.0,
+  "per_listing": [
+    {
+      "listing_id": 1,
+      "expected_first_buyer": 20,
+      "with_prefilter": {
+        "top": [
+          20,
+          16,
+          32
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1632,
+        "cached_tokens": 0,
+        "output_tokens": 460,
+        "total_tokens": 2092,
+        "cost_usd": 0.000431,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          20,
+          32,
+          16
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7664,
+        "cached_tokens": 0,
+        "output_tokens": 546,
+        "total_tokens": 8210,
+        "cost_usd": 0.001228,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 2,
+      "expected_first_buyer": 21,
+      "with_prefilter": {
+        "top": [
+          21,
+          36,
+          31
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1781,
+        "cached_tokens": 0,
+        "output_tokens": 402,
+        "total_tokens": 2183,
+        "cost_usd": 0.00042,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          21,
+          36,
+          31
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7657,
+        "cached_tokens": 0,
+        "output_tokens": 643,
+        "total_tokens": 8300,
+        "cost_usd": 0.001275,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 3,
+      "expected_first_buyer": 22,
+      "with_prefilter": {
+        "top": [
+          22,
+          25,
+          48
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1629,
+        "cached_tokens": 0,
+        "output_tokens": 441,
+        "total_tokens": 2070,
+        "cost_usd": 0.000421,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          22,
+          48,
+          25
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7675,
+        "cached_tokens": 0,
+        "output_tokens": 582,
+        "total_tokens": 8257,
+        "cost_usd": 0.001247,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 4,
+      "expected_first_buyer": 23,
+      "with_prefilter": {
+        "top": [
+          23,
+          18,
+          46
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1596,
+        "cached_tokens": 0,
+        "output_tokens": 395,
+        "total_tokens": 1991,
+        "cost_usd": 0.000394,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          23,
+          18,
+          46
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7655,
+        "cached_tokens": 0,
+        "output_tokens": 542,
+        "total_tokens": 8197,
+        "cost_usd": 0.001225,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 5,
+      "expected_first_buyer": 24,
+      "with_prefilter": {
+        "top": [
+          24,
+          49
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 2,
+        "input_tokens": 1518,
+        "cached_tokens": 0,
+        "output_tokens": 276,
+        "total_tokens": 1794,
+        "cost_usd": 0.000325,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          24,
+          49
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7662,
+        "cached_tokens": 0,
+        "output_tokens": 520,
+        "total_tokens": 8182,
+        "cost_usd": 0.001215,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 6,
+      "expected_first_buyer": 31,
+      "with_prefilter": {
+        "top": [
+          31,
+          21,
+          36
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1619,
+        "cached_tokens": 0,
+        "output_tokens": 464,
+        "total_tokens": 2083,
+        "cost_usd": 0.000431,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          31,
+          21,
+          36
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7666,
+        "cached_tokens": 0,
+        "output_tokens": 699,
+        "total_tokens": 8365,
+        "cost_usd": 0.001305,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 7,
+      "expected_first_buyer": 26,
+      "with_prefilter": {
+        "top": [
+          26,
+          41
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 2,
+        "input_tokens": 1525,
+        "cached_tokens": 0,
+        "output_tokens": 323,
+        "total_tokens": 1848,
+        "cost_usd": 0.000349,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          26,
+          41
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7651,
+        "cached_tokens": 0,
+        "output_tokens": 410,
+        "total_tokens": 8061,
+        "cost_usd": 0.001158,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 8,
+      "expected_first_buyer": 27,
+      "with_prefilter": {
+        "top": [
+          27,
+          19
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 2,
+        "input_tokens": 1538,
+        "cached_tokens": 0,
+        "output_tokens": 304,
+        "total_tokens": 1842,
+        "cost_usd": 0.000341,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          27,
+          19
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7659,
+        "cached_tokens": 0,
+        "output_tokens": 420,
+        "total_tokens": 8079,
+        "cost_usd": 0.001164,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 9,
+      "expected_first_buyer": 28,
+      "with_prefilter": {
+        "top": [
+          28,
+          35,
+          43
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1650,
+        "cached_tokens": 0,
+        "output_tokens": 507,
+        "total_tokens": 2157,
+        "cost_usd": 0.000457,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          28,
+          35,
+          43
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7677,
+        "cached_tokens": 0,
+        "output_tokens": 733,
+        "total_tokens": 8410,
+        "cost_usd": 0.001323,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 10,
+      "expected_first_buyer": 29,
+      "with_prefilter": {
+        "top": [
+          29,
+          17
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 2,
+        "input_tokens": 1551,
+        "cached_tokens": 0,
+        "output_tokens": 248,
+        "total_tokens": 1799,
+        "cost_usd": 0.000315,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          29,
+          17
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7670,
+        "cached_tokens": 0,
+        "output_tokens": 430,
+        "total_tokens": 8100,
+        "cost_usd": 0.001171,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 11,
+      "expected_first_buyer": 30,
+      "with_prefilter": {
+        "top": [
+          30,
+          42,
+          50
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1575,
+        "cached_tokens": 0,
+        "output_tokens": 375,
+        "total_tokens": 1950,
+        "cost_usd": 0.000381,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          30,
+          42,
+          50
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7653,
+        "cached_tokens": 0,
+        "output_tokens": 445,
+        "total_tokens": 8098,
+        "cost_usd": 0.001176,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 12,
+      "expected_first_buyer": 31,
+      "with_prefilter": {
+        "top": [
+          31,
+          21,
+          36
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1660,
+        "cached_tokens": 0,
+        "output_tokens": 390,
+        "total_tokens": 2050,
+        "cost_usd": 0.000399,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          31,
+          21,
+          36
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7687,
+        "cached_tokens": 0,
+        "output_tokens": 917,
+        "total_tokens": 8604,
+        "cost_usd": 0.001416,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 13,
+      "expected_first_buyer": 32,
+      "with_prefilter": {
+        "top": [
+          32,
+          20,
+          16
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1608,
+        "cached_tokens": 0,
+        "output_tokens": 379,
+        "total_tokens": 1987,
+        "cost_usd": 0.000387,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          32,
+          20,
+          16
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7660,
+        "cached_tokens": 0,
+        "output_tokens": 581,
+        "total_tokens": 8241,
+        "cost_usd": 0.001245,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 14,
+      "expected_first_buyer": 33,
+      "with_prefilter": {
+        "top": [
+          33
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 1,
+        "input_tokens": 1408,
+        "cached_tokens": 0,
+        "output_tokens": 309,
+        "total_tokens": 1717,
+        "cost_usd": 0.000327,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          33
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7663,
+        "cached_tokens": 0,
+        "output_tokens": 507,
+        "total_tokens": 8170,
+        "cost_usd": 0.001208,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 15,
+      "expected_first_buyer": 34,
+      "with_prefilter": {
+        "top": [
+          34
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 1,
+        "input_tokens": 1424,
+        "cached_tokens": 0,
+        "output_tokens": 291,
+        "total_tokens": 1715,
+        "cost_usd": 0.00032,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          34
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7672,
+        "cached_tokens": 0,
+        "output_tokens": 377,
+        "total_tokens": 8049,
+        "cost_usd": 0.001144,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 16,
+      "expected_first_buyer": 35,
+      "with_prefilter": {
+        "top": [
+          35,
+          19,
+          5
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1570,
+        "cached_tokens": 0,
+        "output_tokens": 480,
+        "total_tokens": 2050,
+        "cost_usd": 0.000433,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          35,
+          19,
+          5
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7650,
+        "cached_tokens": 0,
+        "output_tokens": 445,
+        "total_tokens": 8095,
+        "cost_usd": 0.001176,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 17,
+      "expected_first_buyer": 37,
+      "with_prefilter": {
+        "top": [
+          37,
+          17,
+          21
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1620,
+        "cached_tokens": 0,
+        "output_tokens": 539,
+        "total_tokens": 2159,
+        "cost_usd": 0.000469,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          37,
+          17,
+          21
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7675,
+        "cached_tokens": 0,
+        "output_tokens": 537,
+        "total_tokens": 8212,
+        "cost_usd": 0.001225,
+        "requests": 1,
+        "top1_correct": true
+      }
+    },
+    {
+      "listing_id": 18,
+      "expected_first_buyer": 38,
+      "with_prefilter": {
+        "top": [
+          38,
+          33,
+          44
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 3,
+        "input_tokens": 1611,
+        "cached_tokens": 0,
+        "output_tokens": 436,
+        "total_tokens": 2047,
+        "cost_usd": 0.000416,
+        "requests": 1,
+        "top1_correct": true
+      },
+      "no_prefilter": {
+        "top": [
+          38,
+          33,
+          44
+        ],
+        "ungrounded": 0,
+        "candidates_sent": 49,
+        "input_tokens": 7664,
+        "cached_tokens": 0,
+        "output_tokens": 612,
+        "total_tokens": 8276,
+        "cost_usd": 0.001261,
+        "requests": 1,
+        "top1_correct": true
+      }
+    }
+  ]
+}

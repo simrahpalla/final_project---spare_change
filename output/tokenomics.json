@@ -1,0 +1,154 @@
+{
+  "model": "gpt-6-luna",
+  "prices_per_1m_tokens_usd": {
+    "input": 0.1,
+    "cached_input": 0.01,
+    "cache_write": 0.125,
+    "output": 0.5
+  },
+  "per_run": {
+    "seller_flow": {
+      "what": "Seller flow: post -> listing agent -> compliance -> matching -> pricing -> outreach",
+      "source": "phase3_stress.json coverage runs that were listed",
+      "runs": 21,
+      "avg_cost_usd": 0.000727,
+      "median_cost_usd": 0.000729,
+      "min_cost_usd": 0.00041,
+      "max_cost_usd": 0.000935,
+      "avg_tokens": 6033,
+      "avg_input_tokens": 5286,
+      "avg_output_tokens": 747,
+      "cached_share_of_input": 0.435,
+      "avg_model_requests": 4.9,
+      "by_agent_avg_cost_usd": {
+        "listing_agent": 0.000158,
+        "compliance_guard": 9.3e-05,
+        "matching_agent": 0.000322,
+        "pricing_agent": 0.000185
+      },
+      "blocked_posts": {
+        "runs": 6,
+        "avg_model_requests": 0,
+        "note": "bad records stopped by code before any model call cost $0"
+      }
+    },
+    "buy_request": {
+      "what": "Buy request (new post): need agent -> guard -> matching -> alerts",
+      "source": "need_post_runs.json (21 real buy requests)",
+      "runs": 21,
+      "avg_cost_usd": 0.000763,
+      "median_cost_usd": 0.000767,
+      "min_cost_usd": 0.000529,
+      "max_cost_usd": 0.000977,
+      "avg_tokens": 5368,
+      "avg_input_tokens": 4839,
+      "avg_output_tokens": 529,
+      "cached_share_of_input": 0.098,
+      "avg_model_requests": 4.4
+    },
+    "rematch": {
+      "what": "Re-match an existing request (matching agent only)",
+      "source": "eval_reverse.json seeded needs",
+      "runs": 21,
+      "avg_cost_usd": 0.000299,
+      "median_cost_usd": 0.000312,
+      "min_cost_usd": 0.0,
+      "max_cost_usd": 0.000622,
+      "avg_model_requests": 1.0
+    },
+    "negotiation": {
+      "what": "Negotiation (both agents, until deal / walk-away / cap)",
+      "source": "phase3_stress.json (18) + negotiation_suite.json (Phase 6)",
+      "runs": 42,
+      "avg_cost_usd": 0.001901,
+      "median_cost_usd": 0.002051,
+      "min_cost_usd": 0.000652,
+      "max_cost_usd": 0.002914,
+      "avg_tokens": 17055,
+      "avg_input_tokens": 20345,
+      "avg_output_tokens": 1490,
+      "cached_share_of_input": 0.389,
+      "avg_model_requests": 6.7
+    }
+  },
+  "assumptions_per_user_month": {
+    "seller_flows": 10,
+    "buy_requests": 4,
+    "negotiations": 6
+  },
+  "cost_per_user_month_usd": 0.02173,
+  "at_scale": [
+    {
+      "users": 1,
+      "per_month_usd": 0.02,
+      "per_year_usd": 0.26,
+      "model_runs_per_month": 20
+    },
+    {
+      "users": 100,
+      "per_month_usd": 2.17,
+      "per_year_usd": 26.08,
+      "model_runs_per_month": 2000
+    },
+    {
+      "users": 10000,
+      "per_month_usd": 217.3,
+      "per_year_usd": 2607.6,
+      "model_runs_per_month": 200000
+    }
+  ],
+  "cost_cutting_experiment": {
+    "name": "SQL pre-filter: code finds the compatible companies, the matching agent only ranks those",
+    "with_prefilter": {
+      "listings": 18,
+      "top1_correct": 18,
+      "top1_accuracy": 1.0,
+      "ungrounded_picks": 0,
+      "avg_candidates_sent": 2.6,
+      "avg_input_tokens": 1584,
+      "avg_output_tokens": 390,
+      "avg_total_tokens": 1974,
+      "avg_cost_usd": 0.00039,
+      "total_cost_usd": 0.007016
+    },
+    "no_prefilter": {
+      "listings": 18,
+      "top1_correct": 18,
+      "top1_accuracy": 1.0,
+      "ungrounded_picks": 0,
+      "avg_candidates_sent": 49.0,
+      "avg_input_tokens": 7664,
+      "avg_output_tokens": 553,
+      "avg_total_tokens": 8217,
+      "avg_cost_usd": 0.001231,
+      "total_cost_usd": 0.022162
+    },
+    "token_reduction_per_matching_call": 0.76,
+    "cost_reduction_per_matching_call": 0.683,
+    "quality": "top-1 18/18 with vs. 18/18 without; ungrounded picks 0 vs. 0",
+    "extra_cost_without_it_per_user_month_usd": 0.01177,
+    "extra_cost_without_it_10000_users_year_usd": 1412.88,
+    "note": "The company list is only 50 here; without a pre-filter the prompt grows with every company that joins, while the pre-filter keeps it at the compatible few."
+  },
+  "other_savings": [
+    {
+      "trick": "Code before models",
+      "evidence": "phase3_stress.md test 4b: the 4 obvious bad records were blocked with 0 model requests; a buy request with no compatible listing skips the matching agent (eval_reverse: 3 needs, 0 matching calls)."
+    },
+    {
+      "trick": "Prompt caching (Portkey / OpenAI)",
+      "evidence": "44% of seller-flow input tokens were served from cache (billed at $0.01 / 1M instead of $0.10 / 1M)."
+    },
+    {
+      "trick": "Code suggests the buyer's budget",
+      "evidence": "no model call for the budget (Phase 6 follow-up); the seller's floor comes with the pricing agent call that already runs."
+    }
+  ],
+  "caps": {
+    "MAX_MODEL_REQUESTS": 30,
+    "MAX_TOKENS_PER_RUN": 150000,
+    "MAX_NEGOTIATION_ROUNDS": 6,
+    "NEGOTIATION_MAX_COST_USD": 0.05,
+    "SESSION_BUDGET_USD": 2.0
+  }
+}

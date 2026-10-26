@@ -94,6 +94,17 @@ def db_digest(path: Path) -> dict:
     return out
 
 
+async def reset_when_idle(base: str, timeout: float = 240) -> tuple[int, dict]:
+    """POST /api/reset, waiting while negotiations are still running (the app refuses a reset then: 409). Since
+    auto-negotiate, demo accounts can start negotiations by themselves during a test."""
+    t0 = asyncio.get_running_loop().time()
+    while True:
+        status, data = await ahttp("POST", f"{base}/api/reset")
+        if status != 409 or asyncio.get_running_loop().time() - t0 > timeout:
+            return status, data
+        await asyncio.sleep(2)
+
+
 # --------------------------------------------------------------------------- the checks
 
 async def symmetry_and_regression() -> None:
@@ -209,9 +220,10 @@ async def attacks() -> None:
 async def double_submit() -> None:
     """3 (the part not covered in Phase 5): the same request submitted twice at once."""
     body = {"text": RIVERBEND_DI["text"], "buyer_id": RIVERBEND_DI["buyer_id"], "max_price": RIVERBEND_DI["max_price"]}
-    before = q("SELECT COUNT(*) c FROM notifications WHERE company_id=1 AND listing_id=13")[0]["c"]
+    # count match alerts only (since auto-negotiate, a "negotiation started" notice may follow the alert)
+    before = q("SELECT COUNT(*) c FROM notifications WHERE company_id=1 AND listing_id=13 AND kind='new_match'")[0]["c"]
     a, b = await asyncio.gather(flow("/api/need-flow/start", body), flow("/api/need-flow/start", body))
-    after = q("SELECT COUNT(*) c FROM notifications WHERE company_id=1 AND listing_id=13")[0]["c"]
+    after = q("SELECT COUNT(*) c FROM notifications WHERE company_id=1 AND listing_id=13 AND kind='new_match'")[0]["c"]
     needs = {a.get("need_id"), b.get("need_id")} - {None}
     DOUBLE.update({"needs_created": len(needs), "new_alerts_to_Hartwell": after - before, "outcomes": [a["outcome"], b["outcome"]]})
 
@@ -332,7 +344,7 @@ async def race() -> None:
     need = {k: v for k, v in RIVERBEND_DI.items() if k in ("text", "buyer_id", "max_price")}
     trials = []
     for t in range(2):
-        await api("POST", "/api/reset")
+        await reset_when_idle(BASE)
         a, b = await asyncio.gather(flow("/api/seller-flow/start", seller), flow("/api/need-flow/start", need))
         lid, nid = a.get("listing_id"), b.get("need_id")
         alerts = q("SELECT company_id, COUNT(*) c FROM notifications WHERE listing_id=? AND need_id=? GROUP BY 1", lid, nid)
@@ -349,7 +361,7 @@ async def race() -> None:
 async def reset_check() -> None:
     """10: post things, reset, compare every table with the seed."""
     await flow("/api/need-flow/start", {"text": RIVERBEND_DI["text"], "buyer_id": 20, "max_price": 180})
-    status, _ = await api("POST", "/api/reset")
+    status, _ = await reset_when_idle(BASE)
     _, sess = await api("GET", "/api/session")
     seed, now = db_digest(REPO / "data" / "exchange.db"), db_digest(DB)
     diff = {t: {"seed": seed.get(t), "after_reset": now.get(t)} for t in set(seed) | set(now) if seed.get(t) != now.get(t)}

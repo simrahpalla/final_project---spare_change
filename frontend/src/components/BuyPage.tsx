@@ -50,7 +50,7 @@ export function BuyPage(props: {
 
   async function poll(runId: string) {
     try {
-      const r = await api.run(runId)
+      const r = await api.run(runId, props.accountId)
       onRun(r)
       if (r.status === 'running') timer.current = window.setTimeout(() => poll(runId), 600)
       else onRunDone()

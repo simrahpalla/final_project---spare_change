@@ -103,6 +103,7 @@ class RunState:
     output_tokens: int = 0
     cost_usd: float = 0.0
     agent_calls: list = field(default_factory=list)
+    owner: int | None = None  # the company that posted (seller flow) or asked (need flow): only it sees the private limit
     steps: list = field(default_factory=list)
     current: str | None = None   # the agent working right now (for the UI's live activity rail)
     status: str = "running"      # running -> done
@@ -271,6 +272,7 @@ class Exchange:
             if not existing.get("ok"):
                 return self._finish(state, "error", error=existing.get("message"))
             text, seller_id = existing["seller_text_untrusted"], existing["seller_id"]
+        state.owner = seller_id
         seller = await self.call("get_company_profile", company_id=seller_id)
         today = (await self.call("get_exchange_date"))["today"]
 
@@ -500,6 +502,7 @@ class Exchange:
             return self._finish(state, "error: something went wrong on our side. Nothing was posted. Please try again.")
 
     async def _need_flow(self, state, text, buyer_id, need_id, max_price, urgency, downtime) -> dict:
+        state.owner = buyer_id
         if need_id is None:
             buyer = await self.call("get_company_profile", company_id=buyer_id)
             if not buyer.get("ok"):
@@ -553,6 +556,7 @@ class Exchange:
         # 3. same pre-filter code (compatibility), reverse direction; no candidates -> no model call
         found = await self.call("search_listings_for_need", need_id=need_id)
         need = found.get("need") or (await self.call("get_need", need_id=need_id))
+        state.owner = need.get("buyer_id", state.owner)
         need_public = {k: v for k, v in need.items() if k not in ("buyer_text_untrusted", "ok")}
         state.step("need", "ready", need=need_public)
         if not found.get("ok"):

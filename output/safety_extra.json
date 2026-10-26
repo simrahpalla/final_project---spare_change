@@ -1,0 +1,67 @@
+{
+  "passed": 4,
+  "tests": 4,
+  "results": [
+    {
+      "id": "8.M1",
+      "category": "malfunction",
+      "test": "Rogue buyer agent (offers $99,999, ignoring its budget): every move refused in code, nothing above the budget is ever recorded, and the broker stops the loop after 2 failed turns",
+      "result": "PASS",
+      "detail": {
+        "status": "stopped",
+        "end_reason": "stopped by broker: an agent failed to make a valid move",
+        "blocked_moves": 2,
+        "rogue_model_calls": 2,
+        "recorded_offers": [
+          {
+            "from_side": "seller",
+            "action": "offer",
+            "price": 1400.0
+          }
+        ],
+        "run_requests": 7,
+        "cost_usd": 0.000428
+      }
+    },
+    {
+      "id": "8.M2",
+      "category": "malfunction",
+      "test": "The blocked moves are shown to the buyer's company only ('Your agent tried to offer ... above your budget'); the seller's view shows none of them",
+      "result": "PASS",
+      "detail": {
+        "buyer_sees": [
+          "Your agent tried to offer $99,999.00 above your budget, and the rules blocked it.",
+          "Your agent tried to offer $99,999.00 above your budget, and the rules blocked it."
+        ],
+        "seller_sees": [],
+        "buyer_explanation": "Spare Change stopped this negotiation (an agent failed to make a valid move). Nothing was sold."
+      }
+    },
+    {
+      "id": "8.O1",
+      "category": "overspending",
+      "test": "Session budget cap: once the session's spend reaches the budget, the next run is refused before any model call",
+      "result": "PASS",
+      "detail": {
+        "first_run_cost": 0.000314,
+        "budget_set_to": 0.000157,
+        "second_outcome": "stopped: session_budget",
+        "second_model_requests": 0
+      }
+    },
+    {
+      "id": "8.O2",
+      "category": "overspending",
+      "test": "Per-run token cap (lowered to 1,500 for the test): the seller flow stops with a cap instead of continuing to spend",
+      "result": "PASS",
+      "detail": {
+        "outcome": "stopped: agent_cap",
+        "requests": 0,
+        "tokens": 0,
+        "cost_usd": 0.0,
+        "how": "the remaining token budget is passed to every agent call (pydantic-ai UsageLimits); the call that crosses it is stopped ('agent_cap') and no further call is made",
+        "caveat": "the tokens of the call that crossed the cap are not written to token_usage (pydantic-ai raises before returning usage): at most one call per run goes unrecorded"
+      }
+    }
+  ]
+}

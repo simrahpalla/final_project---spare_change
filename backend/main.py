@@ -441,8 +441,20 @@ async def negotiation_reject(negotiation_id: int, body: DecisionIn) -> dict:
     return await _decide(negotiation_id, body, False)
 
 
+_PRIVATE_STEP_KEYS = {"floor": ("value", "reason"), "save": ("budget",), "pricing": ("floor_suggestion",)}
+
+
+def _private_stripped(steps: list[dict]) -> list[dict]:
+    """A flow's private limit (suggested floor / budget) is for the company that posted it only."""
+    out = []
+    for x in steps:
+        hide = _PRIVATE_STEP_KEYS.get(x["step"], ())
+        out.append({k: v for k, v in x.items() if k not in hide} | ({"private": "only the posting company sees this"} if hide else {}))
+    return out
+
+
 @app.get("/api/runs/{run_id}")
-def run_status(run_id: str) -> dict:
+def run_status(run_id: str, company_id: int | None = None) -> dict:
     """Live progress: steps so far, the agent working now, token totals, and the result when done."""
     state = runs.get(run_id)
     if not state:
@@ -451,9 +463,12 @@ def run_status(run_id: str) -> dict:
         return {"run_id": run_id, "kind": state.kind, "status": state.status, "current": state.current,
                 "steps": [{"step": x["step"], "status": x["status"]} for x in state.steps], "totals": state.totals(),
                 "agent_calls": list(state.agent_calls), "result": _negotiation_public(state.result)}
+    steps, result = list(state.steps), state.result
+    if company_id is None or company_id != state.owner:  # not the poster: no private floor / budget
+        steps = _private_stripped(steps)
+        result = result and (result | {"steps": _private_stripped(result.get("steps", []))})
     return {"run_id": run_id, "kind": state.kind, "status": state.status, "current": state.current,
-            "steps": list(state.steps), "totals": state.totals(), "agent_calls": list(state.agent_calls),
-            "result": state.result}
+            "steps": steps, "totals": state.totals(), "agent_calls": list(state.agent_calls), "result": result}
 
 
 async def _system(tool: str, **args) -> dict:

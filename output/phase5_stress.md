@@ -1,6 +1,6 @@
 # Phase 5 stress test
 
-`scripts/stress_phase5.py`, real backend API on a scratch database, 62 s.
+`scripts/stress_phase5.py`, real backend API on a scratch database, 103 s.
 
 | # | Check | Result | Notes |
 |---|---|---|---|
@@ -8,7 +8,7 @@
 | 3 | Alerts: 16 alerts in 7 events: right recipients, score >= 70, <= 3 pairs per event, no duplicates, double submit makes one need | **PASS** |  |
 | 5 | Self-match: a company never matches its own listing or need (ranking, board, alerts, saved matches) | **PASS** |  |
 | 6 | Lifecycle: sold, filled and expired items leave matching, alerts and the Marketplace (set by SQL: no deals until Phase 6) | **PASS** |  |
-| 7 | Leaks: 113 API responses + 19 alerts scanned for 23 buyer maxes and 27 seller floors; 7 private-term probes | **PASS** |  |
+| 7 | Leaks: 113 API responses + 25 alerts scanned for 23 buyer maxes and 27 seller floors; 7 private-term probes | **PASS** |  |
 | 8 | Need-side attacks (8 cases): no crash, injections inert, nothing unsafe or ungrounded matched | **PASS** |  |
 | 9 | Race: a listing and the need it fills posted at the same moment (2 trials): no crash, each side alerted exactly once | **PASS** |  |
 | 10 | Reset demo: every table (17) identical to the seed (row counts + content hash), alerts cleared | **PASS** |  |
@@ -27,7 +27,7 @@
 | 4 | 4 | 96 | 95 | 1 |
 | 7 | 7 | 100 | 98 | 2 |
 | 10 | 10 | 98 | 100 | 2 |
-| 12 | 12 | 93 | 91 | 2 |
+| 12 | 12 | 92 | 91 | 1 |
 
 ## Need-side attacks
 
@@ -46,17 +46,17 @@ Double submit: {"needs_created": 1, "new_alerts_to_Hartwell": 1, "outcomes": ["p
 
 Race trials: [{"seller_outcome": "listed and matched", "need_outcome": "posted and matched", "listing": 28, "need": 22, "match_rows": 2, "alerts_per_company": {"16": 1, "20": 1}}, {"seller_outcome": "listed and matched", "need_outcome": "posted and matched", "listing": 28, "need": 22, "match_rows": 2, "alerts_per_company": {"16": 1, "20": 1}}]
 
-## Tokens per alert event (7 events, $0.0061 total)
+## Tokens per alert event (7 events, $0.0063 total)
 
 | Run | Kind | Alerts | Input | Cached | Output | Cost |
 |---|---|---|---|---|---|---|
-| 2c813ae2f3d6 | seller_flow | 2 | 1567 | 2232 | 709 | $0.000741 |
-| 317cd0d83001 | need_flow | 2 | 2731 | 0 | 553 | $0.000844 |
-| 4d02503ca07f | need_flow | 2 | 126 | 0 | 268 | $0.000312 |
-| 5cc52b0bef3c | seller_flow | 2 | 1593 | 1160 | 698 | $0.000871 |
-| 9d00beb66774 | seller_flow | 2 | 1578 | 2241 | 773 | $0.000800 |
-| beb50a54cac3 | seller_flow | 2 | 1632 | 1195 | 831 | $0.001057 |
-| ddd0b07cc6a9 | seller_flow | 4 | 1710 | 1164 | 1214 | $0.001490 |
+| 059188714abe | seller_flow | 2 | 1668 | 2241 | 824 | $0.000834 |
+| 252667690d75 | need_flow | 2 | 2731 | 0 | 469 | $0.000802 |
+| 443447a06988 | seller_flow | 2 | 1657 | 2232 | 753 | $0.000772 |
+| 4835ccdf2155 | seller_flow | 4 | 1800 | 1164 | 1319 | $0.001551 |
+| aa2c39cccfe1 | need_flow | 2 | 126 | 0 | 268 | $0.000312 |
+| c7780baf2f75 | seller_flow | 2 | 1683 | 1160 | 765 | $0.000914 |
+| f702c2131d4a | seller_flow | 2 | 1722 | 1195 | 960 | $0.001131 |
 
 ## Fixes and known limits
 

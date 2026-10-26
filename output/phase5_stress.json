@@ -44,9 +44,9 @@
           {
             "listing": 12,
             "need": 12,
-            "seller_side_score": 93,
+            "seller_side_score": 92,
             "buyer_side_score": 91,
-            "gap": 2
+            "gap": 1
           }
         ],
         "flagged": []
@@ -95,7 +95,7 @@
     },
     {
       "check": 7,
-      "name": "Leaks: 113 API responses + 19 alerts scanned for 23 buyer maxes and 27 seller floors; 7 private-term probes",
+      "name": "Leaks: 113 API responses + 25 alerts scanned for 23 buyer maxes and 27 seller floors; 7 private-term probes",
       "result": "PASS",
       "detail": {
         "leaks": [],
@@ -266,9 +266,9 @@
     {
       "listing": 12,
       "need": 12,
-      "seller_side_score": 93,
+      "seller_side_score": 92,
       "buyer_side_score": 91,
-      "gap": 2
+      "gap": 1
     }
   ],
   "attacks": [
@@ -355,25 +355,43 @@
   ],
   "tokens_per_alert_event": [
     {
-      "run_id": "2c813ae2f3d6",
+      "run_id": "059188714abe",
       "alerts": 2,
       "run_kind": "seller_flow",
-      "input_tokens": 1567,
-      "cached_tokens": 2232,
-      "output_tokens": 709,
-      "cost_usd": 0.000741
+      "input_tokens": 1668,
+      "cached_tokens": 2241,
+      "output_tokens": 824,
+      "cost_usd": 0.000834
     },
     {
-      "run_id": "317cd0d83001",
+      "run_id": "252667690d75",
       "alerts": 2,
       "run_kind": "need_flow",
       "input_tokens": 2731,
       "cached_tokens": 0,
-      "output_tokens": 553,
-      "cost_usd": 0.000844
+      "output_tokens": 469,
+      "cost_usd": 0.000802
     },
     {
-      "run_id": "4d02503ca07f",
+      "run_id": "443447a06988",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1657,
+      "cached_tokens": 2232,
+      "output_tokens": 753,
+      "cost_usd": 0.000772
+    },
+    {
+      "run_id": "4835ccdf2155",
+      "alerts": 4,
+      "run_kind": "seller_flow",
+      "input_tokens": 1800,
+      "cached_tokens": 1164,
+      "output_tokens": 1319,
+      "cost_usd": 0.001551
+    },
+    {
+      "run_id": "aa2c39cccfe1",
       "alerts": 2,
       "run_kind": "need_flow",
       "input_tokens": 126,
@@ -382,40 +400,22 @@
       "cost_usd": 0.000312
     },
     {
-      "run_id": "5cc52b0bef3c",
+      "run_id": "c7780baf2f75",
       "alerts": 2,
       "run_kind": "seller_flow",
-      "input_tokens": 1593,
+      "input_tokens": 1683,
       "cached_tokens": 1160,
-      "output_tokens": 698,
-      "cost_usd": 0.000871
+      "output_tokens": 765,
+      "cost_usd": 0.000914
     },
     {
-      "run_id": "9d00beb66774",
+      "run_id": "f702c2131d4a",
       "alerts": 2,
       "run_kind": "seller_flow",
-      "input_tokens": 1578,
-      "cached_tokens": 2241,
-      "output_tokens": 773,
-      "cost_usd": 0.0008
-    },
-    {
-      "run_id": "beb50a54cac3",
-      "alerts": 2,
-      "run_kind": "seller_flow",
-      "input_tokens": 1632,
+      "input_tokens": 1722,
       "cached_tokens": 1195,
-      "output_tokens": 831,
-      "cost_usd": 0.001057
-    },
-    {
-      "run_id": "ddd0b07cc6a9",
-      "alerts": 4,
-      "run_kind": "seller_flow",
-      "input_tokens": 1710,
-      "cached_tokens": 1164,
-      "output_tokens": 1214,
-      "cost_usd": 0.00149
+      "output_tokens": 960,
+      "cost_usd": 0.001131
     }
   ],
   "known_limits": [
@@ -424,5 +424,5 @@
     "**Race re-check ranks late arrivals by rules, not the matching agent** (no extra model call). The reasons are written from the data, like the rules fallback.",
     "**Symmetry is measured on 6 pairs** with one compatible listing per need, so it shows the two directions agree on clear matches, not on close calls."
   ],
-  "seconds": 62
+  "seconds": 103
 }

@@ -78,6 +78,17 @@ def money_forms(v: float) -> list[str]:
     return [f"${v:,.0f}", f"${v:.0f}", f"${v:,.2f}", f"{v:.1f}"]
 
 
+async def reset_when_idle(base: str, timeout: float = 240) -> tuple[int, dict]:
+    """POST /api/reset, waiting while negotiations are still running (the app refuses a reset then: 409). Since
+    auto-negotiate, demo accounts can start negotiations by themselves during a test."""
+    t0 = asyncio.get_running_loop().time()
+    while True:
+        status, data = await ahttp("POST", f"{base}/api/reset")
+        if status != 409 or asyncio.get_running_loop().time() - t0 > timeout:
+            return status, data
+        await asyncio.sleep(2)
+
+
 async def part_a(db: Path) -> None:
     print("\nPart A: two-account flows, one at a time", flush=True)
     seller = TS["seller_posts"][0]  # Prairie posts CR 15 seal kits -> Tidewater's need #20
@@ -151,7 +162,7 @@ async def part_a(db: Path) -> None:
          r3["outcome"].startswith("posted (no matching") and step(r3, "prefilter").get("candidates") == 0
          and "matching_agent" not in calls, {"outcome": r3["outcome"], "agents": calls})
 
-    status, _ = await ahttp("POST", f"{BASE}/api/reset")
+    status, _ = await reset_when_idle(BASE)
     after_reset = await company(buyer_id)
     board2 = (await ahttp("GET", f"{BASE}/api/marketplace"))[1]
     case("A14. Reset demo restores the seeded state (no alerts, the posted need is gone)",
@@ -235,7 +246,7 @@ async def main() -> int:
             await asyncio.sleep(0.5)
         print(f"backend up in {time.time() - t0:.1f}s on a scratch copy of the database", flush=True)
         await part_a(db)
-        await ahttp("POST", f"{BASE}/api/reset")
+        await reset_when_idle(BASE)
         await part_b()
         events = tokens_per_alert_event(db)
     finally:

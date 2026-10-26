@@ -1,12 +1,77 @@
 {
-  "sections": [
-    1,
-    3,
-    4,
-    5,
-    6
-  ],
-  "checks": [
+  "overall": {
+    "negotiations": 44,
+    "deals": 32,
+    "deal_rate": 0.727,
+    "limit_violations": 0,
+    "avg_rounds": 4.59,
+    "avg_price_position_in_overlap": 0.582,
+    "avg_cost_usd": 0.001887
+  },
+  "by_pair_type": {
+    "deal_likely": {
+      "negotiations": 17,
+      "deals": 17,
+      "deal_rate": 1.0,
+      "limit_violations": 0,
+      "avg_rounds": 3.06,
+      "avg_price_position_in_overlap": 0.712,
+      "avg_cost_usd": 0.001227
+    },
+    "barely_overlapping": {
+      "negotiations": 14,
+      "deals": 11,
+      "deal_rate": 0.786,
+      "limit_violations": 0,
+      "avg_rounds": 5.5,
+      "avg_price_position_in_overlap": 0.405,
+      "avg_cost_usd": 0.002193
+    },
+    "walk_away": {
+      "negotiations": 9,
+      "deals": 0,
+      "deal_rate": 0.0,
+      "limit_violations": 0,
+      "avg_rounds": 6.33,
+      "avg_price_position_in_overlap": null,
+      "avg_cost_usd": 0.002789
+    },
+    "new post": {
+      "negotiations": 4,
+      "deals": 4,
+      "deal_rate": 1.0,
+      "limit_violations": 0,
+      "avg_rounds": 4,
+      "avg_price_position_in_overlap": 0.52,
+      "avg_cost_usd": 0.001594
+    }
+  },
+  "expectations": {
+    "walk_away_pairs_never_close": true,
+    "deal_likely_pairs_close": 1.0
+  },
+  "prompt_fix_effect": {
+    "what": "Narrow-overlap pairs before vs. after the Phase 6 'last offer' prompt fix",
+    "before_phase6_fix": {
+      "negotiations": 6,
+      "deals": 3,
+      "deal_rate": 0.5,
+      "limit_violations": 0,
+      "avg_rounds": 5.5,
+      "avg_price_position_in_overlap": 0.692,
+      "avg_cost_usd": 0.002351
+    },
+    "after_phase6_fix": {
+      "negotiations": 8,
+      "deals": 8,
+      "deal_rate": 1.0,
+      "limit_violations": 0,
+      "avg_rounds": 5.5,
+      "avg_price_position_in_overlap": 0.297,
+      "avg_cost_usd": 0.002073
+    }
+  },
+  "phase6_checks": [
     {
       "section": 1,
       "check": "Seller (Prairie) posts 1 seal kit: listed, Tidewater alerted",
@@ -29,58 +94,78 @@
     },
     {
       "section": 1,
-      "check": "Tidewater's bell shows the alert (switch account)",
+      "check": "The pricing agent's suggested floor is saved to seller_private (with a one-line reason), not yet confirmed",
       "result": "PASS",
-      "detail": [
-        "Prairie Mills Flour listed 96525458 at $330/unit, a match for your need #20 (score 92)."
-      ]
+      "detail": {
+        "step": {
+          "step": "floor",
+          "status": "suggested",
+          "value": 230.0,
+          "set_by": "suggested",
+          "reason": "About 46% of the $499 new price for a new, open-box kit, and still about 22\u00d7 its $10.61 scrap value."
+        },
+        "db": [
+          {
+            "floor_price": 230.0,
+            "set_by": "suggested",
+            "reason": "About 46% of the $499 new price for a new, open-box kit, and still about 22\u00d7 its $10.61 scrap value."
+          }
+        ]
+      }
     },
     {
       "section": 1,
-      "check": "Start panel (as Tidewater): buyer side, its own budget only, can start",
+      "check": "Auto-negotiate waits for the seller to confirm its floor (no negotiation started yet)",
+      "result": "PASS",
+      "detail": {
+        "step": "auto_negotiate",
+        "status": "waiting",
+        "started": [],
+        "waiting": [
+          {
+            "listing_id": 28,
+            "need_id": 20,
+            "score": 93,
+            "seller": "Prairie Mills Flour",
+            "buyer": "Tidewater Dairy",
+            "part_number": "96525458",
+            "waiting_for": [
+              "seller"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "section": 1,
+      "check": "Human touchpoint 1: Prairie confirms the floor -> the negotiation with Tidewater starts by itself",
       "result": "PASS",
       "detail": {
         "ok": true,
-        "side": "buyer",
-        "listing_id": 28,
-        "need_id": 20,
-        "why_it_fits": "96525458 is a pump spare that fits the buyer's Grundfos CR 15",
-        "listing": {
-          "part_number": "96525458",
-          "description": "CR 15 shaft seal kit, HQQE (SiC/SiC/EPDM)",
-          "condition": "new_open_box",
-          "asking_price": 330.0,
-          "qty": 1,
-          "seller_name": "Prairie Mills Flour",
-          "location": "Salina, KS"
-        },
-        "need": {
-          "buyer_name": "Tidewater Dairy",
-          "qty": 1,
-          "urgency": "high",
-          "downtime_cost_per_day": 3500.0,
-          "buyer_location": "Norfolk, VA"
-        },
-        "qty": 1,
-        "my_limit": {
-          "label": "Your budget",
-          "value": 415.0,
-          "set_by": null
-        },
-        "can_start": true,
-        "blocker": null,
-        "open_negotiation_id": null
+        "value": 230.0,
+        "confirmed": true,
+        "started": [
+          {
+            "listing_id": 28,
+            "need_id": 20,
+            "score": 93,
+            "seller": "Prairie Mills Flour",
+            "buyer": "Tidewater Dairy",
+            "part_number": "96525458",
+            "negotiation_id": 1,
+            "queued": false
+          }
+        ]
       }
     },
     {
       "section": 1,
-      "check": "Tidewater starts the negotiation; units locked at once",
+      "check": "Tidewater is told its agent started negotiating (bell)",
       "result": "PASS",
-      "detail": {
-        "negotiation_id": 1,
-        "run_id": "ddb935df1bfd",
-        "queued": false
-      }
+      "detail": [
+        "Your agent started negotiating with Prairie Mills Flour on 96525458 (1 unit), within your private limit. You approve any deal.",
+        "Prairie Mills Flour listed 96525458 at $330/unit, a match for your need #20 (score 93)."
+      ]
     },
     {
       "section": 1,
@@ -95,8 +180,8 @@
             "action": "offer",
             "price": 330.0,
             "qty": 1,
-            "created_at": "2026-10-26T06:40:20+00:00",
-            "message_untrusted": "The kit is new in its open box, and I\u2019m ready to move quickly. Please share a workable counter."
+            "created_at": "2026-10-26T08:00:40+00:00",
+            "message_untrusted": "We can offer the new, open-box kit at our asking price. Let me know your best counter."
           },
           {
             "round": 2,
@@ -104,8 +189,8 @@
             "action": "accept",
             "price": 330.0,
             "qty": 1,
-            "created_at": "2026-10-26T06:40:22+00:00",
-            "message_untrusted": "That works for us. Let\u2019s move ahead."
+            "created_at": "2026-10-26T08:00:41+00:00",
+            "message_untrusted": "We accept your offer; the plant needs the part promptly."
           }
         ],
         "explanation": null
@@ -113,7 +198,7 @@
     },
     {
       "section": 1,
-      "check": "Buyer approves its side: deal still pending (needs the seller too)",
+      "check": "Human touchpoint 2 (buyer): approves its side; the deal still waits for the seller",
       "result": "PASS",
       "detail": {
         "ok": true,
@@ -151,11 +236,11 @@
     },
     {
       "section": 1,
-      "check": "Deal card per side: 'above your floor' for the seller, 'under your budget' for the buyer",
+      "check": "Deal card per side: measured against each company's own limit",
       "result": "PASS",
       "detail": {
-        "seller": "$99.00 above your floor",
-        "buyer": "$85.00 under your budget"
+        "seller": "$100 above your floor",
+        "buyer": "$85 under your budget"
       }
     },
     {
@@ -165,8 +250,49 @@
       "detail": null
     },
     {
+      "section": 1,
+      "check": "Buyer (Riverbend) posts without a max price: a budget is suggested from the new price and downtime, saved, not confirmed",
+      "result": "PASS",
+      "detail": {
+        "budget": {
+          "value": 238.0,
+          "set_by": "suggested",
+          "reason": "About 45% of the $530 new price: low urgency. Buying new is the alternative, so the budget stays below it."
+        },
+        "db": [
+          {
+            "ceiling_price": 238.0,
+            "set_by": "suggested",
+            "reason": "About 45% of the $530 new price: low urgency. Buying new is the alternative, so the budget stays below it."
+          }
+        ]
+      }
+    },
+    {
+      "section": 1,
+      "check": "Riverbend confirms its budget -> the negotiation with Hartwell (input cards) starts by itself",
+      "result": "PASS",
+      "detail": {
+        "ok": true,
+        "value": 238.0,
+        "confirmed": true,
+        "started": [
+          {
+            "listing_id": 13,
+            "need_id": 22,
+            "score": 92,
+            "seller": "Hartwell Precision Components",
+            "buyer": "Riverbend Foods",
+            "part_number": "6ES7321-1BL00-0AA0",
+            "negotiation_id": 2,
+            "queued": false
+          }
+        ]
+      }
+    },
+    {
       "section": 2,
-      "check": "Leak scan (section 1): 20 API responses, 2 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "check": "Leak scan (section 1): 31 API responses, 8 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
       "result": "PASS",
       "detail": {
         "leaks": [],
@@ -180,7 +306,7 @@
       "detail": {
         "first": {
           "negotiation_id": 1,
-          "run_id": "64b9143e8a64",
+          "run_id": "63de72046bf7",
           "queued": false
         },
         "second": {
@@ -235,13 +361,13 @@
       "result": "PASS",
       "detail": {
         "negotiation_id": 2,
-        "run_id": "bde9d759166e",
+        "run_id": "b1475bb4c465",
         "queued": false
       }
     },
     {
       "section": 2,
-      "check": "Leak scan (section 3): 35 API responses, 8 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "check": "Leak scan (section 3): 27 API responses, 8 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
       "result": "PASS",
       "detail": {
         "leaks": [],
@@ -282,7 +408,25 @@
     },
     {
       "section": 2,
-      "check": "Leak scan (section 4): 465 API responses, 14 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "check": "Leak scan (section 4): 155 API responses, 15 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "result": "PASS",
+      "detail": {
+        "leaks": [],
+        "third_party": []
+      }
+    },
+    {
+      "section": 2,
+      "check": "Leak scan (section 5): 85 API responses, 24 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "result": "PASS",
+      "detail": {
+        "leaks": [],
+        "third_party": []
+      }
+    },
+    {
+      "section": 2,
+      "check": "Leak scan (section 5): 73 API responses, 25 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
       "result": "PASS",
       "detail": {
         "leaks": [],
@@ -291,7 +435,7 @@
     },
     {
       "section": 5,
-      "check": "Hartwell -> Riverbend (clear deal): 3/3 runs as expected; prices [1425.0, 1390.0, 1390.0]",
+      "check": "Hartwell -> Riverbend (clear deal): 3/3 runs as expected; prices [1425.0, 1425.0, 1400.0]",
       "result": "PASS",
       "detail": {
         "sample": "Hartwell -> Riverbend (clear deal)",
@@ -303,8 +447,8 @@
         ],
         "prices": [
           1425.0,
-          1390.0,
-          1390.0
+          1425.0,
+          1400.0
         ],
         "rounds": [
           2,
@@ -316,7 +460,7 @@
     },
     {
       "section": 5,
-      "check": "Summit -> Ironclad (clear deal): 3/3 runs as expected; prices [985.0, 975.0, 985.0]",
+      "check": "Summit -> Ironclad (clear deal): 3/3 runs as expected; prices [985.0, 985.0, 985.0]",
       "result": "PASS",
       "detail": {
         "sample": "Summit -> Ironclad (clear deal)",
@@ -328,7 +472,7 @@
         ],
         "prices": [
           985.0,
-          975.0,
+          985.0,
           985.0
         ],
         "rounds": [
@@ -341,7 +485,7 @@
     },
     {
       "section": 5,
-      "check": "Hartwell -> Prairie Packaging (narrow deal): 3/3 runs as expected; prices [122.0, 125.0, 123.0]",
+      "check": "Hartwell -> Prairie Packaging (narrow deal): 3/3 runs as expected; prices [123.0, 122.0, 125.0]",
       "result": "PASS",
       "detail": {
         "sample": "Hartwell -> Prairie Packaging (narrow deal)",
@@ -352,13 +496,13 @@
           "deal"
         ],
         "prices": [
+          123.0,
           122.0,
-          125.0,
-          123.0
+          125.0
         ],
         "rounds": [
-          6,
           5,
+          6,
           5
         ],
         "as_expected": "3/3"
@@ -366,7 +510,7 @@
     },
     {
       "section": 5,
-      "check": "Redwood -> Coastal Electronics (narrow deal): 3/3 runs as expected; prices [252.0, 255.0, 250.0]",
+      "check": "Redwood -> Coastal Electronics (narrow deal): 3/3 runs as expected; prices [255.0, 250.0, 252.0]",
       "result": "PASS",
       "detail": {
         "sample": "Redwood -> Coastal Electronics (narrow deal)",
@@ -377,9 +521,9 @@
           "deal"
         ],
         "prices": [
-          252.0,
           255.0,
-          250.0
+          250.0,
+          252.0
         ],
         "rounds": [
           5,
@@ -412,7 +556,7 @@
     },
     {
       "section": 2,
-      "check": "Leak scan (section 5): 449 API responses, 24 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "check": "Leak scan (section 5): 78 API responses, 24 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
       "result": "PASS",
       "detail": {
         "leaks": [],
@@ -456,1062 +600,655 @@
       }
     }
   ],
-  "negotiations": [
+  "demo_pair_repeat": {
+    "pair": "Hartwell listing 13 (floor $122) vs Riverbend sample request (budget $180)",
+    "runs": [
+      {
+        "run": 1,
+        "status": "agreed",
+        "rounds": 5,
+        "price": 150.0,
+        "qty": 4,
+        "offers": [
+          [
+            "seller",
+            "offer",
+            190.0
+          ],
+          [
+            "buyer",
+            "offer",
+            130.0
+          ],
+          [
+            "seller",
+            "offer",
+            170.0
+          ],
+          [
+            "buyer",
+            "offer",
+            150.0
+          ],
+          [
+            "seller",
+            "accept",
+            150.0
+          ]
+        ],
+        "deal_status_after_approvals": "approved",
+        "seller_sees": "$28 above your floor",
+        "buyer_sees": "$30 under your budget"
+      },
+      {
+        "run": 2,
+        "status": "agreed",
+        "rounds": 5,
+        "price": 150.0,
+        "qty": 4,
+        "offers": [
+          [
+            "seller",
+            "offer",
+            190.0
+          ],
+          [
+            "buyer",
+            "offer",
+            130.0
+          ],
+          [
+            "seller",
+            "offer",
+            170.0
+          ],
+          [
+            "buyer",
+            "offer",
+            150.0
+          ],
+          [
+            "seller",
+            "accept",
+            150.0
+          ]
+        ],
+        "deal_status_after_approvals": "approved",
+        "seller_sees": "$28 above your floor",
+        "buyer_sees": "$30 under your budget"
+      },
+      {
+        "run": 3,
+        "status": "agreed",
+        "rounds": 5,
+        "price": 150.0,
+        "qty": 4,
+        "offers": [
+          [
+            "seller",
+            "offer",
+            190.0
+          ],
+          [
+            "buyer",
+            "offer",
+            130.0
+          ],
+          [
+            "seller",
+            "offer",
+            170.0
+          ],
+          [
+            "buyer",
+            "offer",
+            150.0
+          ],
+          [
+            "seller",
+            "accept",
+            150.0
+          ]
+        ],
+        "deal_status_after_approvals": "approved",
+        "seller_sees": "$28 above your floor",
+        "buyer_sees": "$30 under your budget"
+      }
+    ],
+    "deals_closed": "3/3",
+    "prices_inside_both_limits": true,
+    "leak_scan": {
+      "section": 2,
+      "check": "Leak scan (section 7): 50 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "result": "PASS",
+      "detail": {
+        "leaks": [],
+        "third_party": []
+      }
+    },
+    "spend_usd": 0.0081
+  },
+  "auto_negotiate_e2e": {
+    "checks": 13,
+    "pass": 13
+  },
+  "price_position_note": "0 = deal at the seller's floor, 1 = deal at the buyer's budget (where the price landed inside the overlap).",
+  "logged_negotiations": [
     {
-      "label": "e2e Prairie -> Tidewater",
-      "negotiation_id": 1,
-      "listing": 28,
-      "need": 20,
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "1/1",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1400.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "cost_usd": 0.000844
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "1/1",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1400.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "cost_usd": 0.000844
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "1/1",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1400.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "cost_usd": 0.000844
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "2/17",
+      "type": "barely_overlapping",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 2610.0,
+      "ceiling": 2690.0,
+      "cost_usd": 0.002652
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "2/17",
+      "type": "barely_overlapping",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 2610.0,
+      "ceiling": 2690.0,
+      "cost_usd": 0.002652
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "2/17",
+      "type": "barely_overlapping",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 2610.0,
+      "ceiling": 2690.0,
+      "cost_usd": 0.002652
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "3/3",
+      "type": "walk_away",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 1010.0,
+      "ceiling": 715.0,
+      "cost_usd": 0.002914
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "3/3",
+      "type": "walk_away",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 1010.0,
+      "ceiling": 715.0,
+      "cost_usd": 0.002914
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "3/3",
+      "type": "walk_away",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 1010.0,
+      "ceiling": 715.0,
+      "cost_usd": 0.002914
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "5/5",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 2300.0,
+      "floor": 2210.0,
+      "ceiling": 2340.0,
+      "cost_usd": 0.002051
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "5/5",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 2300.0,
+      "floor": 2210.0,
+      "ceiling": 2340.0,
+      "cost_usd": 0.002051
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "5/5",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 2300.0,
+      "floor": 2210.0,
+      "ceiling": 2340.0,
+      "cost_usd": 0.002051
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "11/11",
+      "type": "walk_away",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "cost_usd": 0.002688
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "11/11",
+      "type": "walk_away",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "cost_usd": 0.002688
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "11/11",
+      "type": "walk_away",
+      "status": "walked_away",
+      "rounds": 6,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "cost_usd": 0.002688
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "12/12",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "cost_usd": 0.002279
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "12/12",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "cost_usd": 0.002279
+    },
+    {
+      "source": "phase3_stress (before the Phase 6 prompt fix)",
+      "pair": "12/12",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "cost_usd": 0.002279
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "28/20",
+      "type": "new post",
       "status": "agreed",
       "rounds": 2,
       "price": 330.0,
-      "floor": 231.0,
+      "floor": 230.0,
       "ceiling": 415.0,
-      "end_reason": "buyer accepted $330.00",
-      "cost_usd": 0.000658,
-      "tokens": 5856,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          330.0
-        ],
-        [
-          "buyer",
-          "accept",
-          330.0
-        ]
-      ]
+      "cost_usd": 0.000794,
+      "label": "e2e Prairie -> Tidewater (auto)"
     },
     {
-      "label": "oversell base 2/2",
-      "negotiation_id": 1,
-      "listing": 2,
-      "need": 2,
+      "source": "phase6 suite",
+      "pair": "13/22",
+      "type": "new post",
+      "status": "agreed",
+      "rounds": 6,
+      "price": 180.0,
+      "floor": 122.0,
+      "ceiling": 238.0,
+      "cost_usd": 0.002394,
+      "label": "buyer-side auto Riverbend <- Hartwell"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "2/2",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 2,
       "price": 3350.0,
       "floor": 2610.0,
       "ceiling": 3780.0,
-      "end_reason": "buyer accepted $3,350.00",
       "cost_usd": 0.00067,
-      "tokens": 5879,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          3350.0
-        ],
-        [
-          "buyer",
-          "accept",
-          3350.0
-        ]
-      ]
+      "label": "oversell base 2/2"
     },
     {
-      "label": "after reject 2/17",
-      "negotiation_id": 2,
-      "listing": 2,
-      "need": 17,
+      "source": "phase6 suite",
+      "pair": "2/17",
+      "type": "barely_overlapping",
       "status": "agreed",
       "rounds": 6,
       "price": 2610.0,
       "floor": 2610.0,
       "ceiling": 2690.0,
-      "end_reason": "buyer accepted $2,610.00",
       "cost_usd": 0.002195,
-      "tokens": 18931,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          3350.0
-        ],
-        [
-          "buyer",
-          "offer",
-          2250.0
-        ],
-        [
-          "seller",
-          "offer",
-          3150.0
-        ],
-        [
-          "buyer",
-          "offer",
-          2500.0
-        ],
-        [
-          "seller",
-          "offer",
-          2610.0
-        ],
-        [
-          "buyer",
-          "accept",
-          2610.0
-        ]
-      ]
+      "label": "after reject 2/17"
     },
     {
-      "label": "concurrent 4/4",
-      "negotiation_id": 1,
-      "listing": 4,
-      "need": 4,
+      "source": "phase6 suite",
+      "pair": "4/4",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 2,
-      "price": 425.0,
+      "price": 435.0,
       "floor": 305.0,
       "ceiling": 455.0,
-      "end_reason": "buyer accepted $425.00",
-      "cost_usd": 0.000632,
-      "tokens": 5817,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          425.0
-        ],
-        [
-          "buyer",
-          "accept",
-          425.0
-        ]
-      ]
+      "cost_usd": 0.000715,
+      "label": "concurrent 4/4"
     },
     {
-      "label": "concurrent 5/5",
-      "negotiation_id": 2,
-      "listing": 5,
-      "need": 5,
+      "source": "phase6 suite",
+      "pair": "5/5",
+      "type": "barely_overlapping",
       "status": "agreed",
-      "rounds": 6,
-      "price": 2210.0,
+      "rounds": 7,
+      "price": 2340.0,
       "floor": 2210.0,
       "ceiling": 2340.0,
-      "end_reason": "buyer accepted $2,210.00",
-      "cost_usd": 0.00218,
-      "tokens": 18885,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          2875.0
-        ],
-        [
-          "buyer",
-          "offer",
-          1950.0
-        ],
-        [
-          "seller",
-          "offer",
-          2625.0
-        ],
-        [
-          "buyer",
-          "offer",
-          2200.0
-        ],
-        [
-          "seller",
-          "offer",
-          2210.0
-        ],
-        [
-          "buyer",
-          "accept",
-          2210.0
-        ]
-      ]
+      "cost_usd": 0.00262,
+      "label": "concurrent 5/5"
     },
     {
-      "label": "concurrent 7/7",
-      "negotiation_id": 3,
-      "listing": 7,
-      "need": 7,
+      "source": "phase6 suite",
+      "pair": "7/7",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 2,
-      "price": 1095.0,
+      "price": 1075.0,
       "floor": 690.0,
       "ceiling": 1490.0,
-      "end_reason": "buyer accepted $1,095.00",
-      "cost_usd": 0.00065,
-      "tokens": 5937,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1095.0
-        ],
-        [
-          "buyer",
-          "accept",
-          1095.0
-        ]
-      ]
+      "cost_usd": 0.000652,
+      "label": "concurrent 7/7"
     },
     {
-      "label": "concurrent 8/8",
-      "negotiation_id": 4,
-      "listing": 8,
-      "need": 8,
+      "source": "phase6 suite",
+      "pair": "8/8",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 2,
-      "price": 2640.0,
+      "price": 2600.0,
       "floor": 1915.0,
       "ceiling": 2985.0,
-      "end_reason": "buyer accepted $2,640.00",
-      "cost_usd": 0.000663,
-      "tokens": 5873,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          2640.0
-        ],
-        [
-          "buyer",
-          "accept",
-          2640.0
-        ]
-      ]
+      "cost_usd": 0.00067,
+      "label": "concurrent 8/8"
     },
     {
-      "label": "concurrent 10/10",
-      "negotiation_id": 5,
-      "listing": 10,
-      "need": 10,
+      "source": "phase6 suite",
+      "pair": "10/10",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 2,
       "price": 2890.0,
       "floor": 1985.0,
       "ceiling": 4150.0,
-      "end_reason": "buyer accepted $2,890.00",
-      "cost_usd": 0.000675,
-      "tokens": 5904,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          2890.0
-        ],
-        [
-          "buyer",
-          "accept",
-          2890.0
-        ]
-      ]
+      "cost_usd": 0.000671,
+      "label": "concurrent 10/10"
     },
     {
-      "label": "sample run 1: Hartwell -> Riverbend (clear deal)",
-      "negotiation_id": 3,
-      "listing": 1,
-      "need": 1,
+      "source": "phase6 suite",
+      "pair": "1/1",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 2,
       "price": 1425.0,
       "floor": 905.0,
       "ceiling": 1890.0,
-      "end_reason": "buyer accepted $1,425.00",
-      "cost_usd": 0.000737,
-      "tokens": 6040,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1425.0
-        ],
-        [
-          "buyer",
-          "accept",
-          1425.0
-        ]
-      ]
+      "cost_usd": 0.00079,
+      "label": "sample run 1: Hartwell -> Riverbend (clear deal)"
     },
     {
-      "label": "sample run 1: Summit -> Ironclad (clear deal)",
-      "negotiation_id": 5,
-      "listing": 12,
-      "need": 12,
+      "source": "phase6 suite",
+      "pair": "12/12",
+      "type": "deal_likely",
       "status": "agreed",
       "rounds": 5,
       "price": 985.0,
       "floor": 790.0,
       "ceiling": 985.0,
-      "end_reason": "seller accepted $985.00",
       "cost_usd": 0.001974,
-      "tokens": 15807,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1095.0
-        ],
-        [
-          "buyer",
-          "offer",
-          900.0
-        ],
-        [
-          "seller",
-          "offer",
-          1025.0
-        ],
-        [
-          "buyer",
-          "offer",
-          985.0
-        ],
-        [
-          "seller",
-          "accept",
-          985.0
-        ]
-      ]
+      "label": "sample run 1: Summit -> Ironclad (clear deal)"
     },
     {
-      "label": "sample run 1: Hartwell -> Prairie Packaging (narrow deal)",
-      "negotiation_id": 1,
-      "listing": 13,
-      "need": 13,
-      "status": "agreed",
-      "rounds": 6,
-      "price": 122.0,
-      "floor": 122.0,
-      "ceiling": 131.0,
-      "end_reason": "buyer accepted $122.00",
-      "cost_usd": 0.00219,
-      "tokens": 18775,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          220.0
-        ],
-        [
-          "buyer",
-          "offer",
-          110.0
-        ],
-        [
-          "seller",
-          "offer",
-          185.0
-        ],
-        [
-          "buyer",
-          "offer",
-          120.0
-        ],
-        [
-          "seller",
-          "offer",
-          122.0
-        ],
-        [
-          "buyer",
-          "accept",
-          122.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 1: Redwood -> Coastal Electronics (narrow deal)",
-      "negotiation_id": 4,
-      "listing": 15,
-      "need": 15,
-      "status": "agreed",
-      "rounds": 5,
-      "price": 252.0,
-      "floor": 248.0,
-      "ceiling": 262.0,
-      "end_reason": "seller accepted $252.00",
-      "cost_usd": 0.001855,
-      "tokens": 15433,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          375.0
-        ],
-        [
-          "buyer",
-          "offer",
-          240.0
-        ],
-        [
-          "seller",
-          "offer",
-          330.0
-        ],
-        [
-          "buyer",
-          "offer",
-          252.0
-        ],
-        [
-          "seller",
-          "accept",
-          252.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 1: Cascade -> Northwoods (walk-away)",
-      "negotiation_id": 2,
-      "listing": 11,
-      "need": 11,
-      "status": "round_cap",
-      "rounds": 7,
-      "price": null,
-      "floor": 655.0,
-      "ceiling": 640.0,
-      "end_reason": "round cap of 6 reached; seller declined the final offer",
-      "cost_usd": 0.002656,
-      "tokens": 22483,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1185.0
-        ],
-        [
-          "buyer",
-          "offer",
-          520.0
-        ],
-        [
-          "seller",
-          "offer",
-          980.0
-        ],
-        [
-          "buyer",
-          "offer",
-          590.0
-        ],
-        [
-          "seller",
-          "offer",
-          655.0
-        ],
-        [
-          "buyer",
-          "offer",
-          640.0
-        ],
-        [
-          "seller",
-          "walk_away",
-          0.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 2: Hartwell -> Riverbend (clear deal)",
-      "negotiation_id": 4,
-      "listing": 1,
-      "need": 1,
-      "status": "agreed",
-      "rounds": 2,
-      "price": 1390.0,
-      "floor": 905.0,
-      "ceiling": 1890.0,
-      "end_reason": "buyer accepted $1,390.00",
-      "cost_usd": 0.000675,
-      "tokens": 5938,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1390.0
-        ],
-        [
-          "buyer",
-          "accept",
-          1390.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 2: Summit -> Ironclad (clear deal)",
-      "negotiation_id": 1,
-      "listing": 12,
-      "need": 12,
-      "status": "agreed",
-      "rounds": 5,
-      "price": 975.0,
-      "floor": 790.0,
-      "ceiling": 985.0,
-      "end_reason": "seller accepted $975.00",
-      "cost_usd": 0.002057,
-      "tokens": 15896,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1075.0
-        ],
-        [
-          "buyer",
-          "offer",
-          900.0
-        ],
-        [
-          "seller",
-          "offer",
-          1020.0
-        ],
-        [
-          "buyer",
-          "offer",
-          975.0
-        ],
-        [
-          "seller",
-          "accept",
-          975.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 2: Hartwell -> Prairie Packaging (narrow deal)",
-      "negotiation_id": 5,
-      "listing": 13,
-      "need": 13,
-      "status": "agreed",
-      "rounds": 5,
-      "price": 125.0,
-      "floor": 122.0,
-      "ceiling": 131.0,
-      "end_reason": "seller accepted $125.00",
-      "cost_usd": 0.001829,
-      "tokens": 15487,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          190.0
-        ],
-        [
-          "buyer",
-          "offer",
-          120.0
-        ],
-        [
-          "seller",
-          "offer",
-          170.0
-        ],
-        [
-          "buyer",
-          "offer",
-          125.0
-        ],
-        [
-          "seller",
-          "accept",
-          125.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 2: Redwood -> Coastal Electronics (narrow deal)",
-      "negotiation_id": 3,
-      "listing": 15,
-      "need": 15,
-      "status": "agreed",
-      "rounds": 5,
-      "price": 255.0,
-      "floor": 248.0,
-      "ceiling": 262.0,
-      "end_reason": "seller accepted $255.00",
-      "cost_usd": 0.001864,
-      "tokens": 15430,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          375.0
-        ],
-        [
-          "buyer",
-          "offer",
-          245.0
-        ],
-        [
-          "seller",
-          "offer",
-          325.0
-        ],
-        [
-          "buyer",
-          "offer",
-          255.0
-        ],
-        [
-          "seller",
-          "accept",
-          255.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 2: Cascade -> Northwoods (walk-away)",
-      "negotiation_id": 2,
-      "listing": 11,
-      "need": 11,
-      "status": "round_cap",
-      "rounds": 7,
-      "price": null,
-      "floor": 655.0,
-      "ceiling": 640.0,
-      "end_reason": "round cap of 6 reached; seller declined the final offer",
-      "cost_usd": 0.002656,
-      "tokens": 22483,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1185.0
-        ],
-        [
-          "buyer",
-          "offer",
-          520.0
-        ],
-        [
-          "seller",
-          "offer",
-          980.0
-        ],
-        [
-          "buyer",
-          "offer",
-          590.0
-        ],
-        [
-          "seller",
-          "offer",
-          655.0
-        ],
-        [
-          "buyer",
-          "offer",
-          640.0
-        ],
-        [
-          "seller",
-          "walk_away",
-          0.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 3: Hartwell -> Riverbend (clear deal)",
-      "negotiation_id": 4,
-      "listing": 1,
-      "need": 1,
-      "status": "agreed",
-      "rounds": 2,
-      "price": 1390.0,
-      "floor": 905.0,
-      "ceiling": 1890.0,
-      "end_reason": "buyer accepted $1,390.00",
-      "cost_usd": 0.000675,
-      "tokens": 5938,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1390.0
-        ],
-        [
-          "buyer",
-          "accept",
-          1390.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 3: Summit -> Ironclad (clear deal)",
-      "negotiation_id": 5,
-      "listing": 12,
-      "need": 12,
-      "status": "agreed",
-      "rounds": 5,
-      "price": 985.0,
-      "floor": 790.0,
-      "ceiling": 985.0,
-      "end_reason": "seller accepted $985.00",
-      "cost_usd": 0.001974,
-      "tokens": 15807,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1095.0
-        ],
-        [
-          "buyer",
-          "offer",
-          900.0
-        ],
-        [
-          "seller",
-          "offer",
-          1025.0
-        ],
-        [
-          "buyer",
-          "offer",
-          985.0
-        ],
-        [
-          "seller",
-          "accept",
-          985.0
-        ]
-      ]
-    },
-    {
-      "label": "sample run 3: Hartwell -> Prairie Packaging (narrow deal)",
-      "negotiation_id": 3,
-      "listing": 13,
-      "need": 13,
+      "source": "phase6 suite",
+      "pair": "13/13",
+      "type": "barely_overlapping",
       "status": "agreed",
       "rounds": 5,
       "price": 123.0,
       "floor": 122.0,
       "ceiling": 131.0,
-      "end_reason": "seller accepted $123.00",
       "cost_usd": 0.001962,
-      "tokens": 15700,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          210.0
-        ],
-        [
-          "buyer",
-          "offer",
-          110.0
-        ],
-        [
-          "seller",
-          "offer",
-          175.0
-        ],
-        [
-          "buyer",
-          "offer",
-          123.0
-        ],
-        [
-          "seller",
-          "accept",
-          123.0
-        ]
-      ]
+      "label": "sample run 1: Hartwell -> Prairie Packaging (narrow deal)"
     },
     {
-      "label": "sample run 3: Redwood -> Coastal Electronics (narrow deal)",
-      "negotiation_id": 2,
-      "listing": 15,
-      "need": 15,
+      "source": "phase6 suite",
+      "pair": "15/15",
+      "type": "barely_overlapping",
       "status": "agreed",
       "rounds": 5,
-      "price": 250.0,
+      "price": 255.0,
       "floor": 248.0,
       "ceiling": 262.0,
-      "end_reason": "seller accepted $250.00",
       "cost_usd": 0.001959,
-      "tokens": 15579,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          375.0
-        ],
-        [
-          "buyer",
-          "offer",
-          225.0
-        ],
-        [
-          "seller",
-          "offer",
-          325.0
-        ],
-        [
-          "buyer",
-          "offer",
-          250.0
-        ],
-        [
-          "seller",
-          "accept",
-          250.0
-        ]
-      ]
+      "label": "sample run 1: Redwood -> Coastal Electronics (narrow deal)"
     },
     {
-      "label": "sample run 3: Cascade -> Northwoods (walk-away)",
-      "negotiation_id": 1,
-      "listing": 11,
-      "need": 11,
+      "source": "phase6 suite",
+      "pair": "11/11",
+      "type": "walk_away",
       "status": "round_cap",
       "rounds": 7,
       "price": null,
       "floor": 655.0,
       "ceiling": 640.0,
-      "end_reason": "round cap of 6 reached; seller declined the final offer",
-      "cost_usd": 0.002738,
-      "tokens": 21319,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          1185.0
-        ],
-        [
-          "buyer",
-          "offer",
-          500.0
-        ],
-        [
-          "seller",
-          "offer",
-          990.0
-        ],
-        [
-          "buyer",
-          "offer",
-          575.0
-        ],
-        [
-          "seller",
-          "offer",
-          655.0
-        ],
-        [
-          "buyer",
-          "offer",
-          640.0
-        ],
-        [
-          "seller",
-          "walk_away",
-          0.0
-        ]
-      ]
+      "cost_usd": 0.002733,
+      "label": "sample run 1: Cascade -> Northwoods (walk-away)"
     },
     {
-      "label": "cost cap 13/13",
-      "negotiation_id": 1,
-      "listing": 13,
-      "need": 13,
-      "status": "stopped",
+      "source": "phase6 suite",
+      "pair": "1/1",
+      "type": "deal_likely",
+      "status": "agreed",
       "rounds": 2,
-      "price": null,
+      "price": 1425.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "cost_usd": 0.000737,
+      "label": "sample run 2: Hartwell -> Riverbend (clear deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "12/12",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "cost_usd": 0.001974,
+      "label": "sample run 2: Summit -> Ironclad (clear deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "13/13",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 6,
+      "price": 122.0,
       "floor": 122.0,
       "ceiling": 131.0,
-      "end_reason": "stopped by broker: cost cap reached ($0.0007, 8,752 tokens)",
-      "cost_usd": 0.00069,
-      "tokens": 5906,
-      "blocked_moves": [],
-      "offers": [
-        [
-          "seller",
-          "offer",
-          220.0
-        ],
-        [
-          "buyer",
-          "offer",
-          110.0
-        ]
-      ]
+      "cost_usd": 0.00219,
+      "label": "sample run 2: Hartwell -> Prairie Packaging (narrow deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "15/15",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 250.0,
+      "floor": 248.0,
+      "ceiling": 262.0,
+      "cost_usd": 0.001959,
+      "label": "sample run 2: Redwood -> Coastal Electronics (narrow deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "11/11",
+      "type": "walk_away",
+      "status": "round_cap",
+      "rounds": 7,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "cost_usd": 0.002733,
+      "label": "sample run 2: Cascade -> Northwoods (walk-away)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "1/1",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1400.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "cost_usd": 0.000662,
+      "label": "sample run 3: Hartwell -> Riverbend (clear deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "12/12",
+      "type": "deal_likely",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "cost_usd": 0.001974,
+      "label": "sample run 3: Summit -> Ironclad (clear deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "13/13",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 125.0,
+      "floor": 122.0,
+      "ceiling": 131.0,
+      "cost_usd": 0.001848,
+      "label": "sample run 3: Hartwell -> Prairie Packaging (narrow deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "15/15",
+      "type": "barely_overlapping",
+      "status": "agreed",
+      "rounds": 5,
+      "price": 252.0,
+      "floor": 248.0,
+      "ceiling": 262.0,
+      "cost_usd": 0.001855,
+      "label": "sample run 3: Redwood -> Coastal Electronics (narrow deal)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "11/11",
+      "type": "walk_away",
+      "status": "round_cap",
+      "rounds": 7,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "cost_usd": 0.002832,
+      "label": "sample run 3: Cascade -> Northwoods (walk-away)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "28/20",
+      "type": "new post",
+      "status": "agreed",
+      "rounds": 2,
+      "price": 330.0,
+      "floor": 230.0,
+      "ceiling": 415.0,
+      "cost_usd": 0.000794,
+      "label": "e2e Prairie -> Tidewater (auto)"
+    },
+    {
+      "source": "phase6 suite",
+      "pair": "13/22",
+      "type": "new post",
+      "status": "agreed",
+      "rounds": 6,
+      "price": 180.0,
+      "floor": 122.0,
+      "ceiling": 238.0,
+      "cost_usd": 0.002394,
+      "label": "buyer-side auto Riverbend <- Hartwell"
     }
   ],
-  "spend": {
-    "cost_usd": 0.037613,
-    "tokens": 311626
-  },
-  "leak_scans": [
-    {
-      "section": 1,
-      "responses": 20,
-      "messages": 2,
-      "negotiations": 1,
-      "leaks": [],
-      "third_party": []
-    },
-    {
-      "section": 3,
-      "responses": 35,
-      "messages": 8,
-      "negotiations": 2,
-      "leaks": [],
-      "third_party": []
-    },
-    {
-      "section": 4,
-      "responses": 465,
-      "messages": 14,
-      "negotiations": 5,
-      "leaks": [],
-      "third_party": []
-    },
-    {
-      "section": 5,
-      "responses": 449,
-      "messages": 24,
-      "negotiations": 5,
-      "leaks": [],
-      "third_party": []
-    }
-  ],
-  "seconds": 348,
-  "concurrency": {
-    "started": 5,
-    "waited_for_slot": 2,
-    "max_overlapping_model_activity": 2,
-    "saw_queued_in_ui": true,
-    "max_running_by_polling": 3
-  },
-  "consistency": [
-    {
-      "sample": "Hartwell -> Riverbend (clear deal)",
-      "expected": "deal",
-      "outcomes": [
-        "deal",
-        "deal",
-        "deal"
-      ],
-      "prices": [
-        1425.0,
-        1390.0,
-        1390.0
-      ],
-      "rounds": [
-        2,
-        2,
-        2
-      ],
-      "as_expected": "3/3"
-    },
-    {
-      "sample": "Summit -> Ironclad (clear deal)",
-      "expected": "deal",
-      "outcomes": [
-        "deal",
-        "deal",
-        "deal"
-      ],
-      "prices": [
-        985.0,
-        975.0,
-        985.0
-      ],
-      "rounds": [
-        5,
-        5,
-        5
-      ],
-      "as_expected": "3/3"
-    },
-    {
-      "sample": "Hartwell -> Prairie Packaging (narrow deal)",
-      "expected": "deal",
-      "outcomes": [
-        "deal",
-        "deal",
-        "deal"
-      ],
-      "prices": [
-        122.0,
-        125.0,
-        123.0
-      ],
-      "rounds": [
-        6,
-        5,
-        5
-      ],
-      "as_expected": "3/3"
-    },
-    {
-      "sample": "Redwood -> Coastal Electronics (narrow deal)",
-      "expected": "deal",
-      "outcomes": [
-        "deal",
-        "deal",
-        "deal"
-      ],
-      "prices": [
-        252.0,
-        255.0,
-        250.0
-      ],
-      "rounds": [
-        5,
-        5,
-        5
-      ],
-      "as_expected": "3/3"
-    },
-    {
-      "sample": "Cascade -> Northwoods (walk-away)",
-      "expected": "no deal",
-      "outcomes": [
-        "no deal",
-        "no deal",
-        "no deal"
-      ],
-      "prices": [],
-      "rounds": [
-        7,
-        7,
-        7
-      ],
-      "as_expected": "3/3"
-    }
-  ],
-  "cost_cap": {
-    "status": "stopped",
-    "explanation": "Spare Change stopped this negotiation (cost cap reached ($0.0007, 8,752 tokens)). Nothing was sold.",
-    "cost": {
-      "cost_usd": 0.00069,
-      "tokens": 5906,
-      "requests": 6
-    }
-  }
+  "sources": [
+    "phase3_stress.json",
+    "negotiation_suite.json",
+    "eval_negotiation_autoflow.json",
+    "eval_demo_pair.json"
+  ]
 }

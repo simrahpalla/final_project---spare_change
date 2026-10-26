@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T06:36:39+00:00",
+  "generated_at": "2026-10-26T07:44:13+00:00",
   "before": [
     {
       "setup": "process-per-run, 5 s startup timeout",
@@ -24,12 +24,12 @@
       "ok": 27,
       "crashes": 0,
       "friendly_errors": 0,
-      "wall_seconds": 98.4,
-      "median_job_seconds": 11.4,
-      "cost_usd": 0.024,
+      "wall_seconds": 47.8,
+      "median_job_seconds": 5.0,
+      "cost_usd": 0.0248,
       "crash_details": [],
-      "startup_seconds": 16.5,
-      "mcp_startup_seconds": 6.2,
+      "startup_seconds": 8.3,
+      "mcp_startup_seconds": 2.6,
       "reconnects": 0,
       "unavailable": 0,
       "refused_table": true,
@@ -38,120 +38,120 @@
           "job": "listing 2",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 6.4,
-          "cost_usd": 0.00149
+          "seconds": 5.1,
+          "cost_usd": 0.001551
         },
         {
           "job": "listing 4",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 6.1,
-          "cost_usd": 0.0008
+          "seconds": 4.9,
+          "cost_usd": 0.000834
         },
         {
           "job": "listing 6",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 15.3,
-          "cost_usd": 0.001319
+          "seconds": 7.4,
+          "cost_usd": 0.001375
         },
         {
           "job": "listing 7",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 6.3,
-          "cost_usd": 0.000741
+          "seconds": 4.7,
+          "cost_usd": 0.000772
         },
         {
           "job": "listing 8",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 19.6,
-          "cost_usd": 0.001175
+          "seconds": 9.8,
+          "cost_usd": 0.001262
         },
         {
           "job": "listing 9",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 19.8,
-          "cost_usd": 0.001415
+          "seconds": 9.2,
+          "cost_usd": 0.00151
         },
         {
           "job": "listing 10",
           "result": "ok",
           "outcome": "listed and matched",
           "seconds": 1.7,
-          "cost_usd": 0.000871
+          "cost_usd": 0.000914
         },
         {
           "job": "listing 12",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 1.9,
-          "cost_usd": 0.001012
+          "seconds": 1.7,
+          "cost_usd": 0.001061
         },
         {
           "job": "listing 13",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 13.1,
-          "cost_usd": 0.000878
+          "seconds": 6.3,
+          "cost_usd": 0.000922
         },
         {
           "job": "listing 14",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 11.4,
-          "cost_usd": 0.000785
+          "seconds": 8.7,
+          "cost_usd": 0.00089
         },
         {
           "job": "listing 15",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 26.0,
-          "cost_usd": 0.000807
+          "seconds": 6.7,
+          "cost_usd": 0.000817
         },
         {
           "job": "listing 16",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 12.0,
-          "cost_usd": 0.000832
+          "seconds": 4.8,
+          "cost_usd": 0.000861
         },
         {
           "job": "listing 17",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 20.9,
-          "cost_usd": 0.001239
+          "seconds": 6.2,
+          "cost_usd": 0.00129
         },
         {
           "job": "listing 18",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 19.0,
-          "cost_usd": 0.000862
+          "seconds": 6.3,
+          "cost_usd": 0.000909
         },
         {
           "job": "listing 19",
           "result": "ok",
           "outcome": "listed (no matching buyers yet)",
-          "seconds": 9.8,
-          "cost_usd": 0.000355
+          "seconds": 5.0,
+          "cost_usd": 0.000408
         },
         {
           "job": "listing 20",
           "result": "ok",
           "outcome": "listed and matched",
-          "seconds": 15.7,
-          "cost_usd": 0.000728
+          "seconds": 5.0,
+          "cost_usd": 0.000769
         },
         {
           "job": "listing 21",
           "result": "ok",
           "outcome": "listed (no matching buyers yet)",
-          "seconds": 8.7,
-          "cost_usd": 0.000394
+          "seconds": 4.9,
+          "cost_usd": 0.000421
         },
         {
           "job": "listing 22",
@@ -164,63 +164,63 @@
           "job": "listing 23",
           "result": "ok",
           "outcome": "blocked: Chemical is past its expiry date.",
-          "seconds": 0.1,
+          "seconds": 0.2,
           "cost_usd": 0.0
         },
         {
           "job": "listing 24",
           "result": "ok",
           "outcome": "blocked: Hazardous material listed without a safety data sheet (SDS).",
-          "seconds": 0.1,
+          "seconds": 0.2,
           "cost_usd": 0.0
         },
         {
           "job": "listing 25",
           "result": "ok",
           "outcome": "blocked: Asking price is more than 3x the new price.",
-          "seconds": 0.1,
+          "seconds": 0.2,
           "cost_usd": 0.0
         },
         {
           "job": "listing 26",
           "result": "ok",
           "outcome": "blocked: Chemical is past its expiry date.",
-          "seconds": 0.1,
+          "seconds": 0.2,
           "cost_usd": 0.0
         },
         {
           "job": "listing 27",
           "result": "ok",
           "outcome": "needs_review: Discontinued part offered new-sealed far below list: counterfeit / grey-market risk.",
-          "seconds": 0.1,
+          "seconds": 0.2,
           "cost_usd": 0.0
         },
         {
           "job": "negotiate 1/1",
           "result": "ok",
           "outcome": "agreed",
-          "seconds": 11.9,
+          "seconds": 12.8,
           "cost_usd": 0.000662
         },
         {
           "job": "negotiate 3/3",
           "result": "ok",
           "outcome": "round_cap",
-          "seconds": 57.5,
+          "seconds": 18.6,
           "cost_usd": 0.002661
         },
         {
           "job": "negotiate 5/5",
           "result": "ok",
           "outcome": "agreed",
-          "seconds": 56.8,
+          "seconds": 18.4,
           "cost_usd": 0.002223
         },
         {
           "job": "negotiate 11/11",
           "result": "ok",
           "outcome": "round_cap",
-          "seconds": 62.3,
+          "seconds": 31.5,
           "cost_usd": 0.002733
         }
       ]
