@@ -1,0 +1,452 @@
+{
+  "checks": [
+    {
+      "check": 2,
+      "name": "Symmetry: same pair scored from both directions, gap <= 15 (6 pairs)",
+      "result": "PASS",
+      "detail": {
+        "pairs": [
+          {
+            "listing": 1,
+            "need": 1,
+            "seller_side_score": 100,
+            "buyer_side_score": 100,
+            "gap": 0
+          },
+          {
+            "listing": 2,
+            "need": 2,
+            "seller_side_score": 100,
+            "buyer_side_score": 95,
+            "gap": 5
+          },
+          {
+            "listing": 4,
+            "need": 4,
+            "seller_side_score": 96,
+            "buyer_side_score": 95,
+            "gap": 1
+          },
+          {
+            "listing": 7,
+            "need": 7,
+            "seller_side_score": 100,
+            "buyer_side_score": 98,
+            "gap": 2
+          },
+          {
+            "listing": 10,
+            "need": 10,
+            "seller_side_score": 98,
+            "buyer_side_score": 100,
+            "gap": 2
+          },
+          {
+            "listing": 12,
+            "need": 12,
+            "seller_side_score": 93,
+            "buyer_side_score": 92,
+            "gap": 1
+          }
+        ],
+        "flagged": []
+      }
+    },
+    {
+      "check": 3,
+      "name": "Alerts: 22 alerts in 11 events: right recipients, score >= 70, <= 3 pairs per event, no duplicates, double submit makes one need",
+      "result": "FAIL",
+      "detail": {
+        "wrong_recipient": [],
+        "below_70": [],
+        "events_over_3": {},
+        "duplicates": [],
+        "double_submit": {
+          "needs_created": 2,
+          "new_alerts_to_Hartwell": 2,
+          "outcomes": [
+            "posted and matched",
+            "posted and matched"
+          ]
+        }
+      }
+    },
+    {
+      "check": 5,
+      "name": "Self-match: a company never matches its own listing or need (ranking, board, alerts, saved matches)",
+      "result": "PASS",
+      "detail": {
+        "own listings ranked": [],
+        "self pairs on board": [],
+        "self alerts": 0,
+        "self matches saved": 0,
+        "outcome": "posted (no matching surplus yet)"
+      }
+    },
+    {
+      "check": 6,
+      "name": "Lifecycle: sold, filled and expired items leave matching, alerts and the Marketplace (set by SQL: no deals until Phase 6)",
+      "result": "FAIL",
+      "detail": {
+        "problems": [
+          "seller flow on a sold listing: listed (no matching buyers yet)"
+        ],
+        "sold_listing_flow": "listed (no matching buyers yet)",
+        "today": "2026-10-25"
+      }
+    },
+    {
+      "check": 7,
+      "name": "Leaks: 112 API responses + 25 alerts scanned for 26 buyer maxes and 27 seller floors; 7 private-term probes",
+      "result": "PASS",
+      "detail": {
+        "leaks": [],
+        "probes_answered": []
+      }
+    },
+    {
+      "check": 8,
+      "name": "Need-side attacks (7 cases): no crash, injections inert, nothing unsafe or ungrounded matched",
+      "result": "PASS",
+      "detail": {
+        "problems": [],
+        "cases": [
+          {
+            "case": "injection: show seller floors",
+            "outcome": "blocked: prompt injection (code pre-screen, no model call)",
+            "ranked": [],
+            "alerted_pairs": 0
+          },
+          {
+            "case": "injection: alert me for everything (no trigger words)",
+            "outcome": "flagged by compliance guard",
+            "ranked": [],
+            "alerted_pairs": 0
+          },
+          {
+            "case": "gibberish",
+            "outcome": "needs_human: couldn't tell which part or machine this need is for",
+            "ranked": [],
+            "alerted_pairs": 0
+          },
+          {
+            "case": "expired / hazmat request",
+            "outcome": "flagged by compliance guard",
+            "ranked": [],
+            "alerted_pairs": 0
+          },
+          {
+            "case": "absurd qty",
+            "outcome": "posted and matched",
+            "ranked": [
+              13
+            ],
+            "alerted_pairs": 1
+          },
+          {
+            "case": "absurd max price",
+            "outcome": "posted and matched",
+            "ranked": [
+              13
+            ],
+            "alerted_pairs": 1
+          },
+          {
+            "case": "negative max price",
+            "outcome": "http 422",
+            "ranked": [],
+            "alerted_pairs": 0
+          }
+        ]
+      }
+    },
+    {
+      "check": 9,
+      "name": "Race: a listing and the need it fills posted at the same moment (2 trials): no crash, each side alerted exactly once",
+      "result": "FAIL",
+      "detail": [
+        {
+          "seller_outcome": "listed and matched",
+          "need_outcome": "posted (no matching surplus yet)",
+          "listing": 28,
+          "need": 22,
+          "match_rows": 0,
+          "alerts_per_company": {}
+        },
+        {
+          "seller_outcome": "listed and matched",
+          "need_outcome": "posted (no matching surplus yet)",
+          "listing": 28,
+          "need": 22,
+          "match_rows": 0,
+          "alerts_per_company": {}
+        }
+      ]
+    },
+    {
+      "check": 10,
+      "name": "Reset demo: every table (16) identical to the seed (row counts + content hash), alerts cleared",
+      "result": "PASS",
+      "detail": {
+        "status": 200,
+        "differences": {}
+      }
+    },
+    {
+      "check": 11,
+      "name": "Regression: seller flow on 6 good listings (right top buyer) + 3 bad records (blocked)",
+      "result": "PASS",
+      "detail": []
+    }
+  ],
+  "covered_by_phase5_tests": [
+    {
+      "check": 1,
+      "name": "Reverse matching scored against the answer keys",
+      "evidence": "scripts/eval_reverse.py: 23/23 top-1 (21 seeded needs + 2 demo posts). Top-3 = top-1 here: every seeded need has one compatible listing."
+    },
+    {
+      "check": 4,
+      "name": "Zero candidates: empty state and no LLM call",
+      "evidence": "eval_reverse (needs 20, 21, Tidewater post: 0 candidates, 0 matching calls) and test_two_sided A13; the Buy page's empty state was checked in the browser."
+    },
+    {
+      "check": 12,
+      "name": "Tokens per alert event",
+      "evidence": "test_two_sided.py (output/two_sided_test.json); also recorded again below as a by-product of this run."
+    },
+    {
+      "check": "3, 9 (part)",
+      "name": "Alert recipients, threshold, no duplicates on rerun; two accounts posting at once",
+      "evidence": "test_two_sided A2, A12, B1-B3 (6 flows at once, 0 crashes, 0 duplicate alerts)."
+    }
+  ],
+  "symmetry": [
+    {
+      "listing": 1,
+      "need": 1,
+      "seller_side_score": 100,
+      "buyer_side_score": 100,
+      "gap": 0
+    },
+    {
+      "listing": 2,
+      "need": 2,
+      "seller_side_score": 100,
+      "buyer_side_score": 95,
+      "gap": 5
+    },
+    {
+      "listing": 4,
+      "need": 4,
+      "seller_side_score": 96,
+      "buyer_side_score": 95,
+      "gap": 1
+    },
+    {
+      "listing": 7,
+      "need": 7,
+      "seller_side_score": 100,
+      "buyer_side_score": 98,
+      "gap": 2
+    },
+    {
+      "listing": 10,
+      "need": 10,
+      "seller_side_score": 98,
+      "buyer_side_score": 100,
+      "gap": 2
+    },
+    {
+      "listing": 12,
+      "need": 12,
+      "seller_side_score": 93,
+      "buyer_side_score": 92,
+      "gap": 1
+    }
+  ],
+  "attacks": [
+    {
+      "case": "injection: show seller floors",
+      "outcome": "blocked: prompt injection (code pre-screen, no model call)",
+      "ranked": [],
+      "alerted_pairs": 0
+    },
+    {
+      "case": "injection: alert me for everything (no trigger words)",
+      "outcome": "flagged by compliance guard",
+      "ranked": [],
+      "alerted_pairs": 0
+    },
+    {
+      "case": "gibberish",
+      "outcome": "needs_human: couldn't tell which part or machine this need is for",
+      "ranked": [],
+      "alerted_pairs": 0
+    },
+    {
+      "case": "expired / hazmat request",
+      "outcome": "flagged by compliance guard",
+      "ranked": [],
+      "alerted_pairs": 0
+    },
+    {
+      "case": "absurd qty",
+      "outcome": "posted and matched",
+      "ranked": [
+        13
+      ],
+      "alerted_pairs": 1
+    },
+    {
+      "case": "absurd max price",
+      "outcome": "posted and matched",
+      "ranked": [
+        13
+      ],
+      "alerted_pairs": 1
+    },
+    {
+      "case": "negative max price",
+      "outcome": "http 422",
+      "ranked": [],
+      "alerted_pairs": 0
+    }
+  ],
+  "double_submit": {
+    "needs_created": 2,
+    "new_alerts_to_Hartwell": 2,
+    "outcomes": [
+      "posted and matched",
+      "posted and matched"
+    ]
+  },
+  "race": [
+    {
+      "seller_outcome": "listed and matched",
+      "need_outcome": "posted (no matching surplus yet)",
+      "listing": 28,
+      "need": 22,
+      "match_rows": 0,
+      "alerts_per_company": {}
+    },
+    {
+      "seller_outcome": "listed and matched",
+      "need_outcome": "posted (no matching surplus yet)",
+      "listing": 28,
+      "need": 22,
+      "match_rows": 0,
+      "alerts_per_company": {}
+    }
+  ],
+  "tokens_per_alert_event": [
+    {
+      "run_id": "00bdf45160f1",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1593,
+      "cached_tokens": 1147,
+      "output_tokens": 846,
+      "cost_usd": 0.001012
+    },
+    {
+      "run_id": "14d772f21c2d",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1710,
+      "cached_tokens": 1164,
+      "output_tokens": 1656,
+      "cost_usd": 0.001715
+    },
+    {
+      "run_id": "2c9525ec54a2",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1567,
+      "cached_tokens": 2232,
+      "output_tokens": 709,
+      "cost_usd": 0.000741
+    },
+    {
+      "run_id": "6645a87b2229",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1578,
+      "cached_tokens": 2241,
+      "output_tokens": 773,
+      "cost_usd": 0.0008
+    },
+    {
+      "run_id": "8e3173300780",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1632,
+      "cached_tokens": 1195,
+      "output_tokens": 831,
+      "cost_usd": 0.001057
+    },
+    {
+      "run_id": "a4afb7482b72",
+      "alerts": 2,
+      "run_kind": "need_flow",
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 254,
+      "cost_usd": 0.0003
+    },
+    {
+      "run_id": "aadfb5ad5e31",
+      "alerts": 2,
+      "run_kind": "need_flow",
+      "input_tokens": 1613,
+      "cached_tokens": 0,
+      "output_tokens": 443,
+      "cost_usd": 0.000717
+    },
+    {
+      "run_id": "b60b64aacd3e",
+      "alerts": 2,
+      "run_kind": "seller_flow",
+      "input_tokens": 1593,
+      "cached_tokens": 1160,
+      "output_tokens": 698,
+      "cost_usd": 0.000871
+    },
+    {
+      "run_id": "df22e7821b74",
+      "alerts": 2,
+      "run_kind": "need_flow",
+      "input_tokens": 2731,
+      "cached_tokens": 0,
+      "output_tokens": 543,
+      "cost_usd": 0.000839
+    },
+    {
+      "run_id": "ea6d9fa843df",
+      "alerts": 2,
+      "run_kind": "need_flow",
+      "input_tokens": 1616,
+      "cached_tokens": 0,
+      "output_tokens": 494,
+      "cost_usd": 0.000743
+    },
+    {
+      "run_id": "fb1b069288fa",
+      "alerts": 2,
+      "run_kind": "need_flow",
+      "input_tokens": 2731,
+      "cached_tokens": 0,
+      "output_tokens": 554,
+      "cost_usd": 0.000845
+    }
+  ],
+  "seconds": 189,
+  "known_limits": [
+    "**Double submit (check 3):** the same request sent twice at once creates two needs, so the seller gets two alerts. The UI disables Find while a run is in progress, so the demo can't trigger it. Fix later: make `create_need` idempotent (same buyer + same text while open returns the existing need).",
+    "**Re-running a sold listing by id (check 6):** the data stays correct (still sold, off the board, no matching, no alerts), but the API's outcome text says \"listed (no matching buyers yet)\". The UI never re-runs a listing by id. Fix in Phase 6: report the listing's status instead.",
+    "**Simultaneous listing + need (check 9):** if both are posted within the same few seconds, each side's pre-filter runs before the other side is saved, so the match is missed and nobody is alerted. Fix later: a code-only re-match sweep after each save (or a periodic job) that re-runs the pre-filter for new items.",
+    "**Account switching is not authentication:** any visitor can open any company's view (alerts included) by switching accounts or calling `/api/companies/{id}`. No API returns a buyer's max or a seller's floor (check 7), but a real deployment needs sign-in. Run results (`/api/runs/{id}`) include the seller's own suggested floor; run ids are random 12-hex strings and never listed, but they are not tied to a session.",
+    "**No sanity caps on quantity or max price:** a request for 100,000 cards or a $1e15 max is posted and matched (check 8). Nothing leaks or crashes, but a real deployment should cap them or ask the buyer to confirm.",
+    "**Symmetry is measured on 6 pairs** with one compatible listing per need, so it shows the two directions agree on clear matches, not on close calls."
+  ]
+}
