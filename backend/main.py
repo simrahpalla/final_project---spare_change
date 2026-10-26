@@ -1,4 +1,4 @@
-"""FastAPI backend for Surplus Exchange. It also serves the built React dashboard.
+"""FastAPI backend for Spare Change. It also serves the built React dashboard.
 
 Start from the repo folder (with the venv active):
     uvicorn main:app --app-dir backend --port 8000
@@ -31,7 +31,7 @@ from pydantic_ai import Agent
 
 import audit
 import config
-from agents import Exchange
+from agents import Exchange, RunState
 from llm import make_model, usage_breakdown
 from mcp_pool import McpPool
 
@@ -110,7 +110,7 @@ async def lifespan(_: FastAPI):
     agent_loop.stop()
 
 
-app = FastAPI(title="Surplus Exchange", lifespan=lifespan)
+app = FastAPI(title="Spare Change", lifespan=lifespan)
 app.add_middleware(  # only needed for the Vite dev server; the built app is same-origin
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -135,7 +135,7 @@ def health() -> dict:
 
 async def _ping_model() -> dict:
     agent = Agent(make_model(), instructions="You are a connectivity check. Reply in five words or fewer.")
-    result = await agent.run("Say hello to Surplus Exchange.")
+    result = await agent.run("Say hello to Spare Change.")
     return {"reply": result.output, **usage_breakdown(result.usage)}
 
 
@@ -192,8 +192,106 @@ async def reset() -> dict:
     if runtime.active_runs:
         raise HTTPException(409, f"{runtime.active_runs} run(s) in progress. Try again when they finish.")
     reset_working_db(config.ORIGINAL_DB, config.WORKING_DB)
+    runs.clear()
+    session_impact.clear()
     audit.log("reset-" + uuid.uuid4().hex[:8], "system", "reset", result="working copy restored from the original")
-    return {"ok": True, "message": "Working database restored from data/exchange.db."}
+    return {"ok": True, "message": "Demo data restored."}
+
+
+# --------------------------------------------------------------------------- live runs (the UI polls these)
+
+runs: dict[str, RunState] = {}          # run_id -> live state, newest last (kept small)
+session_impact: dict[int, dict] = {}    # listing_id -> latest impact estimate this session
+RUNS_KEPT = 50
+
+
+def _register(state: RunState, coro) -> dict:
+    """Start a run on the agent loop without waiting; the UI polls GET /api/runs/{run_id}."""
+    runtime.require_ready()
+    runs[state.run_id] = state
+    while len(runs) > RUNS_KEPT:
+        runs.pop(next(iter(runs)))
+    runtime.active_runs += 1
+
+    def done(fut) -> None:
+        runtime.active_runs -= 1
+        result = state.result or {}
+        impact = next((s for s in result.get("steps", []) if s["step"] == "impact"), None)
+        if impact and str(result.get("outcome", "")).startswith("listed"):
+            session_impact[impact["listing_id"]] = impact
+        if fut.exception() and state.status != "done":  # never leave the UI spinning
+            state.status, state.result = "done", {"run_id": state.run_id, "outcome": "error: something went wrong on our "
+                                                  "side. Nothing was published. Please try again.", "steps": state.steps,
+                                                  "totals": state.totals(), "agent_calls": state.agent_calls}
+
+    agent_loop.submit(coro).add_done_callback(done)
+    return {"run_id": state.run_id, "status": "running"}
+
+
+@app.post("/api/seller-flow/start")
+async def seller_flow_start(body: SellerFlowIn) -> dict:
+    """Start the seller flow and return at once with a run_id to poll."""
+    if not body.listing_id and not ((body.text or "").strip() and body.seller_id):
+        raise HTTPException(422, "Paste a description of the part first.")
+    ex = runtime.require_ready()
+    state = RunState(kind="seller_flow", subject=f"listing:{body.listing_id}" if body.listing_id else f"seller:{body.seller_id}")
+    return _register(state, ex.run_seller_flow(listing_id=body.listing_id, text=body.text, seller_id=body.seller_id, state=state))
+
+
+@app.get("/api/runs/{run_id}")
+def run_status(run_id: str) -> dict:
+    """Live progress: steps so far, the agent working now, token totals, and the result when done."""
+    state = runs.get(run_id)
+    if not state:
+        raise HTTPException(404, "That run isn't available any more. Start a new one.")
+    return {"run_id": run_id, "kind": state.kind, "status": state.status, "current": state.current,
+            "steps": list(state.steps), "totals": state.totals(), "agent_calls": list(state.agent_calls),
+            "result": state.result}
+
+
+async def _system(tool: str, **args) -> dict:
+    runtime.require_ready()
+    return await agent_loop.run(runtime.pool["system"].call(tool, args))
+
+
+@app.get("/api/companies")
+async def companies() -> dict:
+    """Every company, for the demo account switcher."""
+    return await _system("list_companies")
+
+
+@app.get("/api/companies/{company_id}")
+async def company(company_id: int) -> dict:
+    """What a signed-in company sees: its profile, machines, open needs, active listings and alerts."""
+    profile = await _system("get_company_profile", company_id=company_id)
+    if not profile.get("ok"):
+        raise HTTPException(404, "No such company.")
+    alerts = await _system("list_notifications", company_id=company_id)
+    return {**profile, "alerts": alerts["notifications"][:10],
+            "unread_alerts": sum(1 for a in alerts["notifications"] if not a["read"])}
+
+
+@app.post("/api/companies/{company_id}/alerts/read")
+async def alerts_read(company_id: int) -> dict:
+    return await _system("mark_notifications_read", company_id=company_id)
+
+
+@app.get("/api/session")
+async def session() -> dict:
+    """Session cost (from token_usage) and impact (from this session's listed items)."""
+    tokens = await _system("get_token_summary")
+    total = tokens["total"]
+    impacts = list(session_impact.values())
+    s = lambda k: round(sum(i.get(k) or 0 for i in impacts), 2)  # noqa: E731
+    return {
+        "cost_usd": total.get("cost_usd") or 0, "budget_usd": config.SESSION_BUDGET_USD,
+        "requests": total.get("requests") or 0, "runs": total.get("runs") or 0,
+        "impact": {"listings": len(impacts), "value_recovered": s("value_recovered"), "scrap_value": s("scrap_value_total"),
+                   "kg_kept_out_of_scrap": s("kg_kept_out_of_scrap"), "est_kg_co2e_avoided": s("est_kg_co2e_avoided"),
+                   "est_hazardous_disposal_avoided": s("est_hazardous_disposal_avoided"),
+                   "placeholder_factors": any(i.get("placeholder_factors") for i in impacts),
+                   "method": impacts[0]["method"] if impacts else None},
+    }
 
 
 # Serve the built dashboard last, so /api routes take priority.

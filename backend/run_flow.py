@@ -90,6 +90,15 @@ def print_result(r: dict) -> None:
             print(f"  PRICE       ask {money(s['ask'])} · floor suggestion {money(s['floor_suggestion'])} (seller only)"
                   f" · new {money(s['new_price'])} · scrap {money(s['scrap_value'])}" + (" · clamped" if s["clamped"] else ""))
             print(f"              {s['rationale']}")
+        elif name in ("rules", "guard", "prefilter", "listing"):
+            continue  # detail for the UI's activity rail; the CLI shows them via COMPLIANCE / MATCHES
+        elif name == "impact":
+            co2 = s.get("est_kg_co2e_avoided")
+            haz = s.get("est_hazardous_disposal_avoided")
+            print(f"  IMPACT      recovers {money(s.get('value_recovered'))} vs {money(s.get('scrap_value_total'))} scrap · "
+                  f"{s.get('kg_kept_out_of_scrap')} kg kept out of scrap · est. {co2} kg CO2e"
+                  + (f" · est. {money(haz)} hazardous disposal avoided" if haz else "")
+                  + (" (placeholder factors)" if s.get("placeholder_factors") else ""))
         elif name == "outreach":
             print(f"  OUTREACH    to {s['to']}: \"{s['subject']}\"")
             for line in s["body"].splitlines():

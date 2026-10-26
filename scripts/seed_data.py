@@ -1,4 +1,4 @@
-"""Build the Surplus Exchange database from scratch: synthetic, but realistic and reproducible.
+"""Build the Spare Change database from scratch: synthetic, but realistic and reproducible.
 
     .venv\\Scripts\\python.exe scripts\\seed_data.py           # rebuild everything below
     .venv\\Scripts\\python.exe scripts\\seed_data.py --check   # row counts + basic sanity checks only
@@ -80,7 +80,19 @@ CREATE TABLE part_catalog (
     hazmat INTEGER NOT NULL DEFAULT 0 CHECK (hazmat IN (0, 1)),
     hazmat_class TEXT,                -- e.g. 'UN1219 Class 3 flammable liquid'
     shelf_life_months INTEGER,        -- chemicals only
-    obsolete INTEGER NOT NULL DEFAULT 0 CHECK (obsolete IN (0, 1))  -- discontinued by the OEM
+    obsolete INTEGER NOT NULL DEFAULT 0 CHECK (obsolete IN (0, 1)),  -- discontinued by the OEM
+    weight_kg REAL NOT NULL CHECK (weight_kg > 0)  -- shipping weight per unit (PLACEHOLDER until Phase 10)
+);
+
+-- Impact factors by part family, for the sustainability numbers (computed in code, never by the model).
+-- Every row is a PLACEHOLDER until it is replaced with a sourced value in Phase 10.
+CREATE TABLE carbon_factors (
+    family TEXT PRIMARY KEY,
+    kg_co2e_per_kg REAL,              -- avoided manufacturing emissions per kg of new product
+    kg_co2e_per_unit REAL,            -- alternative: per unit (used instead of per kg when set)
+    disposal_cost_per_kg REAL,        -- hazardous-waste disposal cost avoided (chemicals only), USD per kg
+    source TEXT NOT NULL,
+    notes TEXT
 );
 
 -- Which platforms a part fits ('fits'), and which part numbers it can stand in for ('substitute').
@@ -447,6 +459,48 @@ CATALOG = [
     ("HYPO-125-55G", "Generic", "Chemical", "Sodium hypochlorite 12.5% solution, 55-gallon drum", C, 240, 0, 1, "UN1791 Class 8 corrosive", 6, 0, []),
 ]
 
+# Shipping weight per unit, kg. PLACEHOLDER estimates until sourced in Phase 10.
+WEIGHT_KG = {
+    "6ES7315-2AG10-0AB0": 0.3, "6ES7315-2EH14-0AB0": 0.3, "6ES7321-1BL00-0AA0": 0.3, "6ES7322-1BL00-0AA0": 0.3,
+    "6ES7331-7KF02-0AB0": 0.3, "6ES7307-1EA01-0AA0": 0.6, "6ES7392-1AM00-0AA0": 0.05, "6ES7972-0BA12-0XA0": 0.03,
+    "6ES7515-2AM02-0AB0": 0.4, "6ES7521-1BL00-0AB0": 0.3, "6ES7531-7KF00-0AB0": 0.3,
+    "1756-L61": 0.3, "1756-L71": 0.3, "1756-IB16": 0.3, "1756-OB16E": 0.3, "1756-IF8": 0.3, "1756-OF8": 0.3,
+    "1756-PA72": 1.0, "1756-A10": 1.6, "1756-ENBT": 0.3, "1756-EN2T": 0.3, "5069-L320ER": 0.4,
+    "1747-L542": 0.25, "1746-IB16": 0.25, "1746-OW16": 0.25,
+    "25B-D010N104": 2.0, "25B-D017N104": 2.6, "25B-B011N104": 1.9, "25-COMM-E2P": 0.1,
+    "20F11ND022AA0NNNNN": 15.0, "20-750-ENETR": 0.1,
+    "ACS580-01-039A-4": 13.0, "ACS580-01-012A-4": 4.5, "ACS-AP-I": 0.2, "ACS880-01-045A-3": 22.0, "ZCU-14": 0.5,
+    "96416889": 1.2, "96455086": 6.0, "98374681": 110.0, "96525458": 0.9, "96455084": 4.0,
+    "3196-STX-PE": 60.0, "JC-T21-1375": 0.8,
+    "6207-2Z/C3": 0.29, "5306 A/C3": 0.6, "6312-2Z/C3": 1.7, "6210-2Z/C3": 0.45,
+    "A06B-6117-H209": 3.5, "A05B-2518-C202": 2.2, "A06B-6164-H333": 5.0, "A06B-0235-B605": 18.0,
+    "BMXP342020": 0.3, "BMXDDI1602": 0.12, "BMXCPS2000": 0.4, "Q06UDEHCPU": 0.15,
+    "LOC-243-250": 0.3, "LOC-E120HP-50": 0.1, "IPA-99-55G": 175.0, "ACE-TECH-55G": 160.0,
+    "MOB-DTE25-55G": 190.0, "MOB-SHC630-5G": 18.0, "HYPO-125-55G": 260.0,
+}
+
+# (family, kg CO2e per kg, kg CO2e per unit, hazardous disposal $ per kg, notes). All PLACEHOLDERS.
+PLACEHOLDER_SOURCE = "PLACEHOLDER: replace with sourced value in Phase 10"
+CARBON_FACTORS = [
+    ("PLC CPU", 60, None, None, "electronics-heavy (PCBs, ICs)"),
+    ("PLC I/O", 60, None, None, "electronics-heavy"),
+    ("PLC power supply", 40, None, None, "electronics + transformer"),
+    ("PLC accessory", 10, None, None, "plastic + copper terminals"),
+    ("PLC chassis", 8, None, None, "mostly sheet metal backplane"),
+    ("Network", 60, None, None, "electronics-heavy"),
+    ("VFD drive", 25, None, None, "power electronics + aluminium heatsink"),
+    ("VFD option", 60, None, None, "electronics-heavy"),
+    ("VFD control unit", 60, None, None, "electronics-heavy"),
+    ("Servo amplifier", 30, None, None, "power electronics"),
+    ("Robot accessory", 40, None, None, "electronics + display"),
+    ("Servo motor", 9, None, None, "copper windings + steel + magnets"),
+    ("Pump", 6, None, None, "stainless steel"),
+    ("Pump spare", 6, None, None, "stainless steel + SiC faces"),
+    ("Bearing", 3, None, None, "bearing steel"),
+    ("Chemical", 2.5, None, 2.5, "solvent / adhesive production; hazardous disposal ~$2.50/kg"),
+    ("Lubricant", 1.5, None, 1.0, "base oil refining; used-oil disposal ~$1/kg"),
+]
+
 # (part_number, substitutes_for, platform, note): a valid stand-in part on the buyer's platform.
 SUBSTITUTES = [
     ("6ES7315-2EH14-0AB0", "6ES7315-2AG10-0AB0", S7_300, "Newer PN/DP CPU is a drop-in replacement; same rack, re-download program."),
@@ -648,17 +702,19 @@ def build(db_path: Path) -> None:
     con = sqlite3.connect(db_path)
     con.executescript(SCHEMA)
     con.execute("INSERT INTO exchange_meta VALUES ('today', ?)", (EXCHANGE_TODAY,))
-    con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v2 (small test dataset)')")
+    con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v3 (small test dataset, placeholder impact factors)')")
     con.execute("INSERT INTO exchange_meta VALUES ('random_seed', ?)", (str(RANDOM_SEED),))
     con.executemany("INSERT INTO companies VALUES (?,?,?,?,?,?)", COMPANIES)
     con.executemany("INSERT INTO installed_equipment (company_id, platform, qty, years_in_use) VALUES (?,?,?,?)", EQUIPMENT)
     for *fields, fits in _jitter_catalog(rng):
-        con.execute("INSERT INTO part_catalog VALUES (?,?,?,?,?,?,?,?,?,?,?)", fields)
+        con.execute("INSERT INTO part_catalog VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (*fields, WEIGHT_KG[fields[0]]))
         for platform in fits:
             con.execute("INSERT INTO compatibility (part_number, platform, relation) VALUES (?,?,'fits')", (fields[0], platform))
     for part, replaces, platform, note in SUBSTITUTES:
         con.execute("INSERT INTO compatibility (part_number, platform, relation, substitutes_for, note) "
                     "VALUES (?,?,'substitute',?,?)", (part, platform, replaces, note))
+    con.executemany("INSERT INTO carbon_factors VALUES (?,?,?,?,?,?)",
+                    [(f, kg, unit, disp, PLACEHOLDER_SOURCE, note) for f, kg, unit, disp, note in CARBON_FACTORS])
 
     city = {c[0]: f"{c[3]}, {c[4]}" for c in COMPANIES}
     for l in LISTINGS:
@@ -760,6 +816,9 @@ def check(db_path: Path) -> int:
     ok(not q("SELECT id FROM needs WHERE part_number IS NULL AND (platform IS NULL OR family IS NULL)"),
        "needs that name only a machine have platform + family")
     ok(ANSWER_KEYS.exists(), "data/answer_keys.json exists")
+    missing = q("SELECT DISTINCT family FROM part_catalog WHERE family NOT IN (SELECT family FROM carbon_factors)")
+    ok(not missing, f"every part family has an impact factor {missing or ''}")
+    ok(not q("SELECT 1 FROM part_catalog WHERE weight_kg IS NULL OR weight_kg <= 0"), "every part has a weight")
     con.close()
     print(f"\n{'All checks passed.' if not failures else f'{failures} check(s) FAILED.'} "
           "Run scripts/data_report.py for the full data-quality report.")

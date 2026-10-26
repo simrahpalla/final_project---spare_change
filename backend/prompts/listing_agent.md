@@ -1,4 +1,4 @@
-# Listing agent: Surplus Exchange
+# Listing agent: Spare Change
 
 You turn a plant manager's messy surplus post into a clean, structured listing for an industrial-surplus marketplace.
 

@@ -1,14 +1,44 @@
-import { useEffect, useState } from 'react'
-import { api, type Health, type LlmCheck } from './api'
+import { useCallback, useEffect, useState } from 'react'
+import { api, errorMessage, type Company, type CompanyProfile, type Health, type RunStatus, type Session } from './api'
+import { ComingSoon } from './components/ComingSoon'
+import { Nav, type Tab } from './components/Nav'
+import { Rail } from './components/Rail'
+import { SellPage } from './components/SellPage'
+import { DEFAULT_ACCOUNT, featured, type Scenario } from './demo'
+
+// Remembers the demo account between visits; works (without remembering) where storage is blocked.
+const storage = {
+  get: (k: string) => {
+    try {
+      return localStorage.getItem(k)
+    } catch {
+      return null
+    }
+  },
+  set: (k: string, v: string) => {
+    try {
+      localStorage.setItem(k, v)
+    } catch {
+      /* private mode or blocked storage */
+    }
+  },
+}
 
 export default function App() {
   const [health, setHealth] = useState<Health | null>(null)
   const [offline, setOffline] = useState(false)
-  const [check, setCheck] = useState<LlmCheck | null>(null)
-  const [checking, setChecking] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [tab, setTab] = useState<Tab>('sell')
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [accountId, setAccountId] = useState<number>(() => Number(storage.get('sc.account')) || DEFAULT_ACCOUNT)
+  const [profile, setProfile] = useState<CompanyProfile | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
+  const [run, setRun] = useState<RunStatus | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+  // The paste box starts with the signed-in company's own example post, so a visitor can just click Find buyers.
+  const [post, setPost] = useState<string>(() => featured(accountId)?.post ?? '')
+  const ready = health?.mcp?.status === 'ready'
 
-  // Poll health until the marketplace tools (MCP servers) finish starting, then stop polling.
+  // Poll health until the marketplace tools (MCP servers) have started.
   useEffect(() => {
     let stop = false
     let timer: number | undefined
@@ -33,68 +63,104 @@ export default function App() {
     }
   }, [])
 
-  async function runCheck() {
-    setChecking(true)
-    setError(null)
+  const refresh = useCallback(async () => {
+    if (!ready) return
     try {
-      setCheck(await api.llmCheck())
+      const [c, p, s] = await Promise.all([api.companies(), api.company(accountId), api.session()])
+      setCompanies(c.companies)
+      setProfile(p)
+      setSession(s)
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    } finally {
-      setChecking(false)
+      setNotice(errorMessage(e))
+    }
+  }, [ready, accountId])
+
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  function switchAccount(id: number, text?: string) {
+    storage.set('sc.account', String(id))
+    setPost(text ?? featured(id)?.post ?? '')
+    if (id === accountId) return
+    setAccountId(id)
+    setProfile(null)
+    setRun(null)
+  }
+
+  function runScenario(s: Scenario) {
+    if (s.account === null) setPost(s.text) // the injection test keeps the current account
+    else switchAccount(s.account, s.text)
+  }
+
+  async function resetDemo() {
+    try {
+      const r = await api.reset()
+      setRun(null)
+      setNotice(r.message)
+      refresh()
+    } catch (e) {
+      setNotice(errorMessage(e))
     }
   }
 
-  const pill = offline
-    ? { cls: 'pill bad', text: 'Backend offline' }
-    : !health
-      ? { cls: 'pill', text: 'Connecting…' }
-      : !health.key_found
-        ? { cls: 'pill bad', text: 'PORTKEY_API_KEY not found' }
-        : health.mcp?.status === 'starting'
-          ? { cls: 'pill', text: 'Starting up… loading marketplace tools' }
-          : health.mcp?.status === 'failed'
-            ? { cls: 'pill bad', text: `Tools failed to start: ${health.mcp.error ?? 'unknown error'}` }
-            : { cls: 'pill good', text: `${health.model} · key from ${health.key_source} · tools ready` }
+  async function openAlerts() {
+    if (!profile?.unread_alerts) return
+    try {
+      await api.markAlertsRead(accountId)
+      refresh()
+    } catch {
+      /* the list still shows; the count updates next time */
+    }
+  }
 
   return (
     <div className="page">
-      <header className="header">
-        <div className="brand">
-          <span className="mark">SX</span>
-          <div>
-            <h1>Surplus Exchange</h1>
-            <p className="sub">Industrial surplus, matched and negotiated by AI agents</p>
-          </div>
+      <Nav
+        tab={tab}
+        onTab={setTab}
+        companies={companies}
+        accountId={accountId}
+        onAccount={(id) => switchAccount(id)}
+        profile={profile}
+        onOpenAlerts={openAlerts}
+        onReset={resetDemo}
+      />
+      {(offline || !ready) && (
+        <div className={`banner ${offline || health?.mcp?.status === 'failed' ? 'bad' : ''}`} role="status">
+          {offline
+            ? "Can't reach Spare Change. Check that the app is running, then this page reconnects by itself."
+            : health?.mcp?.status === 'failed'
+              ? `The marketplace tools didn't start: ${health.mcp.error ?? 'unknown error'}. Restart the app.`
+              : !health?.key_found && health
+                ? 'PORTKEY_API_KEY was not found. Add it to a .env file (see the README) and restart the app.'
+                : 'Starting up… loading marketplace tools. This takes a few seconds the first time.'}
         </div>
-        <span className={pill.cls}>{pill.text}</span>
-      </header>
-
-      <main className="main">
-        <section className="card">
-          <h2>Setup check</h2>
-          <p className="muted">
-            One small call to <code>{health?.model ?? 'gpt-6-luna'}</code> through Portkey, to confirm the key and model
-            work. Tokens and cost are shown so every run is measured.
-          </p>
-          <button className="primary" onClick={runCheck} disabled={checking || offline}>
-            {checking ? 'Calling the model…' : 'Test model connection'}
-          </button>
-          {error && <p className="error">{error}</p>}
-          {check && (
-            <div className="result">
-              <p className="reply">“{check.reply}”</p>
-              <dl className="stats">
-                <div><dt>Input</dt><dd>{check.input_tokens}</dd></div>
-                <div><dt>Cached</dt><dd>{check.cached_tokens}</dd></div>
-                <div><dt>Output</dt><dd>{check.output_tokens}</dd></div>
-                <div><dt>Cost</dt><dd>${check.cost_usd.toFixed(6)}</dd></div>
-              </dl>
-              <p className="muted small">Run {check.run_id} · logged to the audit trail</p>
-            </div>
-          )}
-        </section>
-      </main>
+      )}
+      {notice && (
+        <div className="banner" role="status" onClick={() => setNotice(null)}>
+          {notice} <span className="muted">(click to dismiss)</span>
+        </div>
+      )}
+      <div className="layout">
+        {tab === 'sell' ? (
+          <SellPage
+            accountId={accountId}
+            profile={profile}
+            companies={companies}
+            ready={ready}
+            run={run}
+            onRun={setRun}
+            onRunDone={refresh}
+            text={post}
+            onText={setPost}
+            onScenario={runScenario}
+          />
+        ) : (
+          <ComingSoon tab={tab} profile={profile} />
+        )}
+        <Rail run={run} session={session} />
+      </div>
     </div>
   )
 }

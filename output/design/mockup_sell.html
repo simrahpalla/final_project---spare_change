@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spare Change · Sell (design mockup)</title>
+<!-- Static design mockup for approval (output/design.md). Data is real output from run 80e9bcb0e93e (listing 1).
+     Impact numbers use PLACEHOLDER weight and carbon factors. -->
+<style>
+  :root {
+    --navy: #0C2340; --orange: #F97316; --orange-text: #C2410C;
+    --green: #3B6D11; --green-bg: #EAF3DE; --red: #B91C1C; --red-bg: #FEF2F2;
+    --teal: #0F766E; --teal-bg: #E6F4F1;
+    --ink: #0F172A; --ink-2: #5B6575; --ink-3: #8A94A6; --line: #D5DCE5; --subtle: #F5F7FA;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink);
+         font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+         font-variant-numeric: tabular-nums; }
+  svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* nav */
+  .nav { position: sticky; top: 0; z-index: 2; height: 56px; background: var(--navy); color: #fff;
+         display: flex; align-items: center; gap: 32px; padding: 0 24px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
+  .coin { width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: #fff;
+          display: grid; place-items: center; font-weight: 700; font-size: 14px; line-height: 1; }
+  .tabs { display: flex; gap: 4px; height: 100%; }
+  .tab { display: flex; align-items: center; padding: 0 12px; color: #B8C3D4; font-weight: 500; border-bottom: 2px solid transparent; }
+  .tab.on { color: #fff; border-bottom-color: var(--orange); }
+  .bell { margin-left: auto; position: relative; color: #B8C3D4; display: flex; }
+  .bell svg { width: 18px; height: 18px; }
+  .badge { position: absolute; top: -6px; right: -9px; background: var(--orange); color: var(--navy);
+           font-size: 10px; font-weight: 700; border-radius: 999px; padding: 0 5px; line-height: 16px; }
+
+  .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; padding: 24px; max-width: 1440px; margin: 0 auto; }
+  @media (min-width: 1500px) { .wrap { grid-template-columns: minmax(0, 1060px) 340px; justify-content: center; } }
+  main { min-width: 0; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0; color: var(--navy); letter-spacing: -0.01em; }
+  .lede { color: var(--ink-2); margin: 4px 0 16px; }
+  h2 { font-size: 15px; font-weight: 600; margin: 0; color: var(--navy); }
+  .muted { color: var(--ink-2); } .small { font-size: 12px; } .mono { font-family: var(--mono); font-size: 13px; }
+
+  .card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 16px 20px; }
+  .section { margin-top: 16px; }
+  .row { display: flex; align-items: center; gap: 12px; }
+
+  /* input */
+  textarea { width: 100%; height: 76px; resize: none; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+             font: inherit; color: var(--ink); }
+  .controls { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; display: flex; gap: 8px; align-items: center; }
+  .chip { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--ink-2); background: #fff; }
+  .btn { border: 0; border-radius: 8px; padding: 9px 16px; font: inherit; font-weight: 600; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+  .btn.primary { background: var(--orange); color: var(--navy); margin-left: auto; }
+  .btn.ghost { background: #fff; border: 1px solid var(--line); color: var(--ink); padding: 6px 12px; font-weight: 500; }
+
+  /* listing */
+  .status { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; }
+  .status.pass { color: var(--green); background: var(--green-bg); }
+  .partno { font-family: var(--mono); font-size: 16px; font-weight: 600; color: var(--navy); }
+  .specs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 14px; border-top: 1px solid var(--line); }
+  .spec { padding: 10px 0 0; }
+  .spec dt { font-size: 12px; color: var(--ink-3); }
+  .spec dd { margin: 2px 0 0; font-weight: 500; }
+  .tag { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--ink-2); }
+
+  /* matches */
+  .match { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+  .match:first-of-type { border-top: 0; }
+  .score { width: 44px; height: 28px; border-radius: 999px; display: grid; place-items: center; font-weight: 700;
+           color: var(--orange-text); background: #FFF1E7; border: 1px solid #FBD5B5; }
+  .score.top { background: var(--orange); color: var(--navy); border-color: var(--orange); }
+  .buyer { font-weight: 600; }
+  .reason { color: var(--ink-2); font-size: 13px; }
+  .needchip { font-size: 11px; color: var(--navy); background: var(--subtle); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+
+  /* prices */
+  .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .price { border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
+  .price .lbl { font-size: 12px; color: var(--ink-2); }
+  .price .val { font-size: 22px; font-weight: 600; margin-top: 2px; }
+  .price.suggested { border-top: 3px solid var(--orange); padding-top: 10px; }
+  .price.suggested .val { color: var(--orange-text); }
+  .why { margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+  .private { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+
+  /* impact */
+  .impact { display: flex; align-items: center; gap: 10px; background: var(--teal-bg); color: var(--teal); border-radius: 8px;
+            padding: 10px 14px; font-weight: 500; }
+  .impact b { font-weight: 700; }
+  .impact .info { margin-left: auto; opacity: .8; }
+
+  /* email */
+  .email { background: var(--subtle); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-top: 10px; white-space: pre-line; }
+
+  /* rail */
+  aside { position: sticky; top: 80px; align-self: start; display: grid; gap: 16px; }
+  .rail h3 { font-size: 13px; font-weight: 600; margin: 0 0 10px; color: var(--navy); display: flex; align-items: center; gap: 6px; }
+  .step { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start; padding: 5px 0; font-size: 13px; }
+  .step .ok { color: var(--green); } .step .code { color: var(--ink-3); font-size: 11px; }
+  .step .res { color: var(--ink-2); font-size: 12px; }
+  .kv { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+  .kv span:first-child { color: var(--ink-2); }
+  .big { font-size: 20px; font-weight: 600; }
+  .bar { height: 6px; border-radius: 999px; background: var(--subtle); border: 1px solid var(--line); overflow: hidden; margin-top: 6px; }
+  .bar i { display: block; height: 100%; width: 1%; background: var(--ink-3); }
+  .rail .impactbox { background: var(--teal-bg); border-color: #CDE7E1; color: var(--teal); }
+  .rail .impactbox h3 { color: var(--teal); }
+  .rail .impactbox .kv span:first-child { color: var(--teal); opacity: .85; }
+  .note { font-size: 11px; color: var(--ink-3); margin-top: 6px; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="logo"><span class="coin">¢</span>Spare Change</div>
+  <div class="tabs">
+    <span class="tab on">Sell</span><span class="tab">Wanted</span><span class="tab">Marketplace</span><span class="tab">Negotiations</span>
+  </div>
+  <span class="bell"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge">3</span></span>
+</nav>
+
+<div class="wrap">
+<main>
+  <h1>Sell surplus parts</h1>
+  <p class="lede">Paste what you have. Agents identify the part, check it's safe to sell, find plants that run it, and suggest a price.</p>
+
+  <div class="card">
+    <textarea>clearing out old S7-300 stuff after line 2 retrofit to 1500s. have 3x CPU 315-2DP (6ES7 315-2AG10), pulled wrking last month, fw 2.6, few scuffs on housing. no MMCs. ~$1425 ea. pickup dayton or we ship</textarea>
+    <div class="controls">
+      <span class="small muted">Selling as</span>
+      <span class="select">Hartwell Precision Components <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+      <span class="small muted">Try:</span>
+      <span class="chip">Siemens PLC</span><span class="chip">Expired solvent</span><span class="chip">Injection test</span>
+      <button class="btn primary">Find buyers</button>
+    </div>
+  </div>
+
+  <!-- Listing -->
+  <div class="card section">
+    <div class="row">
+      <h2>Listing</h2>
+      <span class="status pass" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Compliance passed</span>
+    </div>
+    <div class="row" style="margin-top:10px; gap:10px; flex-wrap:wrap">
+      <span class="partno">6ES7315-2AG10-0AB0</span>
+      <span class="muted">Siemens · PLC CPU · SIMATIC S7-300 CPU 315-2 DP, 256 KB</span>
+      <span class="tag">Discontinued by OEM</span>
+    </div>
+    <dl class="specs">
+      <div class="spec"><dt>Quantity</dt><dd>3 units</dd></div>
+      <div class="spec"><dt>Condition</dt><dd>Used, working</dd></div>
+      <div class="spec"><dt>Seller's ask</dt><dd>$1,425 / unit</dd></div>
+      <div class="spec"><dt>Location</dt><dd>Dayton, OH</dd></div>
+      <div class="spec"><dt>Fits</dt><dd>Siemens S7-300</dd></div>
+      <div class="spec"><dt>Firmware</dt><dd>2.6 (from post)</dd></div>
+      <div class="spec"><dt>Included</dt><dd>No MMC cards</dd></div>
+      <div class="spec"><dt>Agent confidence</dt><dd>0.99</dd></div>
+    </dl>
+  </div>
+
+  <!-- Buyers -->
+  <div class="card section">
+    <div class="row"><h2>Top buyers</h2><span class="small muted">3 of 3 compatible plants · checked against installed equipment</span></div>
+    <div style="margin-top:6px">
+      <div class="match">
+        <span class="score top">100</span>
+        <div><div class="buyer">Riverbend Foods <span class="muted small">· Cedar Rapids, IA</span></div>
+          <div class="reason">Line down on its S7-300 packaging line ($12k/day). Runs 4× S7-300 (18 yrs). Needs 1, you have 3.</div></div>
+        <span class="needchip">Open need #1 · line down</span>
+      </div>
+      <div class="match">
+        <span class="score">58</span>
+        <div><div class="buyer">Oakridge Dairy Cooperative <span class="muted small">· Eau Claire, WI</span></div>
+          <div class="reason">Runs 3× S7-300 (16 yrs): a likely future spare.</div></div>
+        <span></span>
+      </div>
+      <div class="match">
+        <span class="score">56</span>
+        <div><div class="buyer">Prairie Packaging <span class="muted small">· Sioux Falls, SD</span></div>
+          <div class="reason">Runs 5× S7-300 (15 yrs): a likely future spare.</div></div>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price -->
+  <div class="card section">
+    <h2>Price</h2>
+    <div class="prices" style="margin-top:12px">
+      <div class="price"><div class="lbl">New (list)</div><div class="val">$2,966</div></div>
+      <div class="price suggested"><div class="lbl">Suggested ask</div><div class="val">$1,425</div></div>
+      <div class="price"><div class="lbl">Scrap value</div><div class="val">$45.64</div></div>
+    </div>
+    <div class="why">48% of new, inside the 40–55% band for used-working parts. Discontinued parts that plants still run can sit at the top of their band, and one open line-down need matches.</div>
+    <div class="private"><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Suggested floor: <b>$1,000</b> · only you see this</div>
+  </div>
+
+  <!-- Impact strip -->
+  <div class="impact section">
+    <svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+    <span>Recovers <b>$4,275</b> vs. $137 scrap · <b>1.1 kg</b> kept out of scrap · est. <b>63 kg CO2e</b> avoided</span>
+    <svg class="info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+  </div>
+
+  <!-- Outreach -->
+  <div class="card section">
+    <div class="row"><h2>Outreach email to Riverbend Foods</h2>
+      <button class="btn ghost" style="margin-left:auto"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button></div>
+    <div class="email"><b>Subject:</b> Working Siemens S7-300 CPU 315-2 DP available, for your line-down need
+
+Hello Riverbend Foods,
+
+Spare Change has three used-working Siemens SIMATIC S7-300 CPU 315-2 DP units (6ES7315-2AG10-0AB0) available at $1,425 each. They were pulled working last month and have minor housing scuffs; MMCs are not included. This is the exact CPU in your open S7-300 line-down need. We can coordinate shipment from Dayton, OH.
+
+Would you like to reserve one?</div>
+  </div>
+</main>
+
+<aside class="rail">
+  <div class="card">
+    <h3>Agent activity</h3>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Pre-screen <span class="code">(code)</span></span><span class="res">no injection</span></div>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Listing agent</span><span class="res">6/6 fields</span></div>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Compliance rules <span class="code">(code)</span></span><span class="res">passed</span></div>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Compliance guard</span><span class="res">allowed</span></div>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Buyer pre-filter <span class="code">(code)</span></span><span class="res">3 plants</span></div>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Matching agent</span><span class="res">3 ranked</span></div>
+    <div class="step"><svg class="ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Pricing agent</span><span class="res">$1,425</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Cost this run</h3>
+    <div class="big">$0.00073</div>
+    <div class="kv"><span>Tokens</span><span>4,723</span></div>
+    <div class="kv"><span>Cached</span><span>58%</span></div>
+    <div class="kv"><span>Model requests</span><span>5</span></div>
+    <div class="kv" style="margin-top:6px"><span>Session</span><span>$0.004 of $2.00</span></div>
+    <div class="bar"><i></i></div>
+  </div>
+
+  <div class="card impactbox">
+    <h3><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>Impact this session</h3>
+    <div class="kv"><span>Value recovered</span><b>$4,275</b></div>
+    <div class="kv"><span>vs. scrap value</span><span>$137</span></div>
+    <div class="kv"><span>Kept out of scrap</span><span>1.1 kg</span></div>
+    <div class="kv"><span>CO2e avoided</span><span>est. 63 kg</span></div>
+    <div class="note" style="color:var(--teal)">est. = placeholder factors, see method ⓘ</div>
+  </div>
+</aside>
+</div>
+</body>
+</html>

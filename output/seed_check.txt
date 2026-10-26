@@ -5,6 +5,7 @@ exchange_meta              3
 companies                 50
 installed_equipment       79
 part_catalog              62
+carbon_factors            17
 compatibility             74
 listings                  27
 needs                     21
@@ -22,5 +23,7 @@ Sanity checks
   [ok] every need's platform is installed at that buyer 
   [ok] needs that name only a machine have platform + family
   [ok] data/answer_keys.json exists
+  [ok] every part family has an impact factor 
+  [ok] every part has a weight
 
 All checks passed. Run scripts/data_report.py for the full data-quality report.

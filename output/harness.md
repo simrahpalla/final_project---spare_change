@@ -1,6 +1,6 @@
-# Surplus Exchange: System Harness
+# Spare Change: System Harness
 
-Surplus Exchange is a marketplace for industrial surplus that AI agents run. A plant pastes a messy description of a spare part it no longer needs. Agents then:
+Spare Change is a marketplace for industrial surplus that AI agents run. A plant pastes a messy description of a spare part it no longer needs. Agents then:
 - turn it into a structured listing
 - check it for safety and compliance
 - match it to buyers by **equipment compatibility**, not keywords
@@ -10,6 +10,8 @@ Surplus Exchange is a marketplace for industrial surplus that AI agents run. A p
 A human approves every deal. All agents call `gpt-6-luna` through Portkey. An **MCP server** is the only path to the database, a **FastAPI** backend runs the agents, and a **React** dashboard shows everything.
 
 *This file grows phase by phase. The safety section (Phase 8) is added when it is built.*
+
+**Brand:** the app is called **Spare Change** ("Turn spare parts into spare change"), formerly Surplus Exchange. Internal code names (`surplus-exchange` MCP server, `SURPLUS_*` settings) are unchanged.
 
 ---
 
@@ -114,11 +116,11 @@ The first run on the original Phase 1 data passed **3/11**. That report is saved
 
 | Role | Tools | Can | Cannot |
 |---|---|---|---|
-| `broker` | 27 | Build and correct listings and needs, run the compliance rules, activate or flag, search both directions, read company profiles, record matches, open negotiations, stop a stuck one, request approval | Read any private limit, make offers, approve deals |
-| `seller_agent` | 11 | Read **its own** floor and company profile, see **its own** negotiation, make offers, walk away | See the buyer's ceiling or any other negotiation, approve |
-| `buyer_agent` | 11 | Read **its own** ceiling, downtime cost and company profile, see its own negotiation, make offers, walk away | See the seller's floor, approve |
-| `human_approver` | 15 | Approve or reject deals (human names only), plus dashboard views | Negotiate |
-| `system` | 17 | Log tokens, token summaries, dashboard views | Negotiate, approve, change listings |
+| `broker` | 28 | Build and correct listings and needs, run the compliance rules, activate or flag, search both directions, read company profiles, record matches, open negotiations, stop a stuck one, request approval | Read any private limit, make offers, approve deals |
+| `seller_agent` | 12 | Read **its own** floor and company profile, see **its own** negotiation, make offers, walk away | See the buyer's ceiling or any other negotiation, approve |
+| `buyer_agent` | 12 | Read **its own** ceiling, downtime cost and company profile, see its own negotiation, make offers, walk away | See the seller's floor, approve |
+| `human_approver` | 17 | Approve or reject deals (human names only), plus dashboard views | Negotiate |
+| `system` | 20 | Log tokens, token summaries, company list and alerts for the account switcher, dashboard views | Negotiate, approve, change listings |
 
 **Rules enforced in code:**
 - **Compliance:** rules are shared with the data report through `mcp_server/compliance_rules.py`. `activate_listing` re-runs them and flags a listing that trips one.
@@ -126,7 +128,7 @@ The first run on the original Phase 1 data passed **3/11**. That report is saved
 - **Negotiation (`submit_offer`):** strict turns; no offer outside your own limit; the seller never raises and the buyer never lowers; the round cap is enforced; no message may contain your own limit; crossing offers close the deal.
 - **Approval:** only `approve_deal` closes a deal, it exists only for `human_approver`, and it refuses agent-like names.
 
-**Evidence:** `scripts/mcp_smoke.py` makes 80 real stdio calls across all 5 roles on a scratch copy of the DB. It calls all 34 tools, and every refusal must return its exact error code. Result: **80/80 as expected** (`output/mcp_smoke.json`). It includes one negotiation of each kind:
+**Evidence:** `scripts/mcp_smoke.py` makes 86 real stdio calls across all 5 roles on a scratch copy of the DB. It calls all 37 tools, and every refusal must return its exact error code. Result: **86/86 as expected** (`output/mcp_smoke.json`). It includes one negotiation of each kind:
 - **Deal:** agreed at $1,250, then approved by a human.
 - **Walk-away.**
 - **Round cap:** stopped after 6 offers.
@@ -188,3 +190,31 @@ negotiation ──► [code] open ──► seller_negotiator ⇄ buyer_negotiat
 | Negotiation listing 5 / need 5 | $2,875 / $2,200 / $2,600 / $2,300 → seller accepts **$2,300** (inside the $2,210–$2,340 range) | deal ✓ | 15 | $0.00240 |
 
 **A bug found and fixed while testing:** the first run of listing 26 stopped at "part not identified". `lookup_part` required *every* word of the query to match, so "sodium hypo … bleach" found nothing. The word search now ranks parts by how many words match. The rerun found the part and blocked the expired drums. Both runs are kept in `output/runs/`.
+
+
+---
+
+## 4. Sustainability layer: impact numbers computed in code (Phase 4)
+
+Every impact figure comes from the catalog through the MCP tool `get_impact_estimate`, never from the model. The broker calls it as the last step of every listed item (the rail shows "Impact estimate (code)").
+
+| Figure | Formula | Data |
+|---|---|---|
+| $ recovered vs scrap | suggested ask × qty, against `scrap_value` × qty | `part_catalog` |
+| kg kept out of scrap | `weight_kg` × qty | `part_catalog.weight_kg` (new) |
+| est. kg CO2e avoided | `weight_kg` × qty × `carbon_factors.kg_co2e_per_kg` for the part's family (or `kg_co2e_per_unit` × qty) | `carbon_factors` (new, 17 families) |
+| est. hazardous waste disposal avoided | `weight_kg` × qty × `disposal_cost_per_kg`, for chemicals that are hazardous or expire within 12 months | `carbon_factors.disposal_cost_per_kg` |
+
+- **Method (shown in every "est." tooltip):** emissions from manufacturing the new part(s) that this reuse replaces, as weight × a per-family factor. Shipping and refurbishment are not yet subtracted.
+- **All weights and factors are placeholders.** Every `carbon_factors.source` reads "PLACEHOLDER: replace with sourced value in Phase 10", and the UI says "placeholder factors" until then.
+- **Example (listing 1, 3× S7-300 CPU at $1,425):** recovers $4,275 vs. $137 scrap · 0.9 kg · est. 54 kg CO2e (0.3 kg × 3 × 60 kg CO2e/kg).
+
+## 5. Dashboard (Phase 4)
+
+The React dashboard is served by FastAPI. Its design is in `output/design.md`.
+
+- **Top nav:** logo, Sell / Wanted / Marketplace / Negotiations, the **demo account switcher** (all 50 companies, grouped as sellers, buyers and other plants) and that account's **alerts bell**.
+- **Sell:** the company strip (who you are and the machines you run), a paste box with 3 example chips, then the listing card, red or gray outcome cards, the top 3 buyers with scores and reasons, price cards, the teal impact strip and the outreach email.
+- **Right rail:** live agent activity (each step done, working, blocked or skipped, with code steps marked "(code)"), the cost of the run and the session against the budget (from `token_usage`), and the session's impact.
+- **Live progress:** `POST /api/seller-flow/start` returns a `run_id`, and the page polls `GET /api/runs/{run_id}`. The broker updates the run's steps and current agent as it goes.
+- **Startup:** the page shows "Starting up… loading marketplace tools" until the shared MCP processes report ready.

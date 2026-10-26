@@ -16,7 +16,7 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 
 `MAX_NEGOTIATION_ROUNDS` (default 6) sets the round cap.
 
-## Tools by role (34 tools)
+## Tools by role (37 tools)
 
 | Tool | broker | seller_agent | buyer_agent | human_approver | system | What it does |
 |---|:-:|:-:|:-:|:-:|:-:|---|
@@ -25,6 +25,8 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 | `get_compatibility` | ✓ | ✓ | ✓ | ✓ | ✓ | Platforms a part fits, plus its substitutes |
 | `get_price_reference` | ✓ | ✓ | ✓ | ✓ | ✓ | New price, scrap value, other listings' asks, approved deals |
 | `get_listing` / `get_need` | ✓ | ✓ | ✓ | ✓ | ✓ | Public fields only. User text is returned as `*_text_untrusted` |
+| `get_impact_estimate` | ✓ | ✓ | ✓ | ✓ | ✓ | $ recovered vs scrap, kg kept out of scrap, est. kg CO2e, est. hazardous disposal avoided: **computed in code** from `weight_kg` and `carbon_factors` (placeholder factors) |
+| `list_companies` / `mark_notifications_read` | | | | ✓ (list) | ✓ | The demo account switcher and the alerts bell |
 | `create_listing` | ✓ | | | | | Store a structured listing (`submitted`). Unknown part numbers are refused. Expiry is derived from the manufacture date in code |
 | `update_listing_draft` | ✓ | | | | | Fix fields of a `submitted` listing |
 | `check_listing_rules` | ✓ | | | | ✓ | Deterministic compliance rules (read-only) |
@@ -68,4 +70,4 @@ Each process is started with `SURPLUS_ROLE` and registers **only that role's too
 .venv/Scripts/python.exe scripts/mcp_smoke.py
 ```
 
-It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (80 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **80/80 as expected, 34/34 tools called.**
+It starts one real server process per role over stdio, on a scratch copy of the database, and calls every tool at least once (86 calls). Each call states the expected outcome, and each refusal must carry its exact error code. Results go to `output/mcp_smoke.json`: tools by role, the access matrix, and every call with its args and result. Last run: **86/86 as expected, 37/37 tools called.**

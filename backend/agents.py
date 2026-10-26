@@ -1,4 +1,4 @@
-"""Surplus Exchange agents and the broker that runs them.
+"""Spare Change agents and the broker that runs them.
 
 Design
 - The BROKER is plain Python (no LLM): it routes each event through fixed steps, and runs code
@@ -61,6 +61,11 @@ def wrap(tag: str, text: str | None) -> str:
     return f"<{tag}>\n{safe}\n</{tag}>"
 
 
+def _public(listing: dict) -> dict:
+    """A listing as the UI shows it (no raw seller text, no private floor)."""
+    return {k: v for k, v in (listing or {}).items() if k not in ("seller_text_untrusted", "ok")}
+
+
 def _transient(e: Exception) -> bool:
     """Errors worth one retry: timeouts, dropped connections, overload / 5xx / 429."""
     if isinstance(e, ModelHTTPError):
@@ -97,6 +102,9 @@ class RunState:
     cost_usd: float = 0.0
     agent_calls: list = field(default_factory=list)
     steps: list = field(default_factory=list)
+    current: str | None = None   # the agent working right now (for the UI's live activity rail)
+    status: str = "running"      # running -> done
+    result: dict | None = None
 
     @property
     def total_tokens(self) -> int:
@@ -171,6 +179,7 @@ class Exchange:
             total_tokens_limit=config.MAX_TOKENS_PER_RUN - state.total_tokens,
         )
         audit.log(state.run_id, name, "agent_start", subject=state.subject, args={"prompt_chars": len(prompt)})
+        state.current = name
         for attempt in (1, 2):
             try:
                 result = await agent.run(prompt, usage_limits=limits, toolsets=toolsets)
@@ -209,6 +218,7 @@ class Exchange:
                     audit.log(state.run_id, name, "tool_retry", subject=state.subject, tool=part.tool_name, error=str(part.content))
         audit.log(state.run_id, name, "agent_end", subject=state.subject, result=result.output.model_dump(),
                   args={k: u[k] for k in ("requests", "input_tokens", "cached_tokens", "output_tokens", "cost_usd")})
+        state.current = None
         return result.output, u
 
     def _start(self, state: RunState, **args) -> None:
@@ -218,15 +228,18 @@ class Exchange:
 
     def _finish(self, state: RunState, outcome: str, **extra) -> dict:
         audit.log(state.run_id, "broker", "run_end", subject=state.subject, stop_reason=outcome, result=state.totals())
-        return {"run_id": state.run_id, "kind": state.kind, "subject": state.subject, "outcome": outcome,
-                "steps": state.steps, "agent_calls": state.agent_calls, "totals": state.totals(), **extra}
+        result = {"run_id": state.run_id, "kind": state.kind, "subject": state.subject, "outcome": outcome,
+                  "steps": state.steps, "agent_calls": state.agent_calls, "totals": state.totals(), **extra}
+        state.current, state.status, state.result = None, "done", result
+        return result
 
     # ------------------------------------------------------------------ seller flow
 
     async def run_seller_flow(self, listing_id: int | None = None, text: str | None = None,
-                              seller_id: int | None = None) -> dict:
-        """Pasted text (or a seeded listing) -> listing -> compliance -> matches -> price -> outreach."""
-        state = RunState(kind="seller_flow", subject=f"listing:{listing_id}" if listing_id else f"seller:{seller_id}")
+                              seller_id: int | None = None, state: RunState | None = None) -> dict:
+        """Pasted text (or a seeded listing) -> listing -> compliance -> matches -> price -> outreach -> impact.
+        Pass a RunState to watch progress live (the backend polls state.steps / state.current)."""
+        state = state or RunState(kind="seller_flow", subject=f"listing:{listing_id}" if listing_id else f"seller:{seller_id}")
         self._start(state, listing_id=listing_id, seller_id=seller_id)
         try:
             await self._check_session_budget(state)
@@ -269,8 +282,9 @@ class Exchange:
             rules = await self.call("check_listing_rules", listing_id=listing_id)
             if rules["status"] != "allowed":
                 res = await self.call("activate_listing", listing_id=listing_id)
+                state.step("rules", rules["status"], rules=rules["rules"], reasons=rules["reasons"])
                 state.step("compliance", rules["status"], rules=rules["rules"], reasons=rules["reasons"], result=res,
-                           note="code rules on the stored fields, before any model call")
+                           listing=_public(existing), note="code rules on the stored fields, before any model call")
                 return self._finish(state, f"{rules['status']}: {'; '.join(rules['reasons'])}", listing_id=listing_id)
 
         # 2. Listing agent: messy text -> structured fields.
@@ -304,28 +318,35 @@ class Exchange:
 
         # 4. Compliance, code rules first.
         rules = await self.call("check_listing_rules", listing_id=listing_id)
+        state.step("rules", "passed" if rules["status"] == "allowed" else rules["status"], rules=rules["rules"],
+                   reasons=rules["reasons"])
         if rules["status"] != "allowed":
             res = await self.call("activate_listing", listing_id=listing_id) if (existing or {}).get("status", "submitted") == "submitted" else rules
-            state.step("compliance", rules["status"], rules=rules["rules"], reasons=rules["reasons"], result=res)
+            listing = await self.call("get_listing", listing_id=listing_id)
+            state.step("compliance", rules["status"], rules=rules["rules"], reasons=rules["reasons"], result=res,
+                       listing=_public(listing))
             return self._finish(state, f"{rules['status']}: {'; '.join(rules['reasons'])}", listing_id=listing_id)
         listing = await self.call("get_listing", listing_id=listing_id)
-        public = {k: v for k, v in listing.items() if k not in ("seller_text_untrusted", "ok")}
+        public = _public(listing)
 
         # 5. Compliance guard (LLM) for edge cases.
         review, _ = await self._run_agent(state, "compliance_guard", self.guard,
             "Structured listing (code rules passed):\n" + json.dumps(public, indent=1) + "\n" + wrap("seller_text", text))
+        state.step("guard", "flagged" if review.decision == "flag" else "allowed", reasons=review.reasons)
         if review.decision == "flag":
             res = await self.call("flag_listing", listing_id=listing_id, reason="; ".join(review.reasons) or "guard flag")
-            state.step("compliance", "flagged", by="compliance_guard", reasons=review.reasons, result=res)
+            state.step("compliance", "flagged", by="compliance_guard", reasons=review.reasons, result=res, listing=public)
             return self._finish(state, "flagged by compliance guard", listing_id=listing_id)
         state.step("compliance", "allowed", rules="all code rules passed", guard="allow")
         if listing["status"] == "submitted":
             act = await self.call("activate_listing", listing_id=listing_id)
             state.step("activate", act["status"])
             listing = await self.call("get_listing", listing_id=listing_id)
+        state.step("listing", "ready", listing=_public(listing))
 
         # 6. Matching: SQL pre-filter in code, then the model scores only those candidates.
         found = await self.call("search_buyers_for_listing", listing_id=listing_id)
+        state.step("prefilter", "done", candidates=found.get("candidate_count", 0))
         matches = {"saved": [], "rejected": []}
         outreach = None
         if not found.get("ok") or not found["candidates"]:
@@ -360,15 +381,19 @@ class Exchange:
                    clamped=(ask != price.ask or floor != price.floor_suggestion), new_price=ref["new_price"], scrap_value=ref["scrap_value"])
         if outreach:
             state.step("outreach", "drafted", **outreach)
+
+        # 8. Impact: computed in code from the catalog (weight x placeholder factor), never by the model.
+        impact = await self.call("get_impact_estimate", listing_id=listing_id, price=round(ask, 2))
+        state.step("impact", "done", **{k: v for k, v in impact.items() if k != "ok"})
         outcome = "listed and matched" if matches.get("saved") else "listed (no matching buyers yet)"
         return self._finish(state, outcome, listing_id=listing_id)
 
     # ------------------------------------------------------------------ negotiation
 
-    async def run_negotiation(self, listing_id: int, need_id: int) -> dict:
+    async def run_negotiation(self, listing_id: int, need_id: int, state: RunState | None = None) -> dict:
         """Seller agent vs buyer agent, each in its own MCP process that can read only its own limit.
         Ends in a deal (pending human approval), a walk-away, the round cap, or a broker safety stop."""
-        state = RunState(kind="negotiation", subject=f"listing:{listing_id}/need:{need_id}")
+        state = state or RunState(kind="negotiation", subject=f"listing:{listing_id}/need:{need_id}")
         self._start(state, listing_id=listing_id, need_id=need_id, max_rounds=config.MAX_NEGOTIATION_ROUNDS)
         try:
             await self._check_session_budget(state)

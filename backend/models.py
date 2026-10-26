@@ -1,4 +1,4 @@
-"""Data types for Surplus Exchange: agent structured outputs and the audit entry."""
+"""Data types for Spare Change: agent structured outputs and the audit entry."""
 
 from typing import Literal
 

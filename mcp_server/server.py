@@ -1,4 +1,4 @@
-"""Surplus Exchange MCP server: the ONLY path to the marketplace database.
+"""Spare Change MCP server: the ONLY path to the marketplace database.
 
 Every tool works on the working copy (data/exchange_new.db, or SURPLUS_DB). The original
 data/exchange.db is never opened. "Today" is exchange_meta.today, never the computer's clock.
@@ -949,9 +949,74 @@ def get_token_summary(run_id: str | None = None) -> dict:
         return {"run_id": run_id, "total": total, "breakdown": rows}
 
 
+# --------------------------------------------------------------------------- impact + accounts
+
+IMPACT_METHOD = ("Estimated emissions from manufacturing the new part(s) this reuse replaces: weight x a per-family "
+                 "factor (kg CO2e per kg). It doesn't yet subtract shipping or refurbishment. Factors are placeholders "
+                 "until sourced values replace them.")
+
+
+def get_impact_estimate(listing_id: int, price: float | None = None, qty: int | None = None) -> dict:
+    """Sustainability and value numbers for a listing, computed in code from the catalog (never by a model):
+    value recovered vs scrap, kg kept out of scrap, est. kg CO2e avoided, and (chemicals that are hazardous or
+    expire within 12 months) est. hazardous-waste disposal cost avoided. price = per-unit sale price to assume
+    (default: the listing's ask); qty defaults to the listing's quantity."""
+    with _db() as conn:
+        r = _listing_row(conn, listing_id)
+        if not r:
+            return _fail(f"No listing {listing_id}.", "not_found")
+        p = conn.execute("SELECT * FROM part_catalog WHERE part_number=?", (r["part_number"],)).fetchone()
+        f = conn.execute("SELECT * FROM carbon_factors WHERE family=?", (p["family"],)).fetchone()
+        today = _today(conn)
+    q = qty or r["qty"]
+    unit = price if price is not None else r["asking_price"]
+    kg = p["weight_kg"] * q
+    co2 = None
+    if f:
+        co2 = f["kg_co2e_per_unit"] * q if f["kg_co2e_per_unit"] is not None else kg * (f["kg_co2e_per_kg"] or 0)
+    disposal = None
+    if p["category"] == "chemical" and f and f["disposal_cost_per_kg"]:
+        expiring = bool(r["expiry_date"]) and r["expiry_date"] <= f"{int(today[:4]) + 1}{today[4:]}"
+        if p["hazmat"] or expiring:
+            disposal = round(kg * f["disposal_cost_per_kg"], 2)
+    return {
+        "ok": True, "listing_id": listing_id, "part_number": r["part_number"], "qty": q, "unit_price": unit,
+        "value_recovered": round(unit * q, 2) if unit else None,
+        "scrap_value_total": round(p["scrap_value"] * q, 2),
+        "uplift_vs_scrap": round(unit * q - p["scrap_value"] * q, 2) if unit else None,
+        "kg_kept_out_of_scrap": round(kg, 2),
+        "est_kg_co2e_avoided": round(co2, 1) if co2 is not None else None,
+        "est_hazardous_disposal_avoided": disposal,
+        "family": p["family"], "factor_kg_co2e_per_kg": f["kg_co2e_per_kg"] if f else None,
+        "factor_source": f["source"] if f else None,
+        "placeholder_factors": bool(f and str(f["source"]).startswith("PLACEHOLDER")),
+        "method": IMPACT_METHOD,
+    }
+
+
+def mark_notifications_read(company_id: int) -> dict:
+    """Mark all of a company's alerts as read (when its user opens the bell)."""
+    with _db(write=True) as conn:
+        n = conn.execute("UPDATE notifications SET read=1 WHERE company_id=? AND read=0", (company_id,)).rowcount
+        return {"ok": True, "company_id": company_id, "marked_read": n}
+
+
+def list_companies() -> dict:
+    """Every company, for the demo account switcher: location, industry, active listings, open needs and
+    unread alerts."""
+    with _db() as conn:
+        rows = [dict(r) for r in conn.execute(
+            """SELECT c.id, c.name, c.type, c.city, c.state, c.industry,
+                      (SELECT COUNT(*) FROM listings l WHERE l.seller_id=c.id AND l.status='active') AS active_listings,
+                      (SELECT COUNT(*) FROM needs n WHERE n.buyer_id=c.id AND n.status='open') AS open_needs,
+                      (SELECT COUNT(*) FROM notifications x WHERE x.company_id=c.id AND x.read=0) AS unread_alerts
+               FROM companies c ORDER BY c.id""")]
+        return {"count": len(rows), "companies": rows}
+
+
 # --------------------------------------------------------------------------- role -> tools
 
-COMMON = [get_exchange_date, lookup_part, get_compatibility, get_price_reference, get_listing, get_need]
+COMMON = [get_exchange_date, lookup_part, get_compatibility, get_price_reference, get_listing, get_need, get_impact_estimate]
 VIEWS = [list_listings, list_needs, list_matches, list_negotiations, list_deals, list_notifications]
 
 ROLE_TOOLS = {
@@ -961,12 +1026,13 @@ ROLE_TOOLS = {
                         get_company_profile] + VIEWS,
     "seller_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
     "buyer_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
-    "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal] + VIEWS,
-    "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary, get_company_profile] + VIEWS,
+    "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal, list_companies] + VIEWS,
+    "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary, get_company_profile,
+               list_companies, mark_notifications_read] + VIEWS,
 }
 WRITE_TOOLS = {create_listing, update_listing_draft, activate_listing, flag_listing, create_need, record_matches,
                open_negotiation, end_negotiation, request_deal_approval, submit_offer, walk_away, approve_deal,
-               reject_deal, log_tokens}
+               reject_deal, log_tokens, mark_notifications_read}
 
 for _fn in ROLE_TOOLS[ROLE]:
     mcp.tool(annotations=WRITES if _fn in WRITE_TOOLS else READ_ONLY)(_fn)

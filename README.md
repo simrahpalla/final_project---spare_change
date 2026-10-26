@@ -1,4 +1,6 @@
-# Surplus Exchange
+# Spare Change
+
+> **Turn spare parts into spare change.**
 
 **An AI-agent marketplace for industrial surplus.** A plant pastes a messy description of a spare part it no longer needs. Agents turn it into a clean listing, check it for safety and compliance, find buyers whose installed equipment is compatible with it, suggest a fair price, and negotiate the deal. A human approves every deal.
 
@@ -15,8 +17,8 @@ You need **Python 3.11+** and the course **`PORTKEY_API_KEY`**. Node is **not** 
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/simrahpalla/surplus-exchange.git
-cd surplus-exchange
+git clone https://github.com/simrahpalla/spare-change.git
+cd spare-change
 ```
 
 ### 2. Put your key in a `.env` file
@@ -59,7 +61,7 @@ It prints where the key was found (`repo folder` or `parent folder`), a one-line
 .venv/Scripts/python.exe -m uvicorn main:app --app-dir backend --port 8000     # macOS/Linux: .venv/bin/python -m ...
 ```
 
-Open **http://localhost:8000**. For the first few seconds the header says **"Starting up… loading marketplace tools"**: the backend is starting its tool servers once, in the background, and every request reuses them afterwards. It then shows `gpt-6-luna · key from … · tools ready`. Click **Test model connection** to make one live call.
+Open **http://localhost:8000**. For the first few seconds a banner says **"Starting up… loading marketplace tools"**: the backend starts its tool servers once, in the background, and every request reuses them afterwards. When the banner disappears and **Find buyers** is enabled, click **Find buyers**: the box is already filled in with the demo seller's post. Then try the other examples under **Try:** (each one signs in as the company that would post it), for example **Expired solvent** or **Injection test**, to see the safety checks block a listing. The right rail shows each agent working, the cost of the run, and the impact. Use the **account switcher** in the top bar (a demo stand-in for logging in): five featured demo accounts, sellers and buyers, each with a one-line "what to try", plus all 50 companies under "Show all companies". Each account sees its own posts and alerts. **Reset demo data** in that menu restores the database.
 
 ---
 

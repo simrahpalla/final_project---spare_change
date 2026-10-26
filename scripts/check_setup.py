@@ -26,7 +26,7 @@ async def main() -> int:
         print("Put PORTKEY_API_KEY in a .env file in this folder or the folder one level above.")
         return 1
     agent = Agent(make_model(), instructions="You are a connectivity check. Reply in five words or fewer.")
-    result = await agent.run("Say hello to Surplus Exchange.")
+    result = await agent.run("Say hello to Spare Change.")
     out = {
         "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "model": config.MODEL_NAME,

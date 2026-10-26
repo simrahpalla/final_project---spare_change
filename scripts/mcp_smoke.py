@@ -96,6 +96,8 @@ async def run(smoke: Smoke) -> None:
         await S.call(b, "broker", "get_listing", {"listing_id": 1}, "ok", "public listing: no floor price in it")
         await S.call(b, "broker", "get_need", {"need_id": 1}, "ok", "public need: no ceiling price in it")
         await S.call(b, "broker", "get_company_profile", {"company_id": 20}, "ok", "buyer profile: runs 4x Siemens S7-300 (18 yrs)")
+        await S.call(b, "broker", "get_impact_estimate", {"listing_id": 1}, "ok", "impact in code: $ vs scrap, kg, est. CO2e (placeholder factors)")
+        await S.call(b, "broker", "get_impact_estimate", {"listing_id": 15, "price": 350}, "ok", "chemical: also est. hazardous disposal avoided")
 
         # ---- broker: a new listing end to end (fills the open CR 15 need #20 -> two-sided alert)
         new = await S.call(b, "broker", "create_listing", {
@@ -204,6 +206,8 @@ async def run(smoke: Smoke) -> None:
         await S.call(y, "system", "log_tokens", {"run_id": "smoke", "run_kind": "check", "agent": "smoke_test", "model": "gpt-6-luna",
                                                  "input_tokens": 30, "output_tokens": 33, "cost_usd": 0.0000195}, "ok", "write one token_usage row")
         await S.call(y, "system", "get_token_summary", {"run_id": "smoke"}, "ok", "token totals for a run")
+        await S.call(y, "system", "list_companies", {}, "ok", "demo account switcher: companies with listings, needs, alerts")
+        await S.call(y, "system", "mark_notifications_read", {"company_id": 39}, "ok", "a signed-in company opens its alerts")
         await S.call(y, "system", "submit_offer", {"action": "offer", "price": 1}, "refused", "role isolation: system can't negotiate", code="Unknown tool")
 
 

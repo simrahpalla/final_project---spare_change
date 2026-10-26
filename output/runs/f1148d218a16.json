@@ -1,0 +1,84 @@
+{
+  "run_id": "f1148d218a16",
+  "kind": "seller_flow",
+  "subject": "listing:23",
+  "outcome": "blocked: Chemical is past its expiry date.",
+  "steps": [
+    {
+      "step": "prescreen",
+      "status": "passed"
+    },
+    {
+      "step": "rules",
+      "status": "blocked",
+      "rules": [
+        "expired"
+      ],
+      "reasons": [
+        "Chemical is past its expiry date."
+      ]
+    },
+    {
+      "step": "compliance",
+      "status": "blocked",
+      "rules": [
+        "expired"
+      ],
+      "reasons": [
+        "Chemical is past its expiry date."
+      ],
+      "result": {
+        "ok": false,
+        "code": "compliance_blocked",
+        "listing_id": 23,
+        "status": "blocked",
+        "rules": [
+          "expired"
+        ],
+        "reasons": [
+          "Chemical is past its expiry date."
+        ]
+      },
+      "listing": {
+        "listing_id": 23,
+        "status": "submitted",
+        "flag_reason": null,
+        "seller_id": 13,
+        "seller_name": "Redwood Coatings",
+        "location": "Stockton, CA",
+        "part_number": "LOC-E120HP-50",
+        "manufacturer": "Henkel Loctite",
+        "family": "Chemical",
+        "description": "Loctite EA E-120HP structural epoxy, 50 ml cartridge",
+        "qty": 60,
+        "condition": "new_sealed",
+        "asking_price": 8.0,
+        "new_price": 33.0,
+        "scrap_value": 0.0,
+        "hazmat": false,
+        "hazmat_class": null,
+        "expiry_date": "2026-07-31",
+        "sds_available": null,
+        "fits_platforms": [],
+        "created_at": "2026-10-10T10:55:00"
+      },
+      "note": "code rules on the stored fields, before any model call"
+    }
+  ],
+  "agent_calls": [],
+  "totals": {
+    "run_id": "f1148d218a16",
+    "kind": "seller_flow",
+    "requests": 0,
+    "input_tokens": 0,
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0
+  },
+  "listing_id": 23,
+  "answer_key_check": {
+    "expected_outcome": "BLOCKED (flagged): expired chemical."
+  }
+}

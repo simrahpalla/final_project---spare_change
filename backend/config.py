@@ -1,4 +1,4 @@
-"""Paths, model settings and run limits for Surplus Exchange.
+"""Paths, model settings and run limits for Spare Change.
 
 Limits can be overridden with environment variables in .env (see .env.example).
 """

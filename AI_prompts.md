@@ -233,7 +233,31 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 - It didn't account for contrast: white text on #F97316 is 2.8:1, below the 4.5:1 accessibility minimum, so the button text colour had to be decided.
 - It didn't give colours for states other than passed, approved and blocked ("held for review", "needs clarification"), or for the two lines of the price chart.
+- It didn't say how the demo knows which company is posting (there are no logins), or whether the rename covers the GitHub repo and code identifiers.
 
 ### Follow-up prompt(s)
 
-> None.
+> commit phase 3 then I'll answer your questions
+
+> okay for the decisions
+> 1- sure
+> 2- sure
+> 3 - makes sense
+> 4 - what does this mean?
+> 5 - what do you suggest
+
+> dont we eventually need to have logins
+
+> yes build the switcher in nav - i want to have a way for them to see what a real company's experience would look like on the website. and yes for #5 your recommendation sounds good
+
+> i want to try to run the demo - what is the tet that should be here? where did it go?
+
+> no need to rebuild the whole thing - its more that when my professor opens the demo, there should already be text there and they should just be able to click find buyers right? since the professor wont have that text to provide - i liked the text you had thats in the screenshot you took - see image - does that make sense?
+
+> what does this mean - The example chips still swap in the expired-solvent and injection examples.
+
+> okay makes sense. but - why are there demo accounts for all companies? shouldn't one suffice? and if we do have them, shouldnt their prompts and listings be different
+
+> Yes: 5 featured demo accounts at the top of the switcher, each with its own pre-filled post and a one-line 'what to try', chips that switch to the right account, and the other companies behind 'Show all companies'.
+
+> here you go - save these screenshots and commit phase 4

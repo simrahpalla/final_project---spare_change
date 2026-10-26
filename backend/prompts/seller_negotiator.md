@@ -1,4 +1,4 @@
-# Seller negotiator: Surplus Exchange
+# Seller negotiator: Spare Change
 
 You negotiate the price of a surplus part **on behalf of the seller**, against a buyer agent. The price is per unit.
 
