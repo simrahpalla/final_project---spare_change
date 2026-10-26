@@ -1,0 +1,877 @@
+{
+  "sections": [
+    5
+  ],
+  "checks": [
+    {
+      "section": 5,
+      "check": "Hartwell -> Riverbend (clear deal): 3/3 runs as expected; prices [1400.0, 1400.0, 1425.0]",
+      "result": "PASS",
+      "detail": {
+        "sample": "Hartwell -> Riverbend (clear deal)",
+        "expected": "deal",
+        "outcomes": [
+          "deal",
+          "deal",
+          "deal"
+        ],
+        "prices": [
+          1400.0,
+          1400.0,
+          1425.0
+        ],
+        "rounds": [
+          2,
+          2,
+          2
+        ],
+        "as_expected": "3/3"
+      }
+    },
+    {
+      "section": 5,
+      "check": "Summit -> Ironclad (clear deal): 3/3 runs as expected; prices [975.0, 985.0, 985.0]",
+      "result": "PASS",
+      "detail": {
+        "sample": "Summit -> Ironclad (clear deal)",
+        "expected": "deal",
+        "outcomes": [
+          "deal",
+          "deal",
+          "deal"
+        ],
+        "prices": [
+          975.0,
+          985.0,
+          985.0
+        ],
+        "rounds": [
+          5,
+          5,
+          5
+        ],
+        "as_expected": "3/3"
+      }
+    },
+    {
+      "section": 5,
+      "check": "Hartwell -> Prairie Packaging (narrow deal): 3/3 runs as expected; prices [123.0, 125.0, 123.0]",
+      "result": "PASS",
+      "detail": {
+        "sample": "Hartwell -> Prairie Packaging (narrow deal)",
+        "expected": "deal",
+        "outcomes": [
+          "deal",
+          "deal",
+          "deal"
+        ],
+        "prices": [
+          123.0,
+          125.0,
+          123.0
+        ],
+        "rounds": [
+          5,
+          5,
+          5
+        ],
+        "as_expected": "3/3"
+      }
+    },
+    {
+      "section": 5,
+      "check": "Redwood -> Coastal Electronics (narrow deal): 3/3 runs as expected; prices [252.0, 250.0, 262.0]",
+      "result": "PASS",
+      "detail": {
+        "sample": "Redwood -> Coastal Electronics (narrow deal)",
+        "expected": "deal",
+        "outcomes": [
+          "deal",
+          "deal",
+          "deal"
+        ],
+        "prices": [
+          252.0,
+          250.0,
+          262.0
+        ],
+        "rounds": [
+          5,
+          5,
+          7
+        ],
+        "as_expected": "3/3"
+      }
+    },
+    {
+      "section": 5,
+      "check": "Cascade -> Northwoods (walk-away): 3/3 runs as expected; prices []",
+      "result": "PASS",
+      "detail": {
+        "sample": "Cascade -> Northwoods (walk-away)",
+        "expected": "no deal",
+        "outcomes": [
+          "no deal",
+          "no deal",
+          "no deal"
+        ],
+        "prices": [],
+        "rounds": [
+          7,
+          7,
+          7
+        ],
+        "as_expected": "3/3"
+      }
+    },
+    {
+      "section": 2,
+      "check": "Leak scan (section 5): 819 API responses, 26 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+      "result": "PASS",
+      "detail": {
+        "leaks": [],
+        "third_party": []
+      }
+    }
+  ],
+  "negotiations": [
+    {
+      "label": "sample run 1: Hartwell -> Riverbend (clear deal)",
+      "negotiation_id": 1,
+      "listing": 1,
+      "need": 1,
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1400.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "end_reason": "buyer accepted $1,400.00",
+      "cost_usd": 0.000662,
+      "tokens": 5893,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1400.0
+        ],
+        [
+          "buyer",
+          "accept",
+          1400.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 1: Summit -> Ironclad (clear deal)",
+      "negotiation_id": 2,
+      "listing": 12,
+      "need": 12,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 975.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "end_reason": "seller accepted $975.00",
+      "cost_usd": 0.001936,
+      "tokens": 15788,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1075.0
+        ],
+        [
+          "buyer",
+          "offer",
+          925.0
+        ],
+        [
+          "seller",
+          "offer",
+          1015.0
+        ],
+        [
+          "buyer",
+          "offer",
+          975.0
+        ],
+        [
+          "seller",
+          "accept",
+          975.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 1: Hartwell -> Prairie Packaging (narrow deal)",
+      "negotiation_id": 3,
+      "listing": 13,
+      "need": 13,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 123.0,
+      "floor": 122.0,
+      "ceiling": 131.0,
+      "end_reason": "seller accepted $123.00",
+      "cost_usd": 0.001962,
+      "tokens": 15700,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          210.0
+        ],
+        [
+          "buyer",
+          "offer",
+          110.0
+        ],
+        [
+          "seller",
+          "offer",
+          175.0
+        ],
+        [
+          "buyer",
+          "offer",
+          123.0
+        ],
+        [
+          "seller",
+          "accept",
+          123.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 1: Redwood -> Coastal Electronics (narrow deal)",
+      "negotiation_id": 4,
+      "listing": 15,
+      "need": 15,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 252.0,
+      "floor": 248.0,
+      "ceiling": 262.0,
+      "end_reason": "seller accepted $252.00",
+      "cost_usd": 0.001855,
+      "tokens": 15433,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          375.0
+        ],
+        [
+          "buyer",
+          "offer",
+          240.0
+        ],
+        [
+          "seller",
+          "offer",
+          330.0
+        ],
+        [
+          "buyer",
+          "offer",
+          252.0
+        ],
+        [
+          "seller",
+          "accept",
+          252.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 1: Cascade -> Northwoods (walk-away)",
+      "negotiation_id": 5,
+      "listing": 11,
+      "need": 11,
+      "status": "round_cap",
+      "rounds": 7,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "end_reason": "round cap of 6 reached; seller declined the final offer",
+      "cost_usd": 0.002721,
+      "tokens": 22586,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1150.0
+        ],
+        [
+          "buyer",
+          "offer",
+          480.0
+        ],
+        [
+          "seller",
+          "offer",
+          1000.0
+        ],
+        [
+          "buyer",
+          "offer",
+          560.0
+        ],
+        [
+          "seller",
+          "offer",
+          655.0
+        ],
+        [
+          "buyer",
+          "offer",
+          640.0
+        ],
+        [
+          "seller",
+          "walk_away",
+          0.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 2: Hartwell -> Riverbend (clear deal)",
+      "negotiation_id": 1,
+      "listing": 1,
+      "need": 1,
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1400.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "end_reason": "buyer accepted $1,400.00",
+      "cost_usd": 0.000662,
+      "tokens": 5893,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1400.0
+        ],
+        [
+          "buyer",
+          "accept",
+          1400.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 2: Summit -> Ironclad (clear deal)",
+      "negotiation_id": 4,
+      "listing": 12,
+      "need": 12,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "end_reason": "seller accepted $985.00",
+      "cost_usd": 0.00185,
+      "tokens": 15547,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1095.0
+        ],
+        [
+          "buyer",
+          "offer",
+          985.0
+        ],
+        [
+          "seller",
+          "offer",
+          1045.0
+        ],
+        [
+          "buyer",
+          "offer",
+          985.0
+        ],
+        [
+          "seller",
+          "accept",
+          985.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 2: Hartwell -> Prairie Packaging (narrow deal)",
+      "negotiation_id": 5,
+      "listing": 13,
+      "need": 13,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 125.0,
+      "floor": 122.0,
+      "ceiling": 131.0,
+      "end_reason": "seller accepted $125.00",
+      "cost_usd": 0.001829,
+      "tokens": 15487,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          190.0
+        ],
+        [
+          "buyer",
+          "offer",
+          120.0
+        ],
+        [
+          "seller",
+          "offer",
+          170.0
+        ],
+        [
+          "buyer",
+          "offer",
+          125.0
+        ],
+        [
+          "seller",
+          "accept",
+          125.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 2: Redwood -> Coastal Electronics (narrow deal)",
+      "negotiation_id": 2,
+      "listing": 15,
+      "need": 15,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 250.0,
+      "floor": 248.0,
+      "ceiling": 262.0,
+      "end_reason": "seller accepted $250.00",
+      "cost_usd": 0.001959,
+      "tokens": 15579,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          375.0
+        ],
+        [
+          "buyer",
+          "offer",
+          225.0
+        ],
+        [
+          "seller",
+          "offer",
+          325.0
+        ],
+        [
+          "buyer",
+          "offer",
+          250.0
+        ],
+        [
+          "seller",
+          "accept",
+          250.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 2: Cascade -> Northwoods (walk-away)",
+      "negotiation_id": 3,
+      "listing": 11,
+      "need": 11,
+      "status": "round_cap",
+      "rounds": 7,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "end_reason": "round cap of 6 reached; seller declined the final offer",
+      "cost_usd": 0.002832,
+      "tokens": 22646,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1185.0
+        ],
+        [
+          "buyer",
+          "offer",
+          500.0
+        ],
+        [
+          "seller",
+          "offer",
+          1000.0
+        ],
+        [
+          "buyer",
+          "offer",
+          600.0
+        ],
+        [
+          "seller",
+          "offer",
+          760.0
+        ],
+        [
+          "buyer",
+          "offer",
+          640.0
+        ],
+        [
+          "seller",
+          "walk_away",
+          0.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 3: Hartwell -> Riverbend (clear deal)",
+      "negotiation_id": 2,
+      "listing": 1,
+      "need": 1,
+      "status": "agreed",
+      "rounds": 2,
+      "price": 1425.0,
+      "floor": 905.0,
+      "ceiling": 1890.0,
+      "end_reason": "buyer accepted $1,425.00",
+      "cost_usd": 0.00079,
+      "tokens": 4771,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1425.0
+        ],
+        [
+          "buyer",
+          "accept",
+          1425.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 3: Summit -> Ironclad (clear deal)",
+      "negotiation_id": 4,
+      "listing": 12,
+      "need": 12,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 985.0,
+      "floor": 790.0,
+      "ceiling": 985.0,
+      "end_reason": "seller accepted $985.00",
+      "cost_usd": 0.00185,
+      "tokens": 15547,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1095.0
+        ],
+        [
+          "buyer",
+          "offer",
+          985.0
+        ],
+        [
+          "seller",
+          "offer",
+          1045.0
+        ],
+        [
+          "buyer",
+          "offer",
+          985.0
+        ],
+        [
+          "seller",
+          "accept",
+          985.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 3: Hartwell -> Prairie Packaging (narrow deal)",
+      "negotiation_id": 3,
+      "listing": 13,
+      "need": 13,
+      "status": "agreed",
+      "rounds": 5,
+      "price": 123.0,
+      "floor": 122.0,
+      "ceiling": 131.0,
+      "end_reason": "seller accepted $123.00",
+      "cost_usd": 0.001962,
+      "tokens": 15700,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          210.0
+        ],
+        [
+          "buyer",
+          "offer",
+          110.0
+        ],
+        [
+          "seller",
+          "offer",
+          175.0
+        ],
+        [
+          "buyer",
+          "offer",
+          123.0
+        ],
+        [
+          "seller",
+          "accept",
+          123.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 3: Redwood -> Coastal Electronics (narrow deal)",
+      "negotiation_id": 5,
+      "listing": 15,
+      "need": 15,
+      "status": "agreed",
+      "rounds": 7,
+      "price": 262.0,
+      "floor": 248.0,
+      "ceiling": 262.0,
+      "end_reason": "seller accepted $262.00",
+      "cost_usd": 0.002502,
+      "tokens": 21975,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          375.0
+        ],
+        [
+          "buyer",
+          "offer",
+          225.0
+        ],
+        [
+          "seller",
+          "offer",
+          330.0
+        ],
+        [
+          "buyer",
+          "offer",
+          250.0
+        ],
+        [
+          "seller",
+          "offer",
+          290.0
+        ],
+        [
+          "buyer",
+          "offer",
+          262.0
+        ],
+        [
+          "seller",
+          "accept",
+          262.0
+        ]
+      ]
+    },
+    {
+      "label": "sample run 3: Cascade -> Northwoods (walk-away)",
+      "negotiation_id": 1,
+      "listing": 11,
+      "need": 11,
+      "status": "round_cap",
+      "rounds": 7,
+      "price": null,
+      "floor": 655.0,
+      "ceiling": 640.0,
+      "end_reason": "round cap of 6 reached; seller declined the final offer",
+      "cost_usd": 0.002738,
+      "tokens": 21319,
+      "blocked_moves": [],
+      "offers": [
+        [
+          "seller",
+          "offer",
+          1185.0
+        ],
+        [
+          "buyer",
+          "offer",
+          500.0
+        ],
+        [
+          "seller",
+          "offer",
+          990.0
+        ],
+        [
+          "buyer",
+          "offer",
+          575.0
+        ],
+        [
+          "seller",
+          "offer",
+          655.0
+        ],
+        [
+          "buyer",
+          "offer",
+          640.0
+        ],
+        [
+          "seller",
+          "walk_away",
+          0.0
+        ]
+      ]
+    }
+  ],
+  "spend": {
+    "cost_usd": 0.02811,
+    "tokens": 229864
+  },
+  "consistency": [
+    {
+      "sample": "Hartwell -> Riverbend (clear deal)",
+      "expected": "deal",
+      "outcomes": [
+        "deal",
+        "deal",
+        "deal"
+      ],
+      "prices": [
+        1400.0,
+        1400.0,
+        1425.0
+      ],
+      "rounds": [
+        2,
+        2,
+        2
+      ],
+      "as_expected": "3/3"
+    },
+    {
+      "sample": "Summit -> Ironclad (clear deal)",
+      "expected": "deal",
+      "outcomes": [
+        "deal",
+        "deal",
+        "deal"
+      ],
+      "prices": [
+        975.0,
+        985.0,
+        985.0
+      ],
+      "rounds": [
+        5,
+        5,
+        5
+      ],
+      "as_expected": "3/3"
+    },
+    {
+      "sample": "Hartwell -> Prairie Packaging (narrow deal)",
+      "expected": "deal",
+      "outcomes": [
+        "deal",
+        "deal",
+        "deal"
+      ],
+      "prices": [
+        123.0,
+        125.0,
+        123.0
+      ],
+      "rounds": [
+        5,
+        5,
+        5
+      ],
+      "as_expected": "3/3"
+    },
+    {
+      "sample": "Redwood -> Coastal Electronics (narrow deal)",
+      "expected": "deal",
+      "outcomes": [
+        "deal",
+        "deal",
+        "deal"
+      ],
+      "prices": [
+        252.0,
+        250.0,
+        262.0
+      ],
+      "rounds": [
+        5,
+        5,
+        7
+      ],
+      "as_expected": "3/3"
+    },
+    {
+      "sample": "Cascade -> Northwoods (walk-away)",
+      "expected": "no deal",
+      "outcomes": [
+        "no deal",
+        "no deal",
+        "no deal"
+      ],
+      "prices": [],
+      "rounds": [
+        7,
+        7,
+        7
+      ],
+      "as_expected": "3/3"
+    }
+  ],
+  "leak_scans": [
+    {
+      "section": 5,
+      "responses": 819,
+      "messages": 26,
+      "negotiations": 5,
+      "leaks": [],
+      "third_party": []
+    }
+  ],
+  "seconds": 346
+}

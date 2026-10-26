@@ -221,6 +221,9 @@ For sale (21)                                  │  To buy (21)
 
 ### 4.4 Negotiations (Phase 6)
 
+**As built (Phase 6), replacing the sketch below where they differ:** a list on the left (Needs your approval · In progress · Ready to start · Closed) and the selected negotiation on the right. Every view is the signed-in company's own: its limit ("Your floor" / "Your budget", with a lock: "only your agent sees this"), its agent's private one-line reasons under its own bubbles, and its agent's blocked moves as dashed red bubbles ("Your agent tried to offer below your floor, and the rules blocked it"). Bubbles: seller left (orange tint), buyer right (blue tint), the viewer's own agent outlined in navy. The chart shows seller offers (orange), buyer offers (blue) and **only the viewer's own limit** as a dashed line in the viewer's colour. The deal card shows the result against the viewer's own limit ("$495 above your floor"), the impact line, and both companies' approval states; Approve is the primary button in the viewer's side colour. No deal: a plain-English reason plus the next-best match with a Start button. Queued negotiations say so. Start panel: the pair, the quantity (locked), and the viewer's own limit to review, with "Only your agent sees this."
+
+
 ```
 Negotiation #1 · 6ES7315-2AG10-0AB0 × 1 · Hartwell (seller) ↔ Riverbend Foods (buyer)        Round 4 of 6
 

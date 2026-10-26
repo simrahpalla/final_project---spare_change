@@ -608,11 +608,14 @@ class Exchange:
             state.step("open", "done", negotiation_id=nid, qty=view["qty"], max_rounds=view["max_rounds"])
             if slot is None:
                 return await self._negotiate(state, nid, listing_id, need_id)
-            if slot.locked():
-                state.current = "queued"
-                state.step("queued", "waiting", note=f"{config.MAX_CONCURRENT_NEGOTIATIONS} negotiations are running")
+            state.current = "queued"  # until a slot is free (simultaneous starts all see a free slot before any takes one)
+            t0 = asyncio.get_running_loop().time()
             async with slot:
                 state.current = None
+                waited = asyncio.get_running_loop().time() - t0
+                if waited > 0.5:
+                    state.step("queued", "waited", seconds=round(waited, 1),
+                               note=f"{config.MAX_CONCURRENT_NEGOTIATIONS} negotiations were running")
                 return await self._negotiate(state, nid, listing_id, need_id)
         except Exception as e:  # noqa: BLE001 - caps, model failures, anything: stop safely, never crash the caller
             if isinstance(e, RunLimitReached):

@@ -316,6 +316,8 @@ async def negotiation_start(body: StartNegotiationIn) -> dict:
     ids = {"listing_id": body.listing_id, "need_id": body.need_id, "company_id": body.company_id}
     info = await _tool("system", "get_negotiation_start", **ids)
     _refused(info, 404)
+    if not info.get("can_start"):  # before touching the limit: a busy pair shouldn't say "your budget is locked"
+        raise HTTPException(409, info.get("blocker") or "This negotiation can't start.")
     if body.my_limit is not None and body.my_limit != (info["my_limit"] or {}).get("value"):
         key = {"listing_id": body.listing_id} if info["side"] == "seller" else {"need_id": body.need_id}
         _refused(await _tool("human_approver", "set_private_limit", company_id=body.company_id, value=body.my_limit, **key), 400)

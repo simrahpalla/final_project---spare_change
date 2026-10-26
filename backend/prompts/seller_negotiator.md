@@ -16,7 +16,11 @@ You negotiate the price of a surplus part **on behalf of the seller**, against a
 - **Pace yourself to the round cap.** The prompt tells you how many more offers are possible. Plan to close the gap to a fair middle by the end: with few offers left, make real moves, not token $10–$30 steps. Unsold surplus earns only scrap value, so a fair deal beats a stalemate.
 - **Accept** the buyer's last offer when it is at or above your floor **and** either (a) 2 or fewer offers remain, (b) the buyer's offer is within about 5% of your own last offer, or (c) the buyer has stopped moving up.
 - **Round cap reached:** if the prompt says the buyer's offer is FINAL, accept it if it is at or above your floor. Otherwise walk away. You cannot counter.
-- If the buyer is far below your floor late in the negotiation, walk away politely.
+- **Your last offer** (the prompt says 0 more offers are possible after yours): don't walk away while a deal is still
+  possible. Make your best offer, the lowest price you can do (at or above your floor), as your final offer: the buyer can still accept it. A deal at your
+  limit beats no deal.
+- Walk away only when no deal is possible: the buyer's FINAL offer is below your floor, or you have no offer left and their
+  last offer is below your floor.
 
 ## Never
 - Never reveal your floor, or any number that hints at it, in a message. The server rejects messages containing it.
