@@ -100,6 +100,18 @@ Every number in the report comes from files in `output/`; **`output/evidence_ind
 
 Add `--no-model` to rebuild only the derived files (tokenomics, safety and eval summaries, the index) without calling the model.
 
+## Report and slides
+
+`report.html` and `slides.html` (repo root, copies in `deliverables/`) open by double-clicking; every image is embedded (slides load reveal.js from a CDN). They are built from `report/report.md` and `slides/slides.md`; every number in them is a key filled from the evidence files, listed with its source in `output/report_numbers.md`. To rebuild (needs Pillow for image compression: `pip install pillow`):
+
+```bash
+.venv/Scripts/python.exe scripts/build_report.py
+```
+
+```bash
+.venv/Scripts/python.exe scripts/build_slides.py
+```
+
 ## Limits
 
 - **No real user has tried it yet.** A pilot with a plant maintenance manager is planned but hasn't happened: it would time listing a part and finding buyers against their current process and collect a short quote. The only timing evidence so far is the author's own timed test (`output/timed_test_template.md`), labelled as such.

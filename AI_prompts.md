@@ -629,3 +629,103 @@ This file records the prompts I used while building my MGT 409 final project, Su
 ### Follow-up prompt(s)
 
 > sure - push it and check it worked and then we move to actually doing phase 11?
+
+## Phase 11 — Report and slides
+
+### Initial prompt
+
+> Phase 11: report.html and slides.html. These are two of the three graded deliverables (report 41 pts + slides 8 pts), so accuracy and evidence matter more than polish. Re-read the official requirements page (https://zlisto.github.io/mgt_409_fa26/project_requirements.html) and CLAUDE.md before starting.
+>
+> GROUND RULES (apply to both files)
+> - Every number must trace to a file in output/ (tokenomics.json, safety_tests.json, eval_matching.json, eval_negotiation.json, impact_model.json, impact_sources.md, phase*_stress.md, evidence_index.md) or to a sourced row in impact_research.md. Build output/report_numbers.md: a ledger listing every number used in the report and slides → the file and field it came from. If a number has no source, don't use it.
+> - No invented content: no user quotes, testimonials, or pilot results. The real-user test hasn't happened. The timed self-test numbers come from output/timed_test_template.md. If it's still empty, insert a clearly marked [TODO: Simrah to fill timed test] placeholder and list it in the final checklist. Don't make up times.
+> - Be honest: state sample sizes ("18/20", not just "90%"), report failures and limits, label estimates "est." and assumptions as assumptions. Use only numbers from the impact_research.md rows, never the "don't claim" list.
+> - Write for a smart manager who has never seen the app: plain English, short paragraphs, no filler (the grading says filler costs points). Explain any technical term in one line the first time it appears.
+> - Self-contained: both files must open by double-clicking on any computer, with every image embedded as base64 (WebP or compressed PNG to keep file sizes reasonable) and all CSS inline. The only allowed external resource is reveal.js from a CDN in slides.html.
+> - Branding: Spare Change, tagline "Turn spare parts into spare change." Buyer-side line "Spare yourself the downtime." Use the approved Workshop design from output/design.md: navy #0C2340, safety orange #F97316 as the one accent, green for passed/approved, red for blocked, teal #0F766E for impact numbers, clean sans-serif, monospace only for part numbers.
+> - Build both from source files so they're easy to edit: report/report.md + scripts/build_report.py → report.html, and slides/slides.md (or a JSON outline) + scripts/build_slides.py → slides.html. Put the final files at the repo root and in deliverables/.
+>
+> REPORT (report.html, 10–15 printed pages, letter size; sections in exactly this order and with these titles)
+>
+> 1. Title + links
+>    - "Spare Change", the tagline, "Simrah Palla", the GitHub repo link (from output/github_url.txt), the app link if hosted, and ONE sentence saying what the app does.
+>
+> 2. Motivation
+>    - Who has the problem: plants with idle surplus parts, and plants with stopped lines waiting for discontinued parts.
+>    - How they cope today and what it costs, using sourced numbers from impact_sources.md: Siemens TCOD 2024 downtime costs ($1.4T, 11% of revenue; $36k–$2.3M/hr), restart time 49 → 81 min with emergency parts harder to source, ~22% of spare-parts stock unused 5+ years, holding cost ~15–30%/yr, scrap recovering ~5–15%, new OEM lead time ~16–20 weeks vs. surplus in days.
+>    - The S7-300 phase-out story (new parts stopped shipping Oct 2025; spare parts guaranteed to 2033), citing the distributors as the source.
+>
+> 3. What is new here
+>    - Named comparison table: B-Stock, Liquidity Services/GovDeals, EquipNet, eBay, Automa, SPARETECH, Rheaply, Verusen and Verdantis MRO360, Pactum, PharmaCupboard, and ChatGPT itself. For each: what it does, and what it doesn't do that we do.
+>    - Our four differences: matching on what equipment buyers run (not keywords); agents on both sides with private limits enforced in code; the whole loop from messy text to human-approved deal; impact ($ and est. CO2e) on every deal.
+>    - Be honest that Automa and SPARETECH are closest, and say what we do differently.
+>    - A short "What's new vs. my HW5" paragraph: the architecture pattern is reused, but the domain, agents, two-sided matching, negotiation, compliance guard, impact layer, and demo accounts are all new. This matters because ideas built in class without a real addition are capped at Tier 1.
+>
+> 4. The agents
+>    - An agent table: each agent, what it does, its tools (by MCP role), and whether it uses the LLM or deterministic code.
+>    - A clear architecture diagram as inline SVG: seller and buyer entry points → listing/need extraction → compliance guard → matching (both directions, SQL pre-filter) → pricing → negotiators (each locked to its own private limit) → human approval. Show the two human touchpoints (confirm limit, approve deal) and the principle "humans set the guardrails, agents do the work."
+>    - Model choice: gpt-6-luna for all agents via Portkey, and why (course key; cheap enough to run many agents; structured outputs). Note that deterministic code handles what doesn't need judgment.
+>    - ONE real run traced step by step with screenshots: a seller lists an item → listing agent output → compliance pass → matches with reasons → buyer alerted → auto-negotiation turn by turn → both approvals → listing sold and need filled. Use real screenshots from output/screenshots/ and the matching audit trail entries.
+>    - Brief design choices: the MCP server as the only path to the database, role-based tools, negotiator processes locked to one negotiation, and process reuse after the crash fix.
+>
+> 5. Tokenomics
+>    - The price table (gpt-6-luna: $0.10 input / $0.01 cached / $0.125 cache write / $0.50 output per 1M).
+>    - Measured tokens (input / cached / output) and cost per seller run, per need run, and per negotiation, as averages of real runs with the sample size. Include a screenshot of the in-app cost meter.
+>    - Cost per user per month (state the assumptions), at 100 users, and at 10,000 users. Add the scale check: ~284k US manufacturing sites, so 10,000 is ~3.5%.
+>    - What we did to keep cost down: SQL pre-filter, deterministic compliance checks, no LLM call when there are 0 candidates, prompt caching, round caps.
+>    - The pre-filter experiment: tokens AND accuracy with and without it, answering "did cost-cutting hurt performance?" with evidence.
+>
+> 6. Safety
+>    - Three subsections, exactly as the requirements name them:
+>      - Attacks: prompt injection in listings and needs, attempts to extract the other side's limit, calling tools outside a role.
+>      - Agent malfunction: made-up specs or match reasons, wrong actions, infinite loops, MCP crashes under load (show the before/after crash rate from the stress test).
+>      - Overspending: per-run caps, the per-negotiation cap, and the session budget cap.
+>    - For each: the risk, the defense built, and evidence (test result plus a screenshot). Include at least the injection block, the blocked offer shown to its own side, the leak scan, and the side-by-side seller and buyer views showing each side only sees its own limit.
+>
+> 7. Impact
+>    - The plant model from impact_model.md: one-time $ recovered vs. scrap, carrying cost avoided per year (labeled as yearly), downtime value only for line-down deals at the $36k/hr lower bound × 1 hour, and est. CO2e avoided with the method (factor × weight or per unit × 0.5 reuse credit), plus low/mid/high sensitivity.
+>    - Per-deal averages from logged test deals (not totals presented as real-world impact).
+>    - The timed self-test, labeled "measured by the author, not an independent user."
+>    - A sources table for every external number, with its confidence level.
+>
+> 8. Limits + next steps
+>    - Synthetic data; demo account switching is not real login; no payments or shipping; the carbon method is simplified; no independent user test yet.
+>    - Business challenges: getting buyers and sellers on board at the same time; equipment data is scattered and private; trust and counterfeits (part revision and firmware verification); thin margins on small transactions.
+>    - Next steps: a pilot with a plant maintenance manager; starting with discontinued PLCs and drives; an internal exchange between sites of one large manufacturer as a first customer; verification features.
+>
+> Report design: clean, print-friendly layout (letter size, ~11pt body), a navy header bar, numbered section headings, figure captions on every screenshot ("Figure 3: Negotiation from the seller's view"), tables with light borders, and print CSS that avoids splitting images and tables across pages. Put a 3–4 line executive summary right under the title.
+>
+> SLIDES (slides.html, reveal.js from CDN, max 10 slides, big readable text, same colors as the app)
+> 1. Title: Spare Change logo and wordmark, "Turn spare parts into spare change", Simrah Palla, repo link
+> 2. The problem and who has it: two plants side by side (idle surplus vs. line down), with 2–3 sourced numbers
+> 3. What's new: compact competitor comparison, and our four differences
+> 4. How the agents work: the architecture diagram with the two human touchpoints
+> 5. Demo, seller side: listing → compliance → matches → price (screenshots)
+> 6. Demo, negotiation: live negotiation and deal approval (screenshots, seller and buyer views)
+> 7. Cost to run: per run, per user per month, at 10,000 users, and the pre-filter result
+> 8. Safety: three columns (attacks, malfunction, overspending), each with one proof screenshot or number
+> 9. Impact: plant model headline numbers + est. CO2e, with sources
+> 10. What's next: limits, the pilot plan, and "Your next spare part is someone's spare change"
+> - At most ~30 words of text per slide. Visuals carry the story. Add speaker notes with the talking points. Arrow keys must work and F must enter full screen.
+>
+> VERIFICATION (do all of these before telling me it's done)
+> - Open both files in a headless browser: no console errors, every image renders, no external image/CSS references (except reveal.js), all links valid.
+> - Print the report to PDF at letter size and report the page count. It must be 10–15 pages. Adjust content (not font size) if it's outside that range.
+> - Click through every slide and confirm there are ≤10, nothing overflows the slide, and text is readable.
+> - Cross-check every number in both files against output/report_numbers.md, and flag any mismatch.
+> - Search both files for TODO, placeholder, lorem, and invented quotes. List any remaining TODOs for me.
+> - Report file sizes for both HTML files.
+> - Save a PDF copy of the report to deliverables/ for my review.
+>
+> Then stop and give me: a final checklist mapping each rubric row to where it's covered in the report and slides, the remaining TODOs (e.g. the timed test), and any section where the evidence is thin. Log this prompt in AI_prompts.md.
+
+> we can reset it. I still need to do the manual check but I'll do that after my class. I want you to go ahead and execute phase 11 and leave placeholder for the manual check
+
+### What was missing
+
+- **Competitor sources:** none of the named competitors were in the repo, so a sourced scan was done first (`output/competitors.md`, 12 products, every row with the page actually opened; 403s noted). PharmaCupboard turned out to be Indian, not UK/EU.
+- **Two numbers in the prompt conflicted with the Phase 10 rules:** the "$36k–$2.3M/hr" range (Phase 10 says never use $2.3M) → the report uses "at least $36,000 an hour, even in the lowest-cost sector"; "~284k sites, ~3.5%" (the research says to write "about 280,000") → "about 280,000", so 10,000 users ≈ 3.6%.
+- **The ledger is enforced, not just written:** report/slides write `{{key}}`; `scripts/report_numbers.py` reads each value from its evidence file; the build fails on an unknown key.
+- **Found while building:** the evidence index's Impact row read the old impact-model keys and printed $0 (fixed); the slides' notes plugin URL was wrong (fixed).
+- **Section numbering:** the requirements count Title + links as section 1, so Motivation is 2 … Limits is 8.
+- **No natural blocked offer to screenshot:** the traced run closed in round 2, so the "blocked offer shown to its own side" is evidenced by the scripted rogue-agent test (`safety_extra.json`, M3), not a screenshot.

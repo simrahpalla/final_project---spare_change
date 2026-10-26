@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" font-family="Inter, 'Segoe UI', Roboto, Arial, sans-serif" font-size="13" role="img" aria-label="Spare Change agent architecture">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B6575"/></marker>
+  </defs>
+  <!-- legend -->
+  <rect x="20" y="14" width="14" height="14" rx="3" fill="#0C2340"/><text x="40" y="26" fill="#0F172A">AI agent (gpt-6-luna)</text>
+  <rect x="190" y="14" width="14" height="14" rx="3" fill="#F5F7FA" stroke="#A9B4C3"/><text x="210" y="26" fill="#0F172A">Deterministic code</text>
+  <rect x="345" y="14" width="14" height="14" rx="3" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/><text x="365" y="26" fill="#0F172A">Human touchpoint</text>
+
+  <!-- inputs -->
+  <rect x="20" y="60" width="130" height="52" rx="8" fill="#fff" stroke="#F97316" stroke-width="2"/>
+  <text x="85" y="82" text-anchor="middle" font-weight="700" fill="#0C2340">Seller plant</text><text x="85" y="100" text-anchor="middle" fill="#5B6575">pastes messy text</text>
+  <rect x="20" y="124" width="130" height="52" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+  <text x="85" y="146" text-anchor="middle" font-weight="700" fill="#0C2340">Buyer plant</text><text x="85" y="164" text-anchor="middle" fill="#5B6575">posts a need</text>
+  <line x1="150" y1="86" x2="168" y2="105" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="150" y1="150" x2="168" y2="132" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- pipeline -->
+  <rect x="172" y="60" width="118" height="116" rx="8" fill="#F5F7FA" stroke="#A9B4C3"/>
+  <text x="231" y="100" text-anchor="middle" font-weight="700" fill="#0C2340">Pre-screen</text>
+  <text x="231" y="118" text-anchor="middle" fill="#5B6575">injection check</text><text x="231" y="136" text-anchor="middle" fill="#5B6575">blocked = 0 tokens</text>
+
+  <rect x="310" y="60" width="130" height="116" rx="8" fill="#0C2340"/>
+  <text x="375" y="96" text-anchor="middle" font-weight="700" fill="#fff">Listing agent</text>
+  <text x="375" y="114" text-anchor="middle" fill="#fff">or Need agent</text>
+  <text x="375" y="140" text-anchor="middle" fill="#C9D2DE" font-size="12">messy text → part,</text><text x="375" y="156" text-anchor="middle" fill="#C9D2DE" font-size="12">qty, condition</text>
+
+  <rect x="460" y="60" width="130" height="116" rx="8" fill="#0C2340"/>
+  <text x="525" y="96" text-anchor="middle" font-weight="700" fill="#fff">Compliance</text>
+  <text x="525" y="118" text-anchor="middle" fill="#C9D2DE" font-size="12">rules in code first</text><text x="525" y="134" text-anchor="middle" fill="#C9D2DE" font-size="12">(expiry, hazmat, price)</text>
+  <text x="525" y="156" text-anchor="middle" fill="#fff" font-size="12">then guard agent</text>
+
+  <rect x="610" y="60" width="150" height="116" rx="8" fill="#0C2340"/>
+  <text x="685" y="90" text-anchor="middle" font-weight="700" fill="#fff">Matching agent</text>
+  <text x="685" y="112" text-anchor="middle" fill="#C9D2DE" font-size="12">SQL pre-filter (code):</text><text x="685" y="128" text-anchor="middle" fill="#C9D2DE" font-size="12">who runs this machine?</text>
+  <text x="685" y="150" text-anchor="middle" fill="#C9D2DE" font-size="12">fact-check (code)</text><text x="685" y="166" text-anchor="middle" fill="#C9D2DE" font-size="12">both directions</text>
+
+  <rect x="780" y="60" width="160" height="116" rx="8" fill="#0C2340"/>
+  <text x="860" y="96" text-anchor="middle" font-weight="700" fill="#fff">Pricing agent</text>
+  <text x="860" y="116" text-anchor="middle" fill="#C9D2DE" font-size="12">ask + suggested floor</text>
+  <text x="860" y="144" text-anchor="middle" fill="#fff" font-size="12">alerts to both sides</text><text x="860" y="160" text-anchor="middle" fill="#C9D2DE" font-size="12">(code, score ≥ 70)</text>
+
+  <line x1="290" y1="118" x2="308" y2="118" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="440" y1="118" x2="458" y2="118" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="590" y1="118" x2="608" y2="118" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="760" y1="118" x2="778" y2="118" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- human 1 -->
+  <rect x="780" y="214" width="160" height="62" rx="8" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/>
+  <text x="860" y="238" text-anchor="middle" font-weight="700" fill="#C2410C">① Confirm limit</text>
+  <text x="860" y="258" text-anchor="middle" fill="#0F172A" font-size="12">seller floor / buyer budget</text>
+  <line x1="860" y1="176" x2="860" y2="212" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- negotiation -->
+  <rect x="440" y="296" width="320" height="92" rx="8" fill="#0C2340"/>
+  <text x="600" y="322" text-anchor="middle" font-weight="700" fill="#fff">Seller negotiator  ⇄  Buyer negotiator</text>
+  <text x="600" y="344" text-anchor="middle" fill="#C9D2DE" font-size="12">each in its own process, sees only its own limit</text>
+  <text x="600" y="362" text-anchor="middle" fill="#C9D2DE" font-size="12">code refuses offers outside the limit · round cap</text>
+  <text x="600" y="380" text-anchor="middle" fill="#C9D2DE" font-size="12">auto-starts when both companies opt in</text>
+  <path d="M860 276 L860 342 L762 342" fill="none" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- human 2 -->
+  <rect x="172" y="306" width="240" height="72" rx="8" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/>
+  <text x="292" y="332" text-anchor="middle" font-weight="700" fill="#C2410C">② Both companies approve</text>
+  <text x="292" y="352" text-anchor="middle" fill="#0F172A" font-size="12">deal closes: listing sold, need filled,</text>
+  <text x="292" y="368" text-anchor="middle" fill="#0F172A" font-size="12">$ and est. CO2e computed in code</text>
+  <line x1="440" y1="342" x2="414" y2="342" stroke="#5B6575" stroke-width="1.5" marker-end="url(#ah)"/>
+
+  <!-- foundation -->
+  <rect x="20" y="410" width="920" height="40" rx="8" fill="#F5F7FA" stroke="#A9B4C3"/>
+  <text x="480" y="435" text-anchor="middle" fill="#0C2340"><tspan font-weight="700">MCP server: the only path to the database</tspan> · role-based tools · append-only audit trail · token, request and cost caps</text>
+  <text x="480" y="482" text-anchor="middle" font-size="15" font-weight="700" fill="#0C2340">Humans set the guardrails. Agents do the work in between.</text>
+</svg>

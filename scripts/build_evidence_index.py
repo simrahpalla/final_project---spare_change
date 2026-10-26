@@ -172,12 +172,12 @@ rows = [
      f"Phase 6 suite {C['phase6_suite']}, Phase 5 stress {C['phase5_stress']}, two-sided {C['two_sided']}, Phase 3 stress {C['phase3_table']}"),
     ("Impact", "`output/impact_model.md`/`.json` (one mid-size plant; inputs labelled measured / sourced / assumption), `output/impact_check.md` (Phase 10 consistency check), `output/impact_sources.md` "
      "(every external number, link, confidence), `carbon_factors` (sourced), `output/timed_test_template.md` (author's timed test, to fill in)",
-     "`phase5-marketplace` (impact summary), `phase6-deal-approved` (impact line); to take: `phase10-impact`",
-     (f"mid case: {imp.get('mid_scenario', {}).get('extra_recovered_vs_scrap_usd', 0):,} USD more than scrap, "
-      f"{imp.get('mid_scenario', {}).get('carrying_cost_avoided_per_year_usd', 0):,} USD/yr carrying cost avoided, "
-      f"{imp.get('mid_scenario', {}).get('buyer_downtime_value_per_year_usd', 0):,} USD/yr buyer downtime value, "
-      f"est. {imp.get('mid_scenario', {}).get('est_kg_co2e_avoided', 0):,} kg CO2e, model cost "
-      f"{imp.get('mid_scenario', {}).get('app_running_cost_per_year_usd', 0)} USD/yr; measured recovery "
+     "`phase5-marketplace` (impact summary), `phase6-deal-approved` (impact line), `phase10-impact-strip`, `phase10-impact-marketplace`, `phase11-deal-approved`, `phase11-marketplace-after`",
+     (f"mid case: {imp['mid_scenario']['one_time']['extra_recovered_vs_scrap_usd']:,} USD more than scrap (one-time), "
+      f"{imp['mid_scenario']['per_year']['carrying_cost_avoided_usd']:,} USD/yr carrying cost avoided, "
+      f"{imp['mid_scenario']['per_year']['buyer_downtime_value_usd']:,} USD/yr buyer downtime value (line-down only), "
+      f"est. {imp['mid_scenario']['one_time']['est_kg_co2e_avoided']:,} kg CO2e (one-time), model cost "
+      f"{imp['mid_scenario']['per_year']['app_model_cost_usd']} USD/yr; measured recovery "
       f"{imp.get('measured', {}).get('negotiated_price_over_new_price', {}).get('value', 0):.0%} of new price "
       f"(n={imp.get('measured', {}).get('negotiated_price_over_new_price', {}).get('n')}); **no real user yet** (pilot planned)")),
     ("Design", "`output/design.md`, `output/design/` mockups", "`phase4-*`, `phase5-*`, `phase6-*`", "Workshop style; orange Sell / blue Buy"),
