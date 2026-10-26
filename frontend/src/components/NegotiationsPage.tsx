@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   errorMessage,
+  limitsApi,
   negotiationApi,
   type Blocked,
   type CompanyProfile,
@@ -84,6 +85,10 @@ export function NegotiationsPage(props: {
         </p>
       </header>
       {tip && <p className="try-line">{tip}</p>}
+      <AutoToggle accountId={accountId} on={!!props.profile?.auto_negotiate} onChanged={() => {
+        loadList()
+        props.onChanged()
+      }} />
       {error && <p className="form-error">{error}</p>}
 
       <div className="neg-layout">
@@ -149,6 +154,39 @@ export function NegotiationsPage(props: {
         </section>
       </div>
     </main>
+  )
+}
+
+function AutoToggle(props: { accountId: number; on: boolean; onChanged: () => void }) {
+  const [busy, setBusy] = useState(false)
+  const [note, setNote] = useState<string | null>(null)
+  async function flip() {
+    setBusy(true)
+    try {
+      const r = await limitsApi.setAuto(props.accountId, !props.on)
+      setNote(r.started.length ? `Started ${r.started.length} negotiation${r.started.length > 1 ? 's' : ''} that were ready.` : null)
+      props.onChanged()
+    } catch (e) {
+      setNote(errorMessage(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <div className="auto-toggle">
+      <button role="switch" aria-checked={props.on} className={`switch ${props.on ? 'on' : ''}`} onClick={flip} disabled={busy}>
+        <span />
+      </button>
+      <div>
+        <b>Auto-negotiate my matches</b>
+        <div className="small muted">
+          {props.on
+            ? 'On: a strong match (score 70+) starts a negotiation by itself once both companies have confirmed their limits. You still approve every deal.'
+            : 'Off: start each negotiation yourself with the Start button.'}
+          {note && <> {note}</>}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -250,7 +288,9 @@ function StartPanel(props: { accountId: number; target: Target; onCancel: () => 
         </span>
         <span className="field-help">
           <b>Only your agent sees this.</b> The other side never does, and you never see theirs.
-          {info.my_limit.set_by === 'suggested' && ' Pre-filled with the pricing agent\'s suggested floor.'}
+          {info.my_limit.set_by === 'suggested'
+            ? ` Suggested, not confirmed yet: starting confirms it.${info.my_limit.reason ? ` ${info.my_limit.reason}` : ''}`
+            : ' Saved earlier; change it here if you need to.'}
         </span>
       </label>
       {info.blocker && <div className="outcome neutral section">{info.blocker}</div>}

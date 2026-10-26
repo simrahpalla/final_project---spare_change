@@ -70,6 +70,7 @@ class PriceSuggestion(BaseModel):
 
     ask: float = Field(gt=0, description="Suggested public asking price per unit.")
     floor_suggestion: float = Field(gt=0, description="Suggested private minimum per unit (shown only to the seller).")
+    floor_reason: str = Field("", description="One line for the seller: why this floor, citing new price, scrap value and condition.")
     rationale: str = Field(description="Two or three sentences citing new price, scrap value, condition and demand.")
 
 

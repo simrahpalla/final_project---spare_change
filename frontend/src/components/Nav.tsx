@@ -175,7 +175,7 @@ function AlertsBell(props: {
                     </button>
                   )}
                   {a.kind === 'new_match' && a.closed_reason && <span className="muted small push">Closed: {a.closed_reason}</span>}
-                  {(a.kind === 'deal_pending' || a.kind === 'deal_approved' || a.kind === 'deal_rejected') && (
+                  {['deal_pending', 'deal_approved', 'deal_rejected', 'negotiation_started'].includes(a.kind) && (
                     <button
                       className="btn ghost push"
                       onClick={() => {

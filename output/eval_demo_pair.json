@@ -35,8 +35,8 @@
         ]
       ],
       "deal_status_after_approvals": "approved",
-      "seller_sees": "$28.00 above your floor",
-      "buyer_sees": "$30.00 under your budget"
+      "seller_sees": "$28 above your floor",
+      "buyer_sees": "$30 under your budget"
     },
     {
       "run": 2,
@@ -72,8 +72,8 @@
         ]
       ],
       "deal_status_after_approvals": "approved",
-      "seller_sees": "$28.00 above your floor",
-      "buyer_sees": "$30.00 under your budget"
+      "seller_sees": "$28 above your floor",
+      "buyer_sees": "$30 under your budget"
     },
     {
       "run": 3,
@@ -109,20 +109,20 @@
         ]
       ],
       "deal_status_after_approvals": "approved",
-      "seller_sees": "$28.00 above your floor",
-      "buyer_sees": "$30.00 under your budget"
+      "seller_sees": "$28 above your floor",
+      "buyer_sees": "$30 under your budget"
     }
   ],
   "deals_closed": "3/3",
   "prices_inside_both_limits": true,
   "leak_scan": {
     "section": 2,
-    "check": "Leak scan (section 7): 111 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
+    "check": "Leak scan (section 7): 50 API responses, 5 messages and all alerts; neither side's view holds the other's limit; a third company is refused",
     "result": "PASS",
     "detail": {
       "leaks": [],
       "third_party": []
     }
   },
-  "spend_usd": 0.008105
+  "spend_usd": 0.0081
 }

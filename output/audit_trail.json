@@ -10037,5 +10037,805 @@
     "depth": 0,
     "action": "mcp_startup",
     "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.3, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T07:11:55.452+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.4, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:45.610+00:00",
+    "run_id": "mcp-pool",
+    "agent": "system",
+    "depth": 0,
+    "action": "mcp_startup",
+    "result": "{\"status\": \"ready\", \"error\": null, \"startup_seconds\": 2.2, \"roles\": {\"broker\": {\"started\": true, \"reconnects\": 0}, \"system\": {\"started\": true, \"reconnects\": 0}, \"human_approver\": {\"started\": true, \"reconnects\": 0}}}"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:49.278+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "seller:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "seller_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": null,
+      "seller_id": 1
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:24:49.987+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 327
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:24:51.766+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "6ES7 315-2AG10"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:24:51.791+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"6ES7 315-2AG10\", \"count\": 8, \"parts\": [{\"part_number\": \"6ES7315-2AG10-0AB0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC CPU\", \"description\": \"SIMATIC S7-300 CPU 315-2 DP, 256 KB\", \"category\": \"spare_part\", \"new_price\": 2966.0, \"scrap_value\": 45.64, \"hazmat\": 0, \"hazmat_class\": null, \"shel…"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:51.810+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:24:51.831+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "seller:1",
+    "agent": "listing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 2,
+      "input_tokens": 252,
+      "cached_tokens": 1195,
+      "output_tokens": 95,
+      "cost_usd": 0.00035265
+    },
+    "result": "{\"part_number\": \"6ES7315-2AG10-0AB0\", \"qty\": 3, \"condition\": \"used_working\", \"asking_price\": 1425.0, \"expiry_date\": null, \"manufacture_date\": null, \"sds_available\": null, \"other_items\": [], \"confidence\": 0.98, \"notes\": \"Seller states the CPUs were pulled working; MMCs are not included.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:51.886+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 860
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:24:53.673+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:24:53.693+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 674,
+      "cached_tokens": 0,
+      "output_tokens": 84,
+      "cost_usd": 0.0001094
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:53.744+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 2054
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:24:59.420+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:24:59.454+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 405,
+      "cost_usd": 0.00041422
+    },
+    "result": "{\"matches\": [{\"buyer_id\": 20, \"listing_id\": null, \"need_id\": 1, \"score\": 100, \"reason\": \"Open need #1: exact 6ES7315-2AG10-0AB0 for a line-down Siemens S7-300; $12k/day downtime. Runs 4x S7-300 (18 yrs); listing has 3 used-working CPUs, covering the 1 needed.\"}, {\"buyer_id\": 32, \"listing_id\": null,…"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:59.476+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T07:24:59.534+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 443
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:25:02.548+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:25:02.585+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "pricing_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 707,
+      "cached_tokens": 0,
+      "output_tokens": 315,
+      "cost_usd": 0.0002282
+    },
+    "result": "{\"ask\": 1425.0, \"floor_suggestion\": 997.5, \"floor_reason\": \"About 34% of the $2,966 new price for a used, working CPU, and still about 22x its $45.64 scrap value.\", \"rationale\": \"The $1,425 ask is reasonable for a used, working unit: it is about 48% of the $2,966 new price, within the 40\\u201355% c…"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:02.640+00:00",
+    "run_id": "5ef833f01e15",
+    "subject": "listing:28",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"5ef833f01e15\", \"kind\": \"seller_flow\", \"requests\": 5, \"input_tokens\": 1759, \"cached_tokens\": 1195, \"cache_write_tokens\": 3737, \"output_tokens\": 899, \"total_tokens\": 7590, \"cost_usd\": 0.001104}",
+    "stop_reason": "listed and matched"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:09.764+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "listing:28/need:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 28,
+      "need_id": 1,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:25:14.800+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 473
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:25:19.977+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:25:20.002+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 1, \"listing_id\": 28, \"qty\": 1, \"floor_price\": 997.5, \"public_asking_price\": 1425.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:20.021+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 1425,
+      "message": "This is a working unit, and given the production urgency, we can proceed promptly at our asking price."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:25:20.047+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 1, \"action\": \"offer\", \"price\": 1425.0, \"status\": \"open\", \"rounds_left\": 5, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:20.065+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:25:20.082+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 1193,
+      "output_tokens": 213,
+      "cost_usd": 0.00047098
+    },
+    "result": "{\"move\": \"offer\", \"price\": 1425.0, \"reasoning\": \"Opened at $1,425 to anchor near the asking price while the buyer's line-down urgency may support a prompt transaction.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:20.127+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 616
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.763+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.802+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 1, \"need_id\": 1, \"qty\": 1, \"ceiling_price\": 1890.0, \"urgency\": \"line_down\", \"downtime_cost_per_day\": 12000.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.825+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "We accept your offer and are ready to proceed promptly."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.848+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 1, \"round\": 2, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 1425.0, \"end_reason\": \"buyer accepted $1,425.00\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.870+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.887+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2458,
+      "output_tokens": 161,
+      "cost_usd": 0.00032051
+    },
+    "result": "{\"move\": \"accept\", \"price\": 1425.0, \"reasoning\": \"Accepted at $1,425 because the line-down urgency makes restoring production promptly more valuable than further bargaining.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:25:33.946+00:00",
+    "run_id": "e87b6397042b",
+    "subject": "negotiation:1",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"e87b6397042b\", \"kind\": \"negotiation\", \"requests\": 6, \"input_tokens\": 756, \"cached_tokens\": 3651, \"cache_write_tokens\": 3939, \"output_tokens\": 374, \"total_tokens\": 8720, \"cost_usd\": 0.000791}",
+    "stop_reason": "agreed"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:02.394+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "need_flow",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "need_id": null,
+      "buyer_id": 20
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:02.451+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 283
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:03.899+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "lookup_part",
+    "args": {
+      "query": "Siemens S7-300 SM 321 32-point digital input card",
+      "limit": 8
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:03.927+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "lookup_part",
+    "result": "{\"query\": \"Siemens S7-300 SM 321 32-point digital input card\", \"count\": 1, \"parts\": [{\"part_number\": \"6ES7321-1BL00-0AA0\", \"manufacturer\": \"Siemens\", \"family\": \"PLC I/O\", \"description\": \"S7-300 SM 321 digital input 32 x 24 V DC\", \"category\": \"spare_part\", \"new_price\": 530.0, \"scrap_value\": 7.84, \"h…"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:03.945+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_compatibility",
+    "args": {
+      "part_number": "6ES7321-1BL00-0AA0"
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:03.973+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_compatibility",
+    "result": "{\"ok\": true, \"part_number\": \"6ES7321-1BL00-0AA0\", \"fits_platforms\": [\"Siemens S7-300\"], \"can_substitute_for\": [], \"can_be_replaced_by\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:04.008+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:26:04.046+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "need_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 2117,
+      "cached_tokens": 0,
+      "output_tokens": 159,
+      "cost_usd": 0.00042283
+    },
+    "result": "{\"part_number\": \"6ES7321-1BL00-0AA0\", \"platform\": \"Siemens S7-300\", \"family\": \"PLC I/O\", \"qty\": 4, \"urgency\": \"low\", \"downtime_cost_per_day\": null, \"other_items\": [], \"confidence\": 0.99, \"notes\": \"Requested as spares, so urgency is low despite the line's input issue.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:04.089+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 338
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:04.402+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:26:04.422+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "buyer:20",
+    "agent": "compliance_guard",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 488,
+      "cached_tokens": 0,
+      "output_tokens": 103,
+      "cost_usd": 0.0001003
+    },
+    "result": "{\"decision\": \"allow\", \"reasons\": []}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:04.466+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 1216
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:10.812+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:26:10.844+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "need:22",
+    "agent": "matching_agent",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 1,
+      "input_tokens": 126,
+      "cached_tokens": 0,
+      "output_tokens": 315,
+      "cost_usd": 0.00033335
+    },
+    "result": "{\"matches\": [{\"buyer_id\": null, \"listing_id\": 13, \"need_id\": 22, \"score\": 95, \"reason\": \"Exact part 6ES7321-1BL00-0AA0 for Siemens S7-300 \\u00b7 used, working \\u00b7 12 units cover the 4 needed \\u00b7 no public ask listed \\u00b7 Dayton, OH. High-urgency need for Line 3 packaging PLC; downtime cost …"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:10.863+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "match_check_passed",
+    "result": "agent"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:10.918+00:00",
+    "run_id": "4b331f8ee10c",
+    "subject": "need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"4b331f8ee10c\", \"kind\": \"need_flow\", \"requests\": 5, \"input_tokens\": 2731, \"cached_tokens\": 0, \"cache_write_tokens\": 2359, \"output_tokens\": 577, \"total_tokens\": 5667, \"cost_usd\": 0.000856}",
+    "stop_reason": "posted and matched"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:16.548+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "listing:13/need:22",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_start",
+    "args": {
+      "kind": "negotiation",
+      "model": "gpt-6-luna",
+      "max_model_requests": 30,
+      "max_tokens_per_run": 150000,
+      "session_budget_usd": 2.0,
+      "listing_id": 13,
+      "need_id": 22,
+      "max_rounds": 6
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:21.184+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 475
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.109+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.131+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"seller\", \"negotiation_id\": 2, \"listing_id\": 13, \"qty\": 4, \"floor_price\": 122.0, \"public_asking_price\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.151+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "offer",
+      "price": 240,
+      "message": "We can supply the four working units and are ready to move quickly. Please share your best price."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.173+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 1, \"action\": \"offer\", \"price\": 240.0, \"status\": \"open\", \"rounds_left\": 5, \"final_offer\": false, \"end_reason\": null}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.194+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.211+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "seller_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2302,
+      "output_tokens": 227,
+      "cost_usd": 0.00035019
+    },
+    "result": "{\"move\": \"offer\", \"price\": 240.0, \"reasoning\": \"Opened at $240 per unit to leave room for negotiation while accounting for the buyer's high urgency.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:31.254+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_start",
+    "args": {
+      "prompt_chars": 611
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.359+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "get_my_private_terms",
+    "args": {}
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.378+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "get_my_private_terms",
+    "result": "{\"ok\": true, \"side\": \"buyer\", \"negotiation_id\": 2, \"need_id\": 22, \"qty\": 4, \"ceiling_price\": 450.0, \"urgency\": \"high\", \"downtime_cost_per_day\": 4000.0}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.397+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_call",
+    "tool": "submit_offer",
+    "args": {
+      "action": "accept",
+      "message": "We accept your offer and are ready to move forward with the four units."
+    }
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.416+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "submit_offer",
+    "result": "{\"ok\": true, \"negotiation_id\": 2, \"round\": 2, \"action\": \"accept\", \"status\": \"agreed\", \"price\": 240.0, \"end_reason\": \"buyer accepted $240.00\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.437+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "tool_result",
+    "tool": "final_result",
+    "result": "Final result processed."
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.456+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "buyer_negotiator",
+    "depth": 0,
+    "action": "agent_end",
+    "args": {
+      "requests": 3,
+      "input_tokens": 378,
+      "cached_tokens": 2440,
+      "output_tokens": 209,
+      "cost_usd": 0.00034882
+    },
+    "result": "{\"move\": \"accept\", \"price\": 240.0, \"reasoning\": \"Accepted $240 per unit because the high-urgency need makes securing the four working units quickly worthwhile.\"}"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:38.538+00:00",
+    "run_id": "10a5d19d503f",
+    "subject": "negotiation:2",
+    "agent": "broker",
+    "depth": 0,
+    "action": "run_end",
+    "result": "{\"run_id\": \"10a5d19d503f\", \"kind\": \"negotiation\", \"requests\": 6, \"input_tokens\": 756, \"cached_tokens\": 4742, \"cache_write_tokens\": 2864, \"output_tokens\": 436, \"total_tokens\": 8798, \"cost_usd\": 0.000699}",
+    "stop_reason": "agreed"
+  },
+  {
+    "timestamp": "2026-10-26T07:26:39.434+00:00",
+    "run_id": "reset-0d2a4f3e",
+    "agent": "system",
+    "depth": 0,
+    "action": "reset",
+    "result": "working copy restored from the original"
   }
 ]

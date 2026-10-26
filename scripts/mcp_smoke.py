@@ -118,6 +118,8 @@ async def run(smoke: Smoke) -> None:
         await S.call(b, "broker", "send_match_alerts", {"run_id": "smoke"}, "ok",
                      "code sends alerts for score >= 70: Tidewater (buyer) and Prairie (seller)")
         await S.call(b, "broker", "send_match_alerts", {"run_id": "smoke"}, "ok", "same event again: 0 sent, 2 duplicates skipped")
+        await S.call(b, "broker", "auto_negotiate_pairs", {"run_id": "smoke"}, "ok",
+                     "code: which strong matches may start a negotiation now (both companies on, both limits confirmed)")
         await S.call(b, "broker", "record_matches", {"direction": "seller_to_buyer", "matches": [
             {"listing_id": 1, "buyer_id": 40, "score": 100, "reason": "Apex Holdings is the #1 buyer"}]},
             "refused", "ungrounded match (Apex runs no S7-300) is rejected in code", code="no compatible platform")
@@ -212,6 +214,8 @@ async def run(smoke: Smoke) -> None:
                      "a company can't set another company's budget", code="not_yours")
         await S.call(h, "human_approver", "set_private_limit", {"company_id": 39, "need_id": 20, "value": 400}, "ok",
                      "Tidewater sets its own budget for need #20")
+        await S.call(h, "human_approver", "set_auto_negotiate", {"company_id": 39, "on": True}, "ok",
+                     "a company turns 'Auto-negotiate my matches' on")
 
     # ---- system: token logging
     async with Client(init_timeout=30, transport=S.transport("system")) as y:

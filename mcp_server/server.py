@@ -493,6 +493,32 @@ def flag_listing(listing_id: int, reason: str) -> dict:
         return {"ok": True, "listing_id": listing_id, "status": "flagged"}
 
 
+_BUDGET_SHARE = {"low": 0.45, "normal": 0.55, "high": 0.70, "line_down": 0.85}
+
+
+def _suggest_budget(conn, part_number, platform, family, urgency: str, downtime: float) -> tuple[float | None, str]:
+    """Code, not a model: a budget from the part's new price, scaled by urgency; a day of downtime costing more than a
+    new part means paying up to 85% of new. Never above the new price (buying new is the alternative)."""
+    if part_number:
+        new = conn.execute("SELECT new_price FROM part_catalog WHERE part_number=?", (part_number,)).fetchone()[0]
+    else:
+        prices = sorted(r[0] for r in conn.execute(
+            "SELECT p.new_price FROM part_catalog p JOIN compatibility c ON c.part_number=p.part_number "
+            "WHERE c.platform=? AND p.family=? AND p.new_price IS NOT NULL", (platform, family)))
+        new = prices[len(prices) // 2] if prices else None
+    if not new:
+        return None, ""
+    share = _BUDGET_SHARE.get(urgency, 0.55)
+    if downtime and downtime >= new:
+        share = max(share, 0.85)
+    value = round(min(new * share, new))
+    why = (f"About {round(share * 100)}% of the ${new:,.0f} new price"
+           + (f": your line costs ${downtime:,.0f}/day while it waits" if downtime and downtime >= new else
+              f": {urgency.replace('_', ' ')} urgency")
+           + ". Buying new is the alternative, so the budget stays below it.")
+    return float(value), why
+
+
 def create_need(buyer_id: int, raw_text: str, qty: int, urgency: str, downtime_cost_per_day: float = 0,
                 part_number: str | None = None, platform: str | None = None, family: str | None = None,
                 ceiling_price: float | None = None) -> dict:
@@ -516,17 +542,27 @@ def create_need(buyer_id: int, raw_text: str, qty: int, urgency: str, downtime_c
                            "ORDER BY id LIMIT 1", (buyer_id, raw_text, _redact_number(raw_text, ceiling_price) if ceiling_price
                                                    else raw_text)).fetchone()
         if dup:  # same post sent twice (double click, two tabs): reuse it, so the seller isn't alerted twice
+            b = conn.execute("SELECT * FROM buyer_private WHERE need_id=?", (dup["id"],)).fetchone()
             return {"ok": True, "need_id": dup["id"], "status": dup["status"], "duplicate_of_existing": True,
-                    "ceiling_recorded": bool(conn.execute("SELECT 1 FROM buyer_private WHERE need_id=?", (dup["id"],)).fetchone())}
+                    "ceiling_recorded": bool(b),
+                    "budget": {"value": b["ceiling_price"], "set_by": b["set_by"], "reason": b["reason"]} if b else None}
         if ceiling_price and _limit_in_message(raw_text, ceiling_price):
             raw_text = _redact_number(raw_text, ceiling_price)  # the public post must never show the private budget
         cur = conn.execute(
             "INSERT INTO needs (buyer_id, raw_text, part_number, platform, family, qty, urgency, downtime_cost_per_day, "
             "status, created_at) VALUES (?,?,?,?,?,?,?,?, 'open', ?)",
             (buyer_id, raw_text, part_number, platform, family, qty, urgency, downtime_cost_per_day, _now()))
-        if ceiling_price:
-            conn.execute("INSERT INTO buyer_private VALUES (?,?)", (cur.lastrowid, ceiling_price))
-        return {"ok": True, "need_id": cur.lastrowid, "status": "open", "ceiling_recorded": bool(ceiling_price)}
+        budget = None
+        if ceiling_price:  # the buyer typed it: confirmed
+            conn.execute("INSERT INTO buyer_private (need_id, ceiling_price, set_by) VALUES (?,?, 'buyer')", (cur.lastrowid, ceiling_price))
+            budget = {"value": ceiling_price, "set_by": "buyer", "reason": None}
+        else:  # suggested in code; the buyer confirms or edits it (only its own agent ever reads it)
+            value, why = _suggest_budget(conn, part_number, platform, family, urgency, downtime_cost_per_day)
+            if value:
+                conn.execute("INSERT INTO buyer_private (need_id, ceiling_price, set_by, reason) VALUES (?,?, 'suggested', ?)",
+                             (cur.lastrowid, value, why))
+                budget = {"value": value, "set_by": "suggested", "reason": why}
+        return {"ok": True, "need_id": cur.lastrowid, "status": "open", "ceiling_recorded": bool(budget), "budget": budget}
 
 
 # --------------------------------------------------------------------------- broker: matching
@@ -683,7 +719,7 @@ def send_match_alerts(run_id: str) -> dict:
 # --------------------------------------------------------------------------- broker: negotiation + deals
 
 
-def open_negotiation(listing_id: int, need_id: int, qty: int | None = None, run_id: str | None = None) -> dict:
+def open_negotiation(listing_id: int, need_id: int, qty: int | None = None, run_id: str | None = None, auto: bool = False) -> dict:
     """Start a negotiation between an active listing and an open need it can fill. The units it covers are
     locked (no other negotiation can use them) until it ends. The seller agent moves first; sides alternate;
     the round cap is enforced by the server."""
@@ -712,6 +748,11 @@ def open_negotiation(listing_id: int, need_id: int, qty: int | None = None, run_
             "INSERT INTO negotiations (listing_id, need_id, seller_id, buyer_id, qty, status, max_rounds, run_id, created_at) "
             "VALUES (?,?,?,?,?, 'open', ?, ?, ?)", (listing_id, need_id, r["seller_id"], n["buyer_id"], q, MAX_ROUNDS, run_id, _now()))
         conn.execute("UPDATE listings SET status='in_negotiation' WHERE id=? AND status='active'", (listing_id,))
+        if auto:  # started by the auto-negotiate setting: both companies hear about it
+            for cid, other in ((r["seller_id"], n["buyer_name"]), (n["buyer_id"], r["seller_name"])):
+                _notify(conn, cid, "negotiation_started", f"Your agent started negotiating with {other} on {r['part_number']} "
+                        f"({q} unit{'s' if q > 1 else ''}), within your private limit. You approve any deal.",
+                        listing_id=listing_id, need_id=need_id)
         return {"ok": True, **_negotiation_view(conn, conn.execute("SELECT * FROM negotiations WHERE id=?", (cur.lastrowid,)).fetchone())}
 
 
@@ -919,7 +960,7 @@ def get_company_profile(company_id: int | None = None) -> dict:
             return _fail(f"No company {company_id}.", "not_found")
         return {
             "ok": True, "company_id": c["id"], "name": c["name"], "type": c["type"],
-            "location": f"{c['city']}, {c['state']}", "industry": c["industry"],
+            "location": f"{c['city']}, {c['state']}", "industry": c["industry"], "auto_negotiate": bool(c["auto_negotiate"]),
             "installed_equipment": [dict(r) for r in conn.execute(
                 "SELECT platform, qty, years_in_use FROM installed_equipment WHERE company_id=? ORDER BY platform", (company_id,))],
             "open_needs": [_public_need(_need_row(conn, r[0])) for r in conn.execute(
@@ -1044,12 +1085,12 @@ def set_private_limit(company_id: int, value: float, listing_id: int | None = No
             if new and value > MAX_CEILING_X_NEW * new:
                 return _fail(f"A budget of ${value:,.0f} is more than {MAX_CEILING_X_NEW}x this part's new price (${new:,.0f}). "
                              "Please check the number.", "ceiling_implausible")
-        conn.execute("INSERT INTO buyer_private (need_id, ceiling_price) VALUES (?,?) "
-                     "ON CONFLICT(need_id) DO UPDATE SET ceiling_price=excluded.ceiling_price", (need_id, value))
+        conn.execute("INSERT INTO buyer_private (need_id, ceiling_price, set_by) VALUES (?,?, 'buyer') "
+                     "ON CONFLICT(need_id) DO UPDATE SET ceiling_price=excluded.ceiling_price, set_by='buyer'", (need_id, value))
         return {"ok": True, "need_id": need_id, "ceiling_price": value}
 
 
-def store_suggested_floor(listing_id: int, floor: float) -> dict:
+def store_suggested_floor(listing_id: int, floor: float, reason: str = "") -> dict:
     """Broker: keep the pricing agent's suggested floor as the listing's starting floor, only if the seller has
     none yet (set_by='suggested'). The seller reviews or changes it before any negotiation."""
     with _db(write=True) as conn:
@@ -1059,9 +1100,11 @@ def store_suggested_floor(listing_id: int, floor: float) -> dict:
         floor = round(min(floor, r["asking_price"]) if r["asking_price"] else floor, 2)
         if floor <= 0:
             return _fail("Floor must be positive.", "invalid_field")
-        cur = conn.execute("INSERT OR IGNORE INTO seller_private (listing_id, floor_price, set_by) VALUES (?,?, 'suggested')",
-                           (listing_id, floor))
-        return {"ok": True, "listing_id": listing_id, "stored": bool(cur.rowcount)}
+        cur = conn.execute("INSERT OR IGNORE INTO seller_private (listing_id, floor_price, set_by, reason) VALUES (?,?, 'suggested', ?)",
+                           (listing_id, floor, (reason or "")[:300] or None))
+        f = conn.execute("SELECT * FROM seller_private WHERE listing_id=?", (listing_id,)).fetchone()
+        return {"ok": True, "listing_id": listing_id, "stored": bool(cur.rowcount),
+                "floor": {"value": f["floor_price"], "set_by": f["set_by"], "reason": f["reason"]}}
 
 
 def save_turn_note(negotiation_id: int, side: str, round: int, note: str) -> dict:
@@ -1082,6 +1125,63 @@ def save_turn_note(negotiation_id: int, side: str, round: int, note: str) -> dic
         conn.execute("INSERT INTO turn_notes (negotiation_id, side, round, note, created_at) VALUES (?,?,?,?,?)",
                      (negotiation_id, side, round, note, _now()))
         return {"ok": True}
+
+
+# --------------------------------------------------------------------------- auto-negotiate
+
+
+def set_auto_negotiate(company_id: int, on: bool) -> dict:
+    """HUMAN ONLY (the company itself). Turn "Auto-negotiate my matches" on or off for this company."""
+    with _db(write=True) as conn:
+        cur = conn.execute("UPDATE companies SET auto_negotiate=? WHERE id=?", (1 if on else 0, company_id))
+        if not cur.rowcount:
+            return _fail(f"No company {company_id}.", "not_found")
+        return {"ok": True, "company_id": company_id, "auto_negotiate": bool(on)}
+
+
+def auto_negotiate_pairs(run_id: str | None = None, listing_id: int | None = None, need_id: int | None = None,
+                         company_id: int | None = None) -> dict:
+    """Code decides which strong matches (score >= 70 with an open need) may start a negotiation by themselves now:
+    both companies have auto-negotiate on, BOTH private limits are confirmed by their owners (not just suggested),
+    units are free and the request isn't already negotiating. Also lists matches waiting for a confirmation."""
+    with _db() as conn:
+        sql, args = ("SELECT listing_id, need_id, MAX(score) score FROM matches WHERE need_id IS NOT NULL AND score >= ?",
+                     [ALERT_THRESHOLD])
+        if run_id:
+            sql, args = sql + " AND run_id=?", args + [run_id]
+        if listing_id:
+            sql, args = sql + " AND listing_id=?", args + [listing_id]
+        if need_id:
+            sql, args = sql + " AND need_id=?", args + [need_id]
+        rows = conn.execute(sql + " GROUP BY listing_id, need_id ORDER BY score DESC", args).fetchall()
+        today = _today(conn)
+        busy = {x[0] for x in conn.execute("SELECT need_id FROM negotiations WHERE status IN ('open','agreed')")}
+        start, waiting, seen_needs = [], [], set()
+        for m in rows:
+            r, n = _listing_row(conn, m["listing_id"]), _need_row(conn, m["need_id"])
+            if not r or not n or n["id"] in busy or n["id"] in seen_needs:
+                continue
+            if company_id and company_id not in (r["seller_id"], n["buyer_id"]):
+                continue
+            if r["status"] not in MATCHABLE_LISTINGS or (r["expiry_date"] and r["expiry_date"] < today):
+                continue
+            if n["status"] not in MATCHABLE_NEEDS or r["qty"] - _units_locked(conn, r["id"]) <= 0 or not _fill_reason(conn, r, n):
+                continue
+            auto = {c[0]: c[1] for c in conn.execute("SELECT id, auto_negotiate FROM companies WHERE id IN (?,?)",
+                                                       (r["seller_id"], n["buyer_id"]))}
+            if not (auto.get(r["seller_id"]) and auto.get(n["buyer_id"])):
+                continue
+            f = conn.execute("SELECT set_by FROM seller_private WHERE listing_id=?", (r["id"],)).fetchone()
+            c = conn.execute("SELECT set_by FROM buyer_private WHERE need_id=?", (n["id"],)).fetchone()
+            pair = {"listing_id": r["id"], "need_id": n["id"], "score": m["score"], "seller": r["seller_name"],
+                    "buyer": n["buyer_name"], "part_number": r["part_number"]}
+            unconfirmed = [side for side, row in (("seller", f), ("buyer", c)) if not row or row["set_by"] == "suggested"]
+            if unconfirmed:
+                waiting.append(pair | {"waiting_for": unconfirmed})
+                continue
+            seen_needs.add(n["id"])
+            start.append(pair)
+        return {"ok": True, "start": start, "waiting": waiting}
 
 
 # --------------------------------------------------------------------------- what ONE company sees (system role)
@@ -1254,9 +1354,9 @@ def get_negotiation_start(listing_id: int, need_id: int, company_id: int) -> dic
             return _fail("You can only negotiate for your own listing or request.", "not_yours")
         floor, ceiling = _limits(conn, {"listing_id": listing_id, "need_id": need_id})
         mine = floor if side == "seller" else ceiling
-        set_by = None
-        if side == "seller" and floor is not None:
-            set_by = conn.execute("SELECT set_by FROM seller_private WHERE listing_id=?", (listing_id,)).fetchone()[0]
+        row = (conn.execute("SELECT set_by, reason FROM seller_private WHERE listing_id=?", (listing_id,)).fetchone() if side == "seller"
+               else conn.execute("SELECT set_by, reason FROM buyer_private WHERE need_id=?", (need_id,)).fetchone())
+        set_by, reason = (row["set_by"], row["reason"]) if row else (None, None)
         free = r["qty"] - _units_locked(conn, listing_id)
         busy = conn.execute("SELECT id FROM negotiations WHERE need_id=? AND status IN ('open','agreed') ORDER BY id DESC",
                             (need_id,)).fetchone()
@@ -1280,7 +1380,7 @@ def get_negotiation_start(listing_id: int, need_id: int, company_id: int) -> dic
                             "asking_price": r["asking_price"], "qty": r["qty"], "seller_name": r["seller_name"], "location": r["location"]},
                 "need": {"buyer_name": nd["buyer_name"], "qty": nd["qty"], "urgency": nd["urgency"],
                          "downtime_cost_per_day": nd["downtime_cost_per_day"], "buyer_location": nd["buyer_location"]},
-                "qty": max(min(free, nd["qty"]), 0), "my_limit": {"label": _LABEL[side], "value": mine, "set_by": set_by},
+                "qty": max(min(free, nd["qty"]), 0), "my_limit": {"label": _LABEL[side], "value": mine, "set_by": set_by, "reason": reason},
                 "can_start": blocker is None, "blocker": blocker, "open_negotiation_id": busy[0] if busy else None}
 
 
@@ -1511,17 +1611,18 @@ ROLE_TOOLS = {
     "broker": COMMON + [create_listing, update_listing_draft, check_listing_rules, activate_listing, flag_listing,
                         create_need, search_buyers_for_listing, search_listings_for_need, list_buyer_profiles,
                         record_matches, send_match_alerts, open_negotiation, get_negotiation, end_negotiation, request_deal_approval,
-                        get_company_profile, store_suggested_floor, save_turn_note] + VIEWS,
+                        get_company_profile, store_suggested_floor, save_turn_note, auto_negotiate_pairs] + VIEWS,
     "seller_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
     "buyer_agent": COMMON + [get_negotiation, get_my_private_terms, submit_offer, walk_away, get_company_profile],
-    "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal, set_private_limit, list_companies] + VIEWS,
+    "human_approver": COMMON + [get_negotiation, approve_deal, reject_deal, set_private_limit, set_auto_negotiate, list_companies] + VIEWS,
     "system": COMMON + [get_negotiation, check_listing_rules, log_tokens, get_token_summary, get_company_profile,
                list_companies, mark_notifications_read, get_marketplace_board, get_negotiation_for_company,
                list_negotiations_for_company, get_negotiation_start, list_negotiable_pairs] + VIEWS,
 }
 WRITE_TOOLS = {create_listing, update_listing_draft, activate_listing, flag_listing, create_need, record_matches, send_match_alerts,
                open_negotiation, end_negotiation, request_deal_approval, submit_offer, walk_away, approve_deal,
-               reject_deal, log_tokens, mark_notifications_read, set_private_limit, store_suggested_floor, save_turn_note}
+               reject_deal, log_tokens, mark_notifications_read, set_private_limit, store_suggested_floor, save_turn_note,
+               set_auto_negotiate}
 
 for _fn in ROLE_TOOLS[ROLE]:
     mcp.tool(annotations=WRITES if _fn in WRITE_TOOLS else READ_ONLY)(_fn)

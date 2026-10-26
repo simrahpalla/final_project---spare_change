@@ -299,3 +299,13 @@ On failure the agent is **retried once** with the exact errors. If it fails agai
 **Cost:** about $0.0006 (clear deal, 2 rounds) to $0.003 (6–7 rounds) per negotiation. Per-negotiation cap: $0.05 / 80k tokens (`NEGOTIATION_MAX_COST_USD`, `NEGOTIATION_MAX_TOKENS`), on top of the per-run caps.
 
 **Evidence:** `scripts/test_negotiation.py` → `output/eval_negotiation.json`, `output/phase6_stress.md` (end to end, leak scan of every response and message, oversell and reject, 5 at once with 3 slots, demo samples × 3, message scrub and cost cap). MCP smoke 100/100 (46 tools). Regression after Phase 6: Phase 5 stress 9/9, two-sided 17/17, match check 5/5, Phase 3 concurrency 27/27 (`output/phase6_regression_phase3.json`). Decisions: `output/phase6_decisions.md`.
+
+### Design principle: humans set the guardrails, agents do the work in between
+
+A person touches a deal exactly **twice**:
+1. **Confirming the private limit.** When a listing is created, the pricing agent suggests a floor with a one-line reason (new price, scrap value, condition); when a request is posted, code suggests a budget from the new price, the urgency and the downtime cost. Each is saved at once (`seller_private` / `buyer_private`, `set_by='suggested'`) and shown pre-filled with "Only your agent sees this." The company confirms or edits it (`POST /api/limits` → `set_private_limit`, `set_by` becomes the company).
+2. **Approving the deal.** Each company approves its own side; nothing closes without both.
+
+Everything in between is agents and code: extraction, compliance, matching, alerts, and, with **"Auto-negotiate my matches"** on (default for the demo accounts), starting the negotiation itself. Code (`auto_negotiate_pairs`) starts one only when the match scores 70+, both companies have the setting on, **both limits are confirmed** (an agent never bargains with a number its owner hasn't seen), units are free and the request isn't already negotiating. It runs through the same 3-slot queue as a manual start. With the setting off, the Start button stays. The limits are the guardrails the agents can't cross: every move is checked against them in code.
+
+Evidence: `output/phase6_autoflow.md` / `eval_negotiation_autoflow.json` — **13/13**: list → suggested floor saved (not confirmed) → auto-negotiate waits → seller confirms → negotiation starts by itself → deal inside both limits → both approve → listing sold, need filled, alerts closed; buyer side: request without a max → suggested budget saved → confirm → negotiation starts by itself; leak scan of every response, message and alert: 0 leaks. `scripts/test_demo_pair.py`: 3/3 deals ($150) with the negotiation auto-started. MCP smoke 102/102 (48 tools).

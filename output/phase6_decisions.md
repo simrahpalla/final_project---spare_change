@@ -30,3 +30,10 @@ Decisions made while working overnight without the user (per the Phase 6 prompt)
 21. **Deal card wording:** a deal exactly at your limit now says "right at your floor / budget" instead of "$0.00 above your floor"; whole-dollar differences show as "$28", not "$28.00".
 22. **"Offer blocked" screenshot skipped** (user's choice): agents stayed inside their limits in every run; the code rule is covered by the scripted test in `phase6_stress.md` section 6.
 
+
+## Follow-up: limits captured up front + auto-negotiate (user request)
+23. **Auto-negotiation starts only when BOTH limits are confirmed.** A suggested limit isn't a confirmed one; an agent shouldn't bargain with a number its owner hasn't looked at. So a seller's new listing waits for the seller's "Confirm floor"; confirming starts the waiting negotiations. Seeded limits count as confirmed.
+24. **Both companies must have auto-negotiate on.** A company's agent only starts negotiating on its own when that company's setting allows it. On by default for the 7 demo accounts (the 6 featured + Prairie Mills, which the "CR 15 seal kits" example signs in as); off for the other 43.
+25. **The buyer's budget is suggested in code, not by a model:** share of the new price by urgency (low 45%, normal 55%, high 70%, line down 85%), at least 85% when a day of downtime costs more than a new part, never above the new price. Deterministic, free, and explained in one line. The seller's floor keeps coming from the pricing agent (now with a one-line `floor_reason`).
+26. **The Buy form no longer has a max-price field**; the budget is suggested after posting and confirmed on the result. The API still accepts `max_price` (counts as confirmed).
+27. **Reseeding reset the local demo database** (new columns), so the user's earlier Prairie deal is gone; it was demo data only.

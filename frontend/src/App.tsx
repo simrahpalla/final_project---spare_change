@@ -188,6 +188,7 @@ export default function App() {
             onRun={setRun}
             onRunDone={runDone}
             onStartNegotiation={startNegotiation}
+            onOpenNegotiations={() => setTab('negotiations')}
             text={post}
             onText={setPost}
             onScenario={runScenario}
@@ -203,6 +204,7 @@ export default function App() {
             form={needForm}
             onForm={setNeedForm}
             onStartNegotiation={startNegotiation}
+            onOpenNegotiations={() => setTab('negotiations')}
           />
         ) : tab === 'marketplace' ? (
           <MarketplacePage ready={ready} accountId={accountId} version={boardVersion} />

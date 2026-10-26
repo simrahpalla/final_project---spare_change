@@ -3,8 +3,8 @@ input-card request (posted on Buy with its private $180 budget). Both are featur
 
     .venv\Scripts\python.exe scripts\test_demo_pair.py [--runs 3]
 
-Each run: reset demo -> Riverbend posts its sample request (Buy) -> Hartwell starts the negotiation -> wait -> both
-approve. Checks every run ends in a deal inside both limits and that neither side's view shows the other's limit.
+Each run: reset demo -> Riverbend posts its sample request (Buy) -> the negotiation starts by itself (auto-negotiate)
+-> wait -> both approve. Checks every run ends in a deal inside both limits and that neither side's view shows the other's limit.
 Writes output/eval_demo_pair.json.
 """
 
@@ -30,11 +30,16 @@ async def main(runs: int) -> int:
             await b.call("POST", "/api/reset")
             r = await b.flow("/api/need-flow/start", {"text": POST["text"], "buyer_id": 20, "max_price": POST["max_price"]})
             need = r.get("need_id")
-            st, d = await b.start(13, need, 1)
-            if st != 200:
-                rows.append({"run": k + 1, "status": f"start refused: {d}"})
-                continue
-            nid = d["negotiation_id"]
+            # A typed budget counts as confirmed, Hartwell's floor is confirmed and both have auto-negotiate on, so the
+            # negotiation starts by itself at the end of Riverbend's post; start it by hand only if it didn't.
+            auto = next((x for x in r["steps"] if x["step"] == "auto_negotiate"), {})
+            nid = next((x["negotiation_id"] for x in auto.get("started", []) if x["listing_id"] == 13), None)
+            if nid is None:
+                st, d = await b.start(13, need, 1)
+                if st != 200:
+                    rows.append({"run": k + 1, "status": f"start refused: {d}"})
+                    continue
+                nid = d["negotiation_id"]
             v = await b.wait(nid, 1)
             b.record(f"featured pair run {k + 1}", v)
             if v.get("deal"):

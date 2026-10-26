@@ -93,6 +93,7 @@ export type CompanyProfile = {
   type: string
   location: string
   industry: string
+  auto_negotiate: boolean
   installed_equipment: { platform: string; qty: number; years_in_use: number }[]
   open_needs: Need[]
   active_listing_ids: number[]
@@ -279,7 +280,7 @@ export type StartInfo = {
   listing: { part_number: string; description: string; condition: string; asking_price: number | null; qty: number; seller_name: string; location: string }
   need: { buyer_name: string; qty: number; urgency: string; downtime_cost_per_day: number; buyer_location: string }
   qty: number
-  my_limit: { label: string; value: number | null; set_by: string | null }
+  my_limit: { label: string; value: number | null; set_by: string | null; reason: string | null }
   can_start: boolean
   blocker: string | null
   open_negotiation_id: number | null
@@ -294,4 +295,17 @@ export const negotiationApi = {
   view: (id: number, companyId: number) => request<NegotiationView>(`/api/negotiations/${id}?company_id=${companyId}`),
   approve: (id: number, companyId: number) => post(`/api/negotiations/${id}/approve`, { company_id: companyId }),
   reject: (id: number, companyId: number, note = '') => post(`/api/negotiations/${id}/reject`, { company_id: companyId, note }),
+}
+
+// ------------------------------------------------------------------ private limits + auto-negotiate (human touchpoint 1)
+
+export type Limit = { value: number; set_by: 'suggested' | 'seller' | 'buyer'; reason: string | null }
+
+export type AutoStarted = { listing_id: number; need_id: number; negotiation_id: number; seller: string; buyer: string; queued?: boolean }
+
+export const limitsApi = {
+  confirm: (body: { company_id: number; value: number; listing_id: number | null; need_id: number | null }) =>
+    post<{ ok: boolean; value: number; started: AutoStarted[] }>('/api/limits', body),
+  setAuto: (companyId: number, on: boolean) =>
+    post<{ ok: boolean; auto_negotiate: boolean; started: AutoStarted[] }>(`/api/companies/${companyId}/auto-negotiate`, { on }),
 }

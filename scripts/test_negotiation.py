@@ -4,7 +4,8 @@ r"""Phase 6 tests: negotiation in the app, through the real backend API (and two
     .venv\Scripts\python.exe scripts\test_negotiation.py --only 1 2   # some sections
 
 Sections run in priority order, so the most important evidence exists even if a spending cap stops the run:
-  1. End to end: seller posts -> buyer alerted -> buyer negotiates -> both approve -> listing sold, need filled, alerts closed
+  1. End to end: seller posts -> confirms the suggested floor -> auto-negotiate -> both approve -> sold (and the buyer-side
+     version: suggested budget -> confirm -> auto-negotiate)
   2. Leak scan: every API response either company saw, every message, note and alert; third-party access refused
   3. Oversell (units locked while a negotiation is open) and the reject path (listing back on the market)
   4. Concurrency: 5 negotiations started at once -> at most 3 run, the rest show "queued", all finish
@@ -151,33 +152,44 @@ def over_budget() -> bool:
 # --------------------------------------------------------------------------- 1. end to end
 
 async def end_to_end() -> None:
-    print("\n1. End to end: seller posts -> buyer alerted -> negotiate -> both approve", flush=True)
+    """Agent-driven, with two human touchpoints: confirm the suggested limit, then approve the deal."""
+    print("\n1. End to end: list -> confirm floor -> auto-negotiate -> both approve -> sold", flush=True)
     async with Backend(8768) as b:
         post = {"text": "1 grundfos CR15 shaft seal kit HQQE left over, opened box but never installed. 330 or best offer", "seller_id": 7}
         r = await b.flow("/api/seller-flow/start", post)
         lid = r.get("listing_id")
-        alerts = next((s for s in r["steps"] if s["step"] == "alerts"), {})
-        check(1, "Seller (Prairie) posts 1 seal kit: listed, Tidewater alerted", r["outcome"].startswith("listed and matched")
-              and 39 in alerts.get("companies", []), {"outcome": r["outcome"], "alerts": alerts})
+        step = lambda name: next((s for s in r["steps"] if s["step"] == name), {})  # noqa: E731
+        check(1, "Seller (Prairie) posts 1 seal kit: listed, Tidewater alerted",
+              r["outcome"].startswith("listed and matched") and 39 in step("alerts").get("companies", []),
+              {"outcome": r["outcome"], "alerts": step("alerts")})
+        floor = step("floor")
+        saved = b.q("SELECT floor_price, set_by, reason FROM seller_private WHERE listing_id=?", lid)
+        check(1, "The pricing agent's suggested floor is saved to seller_private (with a one-line reason), not yet confirmed",
+              bool(saved) and saved[0]["set_by"] == "suggested" and saved[0]["floor_price"] == floor.get("value")
+              and bool(saved[0]["reason"]), {"step": floor, "db": saved})
+        auto = step("auto_negotiate")
+        check(1, "Auto-negotiate waits for the seller to confirm its floor (no negotiation started yet)",
+              auto.get("status") == "waiting" and not b.q("SELECT 1 FROM negotiations WHERE listing_id=?", lid), auto)
+        st, conf = await b.call("POST", "/api/limits", {"company_id": 7, "value": floor["value"], "listing_id": lid}, viewer=7)
+        started = conf.get("started", [])
+        check(1, "Human touchpoint 1: Prairie confirms the floor -> the negotiation with Tidewater starts by itself",
+              st == 200 and any(x["need_id"] == 20 for x in started), conf)
+        if not started:
+            return
+        nid = started[0]["negotiation_id"]
         _, tide = await b.call("GET", "/api/companies/39", viewer=39)
-        alert = next((a for a in tide["alerts"] if a["kind"] == "new_match" and a["listing_id"] == lid), None)
-        check(1, "Tidewater's bell shows the alert (switch account)", bool(alert), [a["message"] for a in tide["alerts"]])
-        _, info = await b.call("GET", f"/api/negotiations/start-info?listing_id={lid}&need_id=20&company_id=39", viewer=39)
-        check(1, "Start panel (as Tidewater): buyer side, its own budget only, can start",
-              info.get("side") == "buyer" and info["my_limit"]["value"] == 415 and info.get("can_start"), info)
-        st, started = await b.start(lid, 20, 39, 415)
-        nid = started.get("negotiation_id")
-        check(1, "Tidewater starts the negotiation; units locked at once", st == 200 and
-              b.q("SELECT status FROM listings WHERE id=?", lid)[0]["status"] == "in_negotiation", started)
+        check(1, "Tidewater is told its agent started negotiating (bell)",
+              any(a["kind"] == "negotiation_started" for a in tide["alerts"]), [a["message"] for a in tide["alerts"]][:4])
         v = await b.wait(nid, 39)
-        b.record("e2e Prairie -> Tidewater", v)
+        b.record("e2e Prairie -> Tidewater (auto)", v)
         check(1, "Agents reach a deal within both limits (code-enforced)", v["status"] == "agreed" and v["deal"]
-              and v["deal"]["price"] <= 415, {"status": v["status"], "offers": v.get("offers"), "explanation": v.get("explanation")})
+              and floor["value"] <= v["deal"]["price"] <= 415,
+              {"status": v["status"], "offers": v.get("offers"), "explanation": v.get("explanation")})
         if not v.get("deal"):
             return
         st1, a1 = await b.call("POST", f"/api/negotiations/{nid}/approve", {"company_id": 39}, viewer=39)
         mid = b.q("SELECT status FROM deals WHERE negotiation_id=?", nid)[0]["status"]
-        check(1, "Buyer approves its side: deal still pending (needs the seller too)", st1 == 200 and mid == "pending_approval", a1)
+        check(1, "Human touchpoint 2 (buyer): approves its side; the deal still waits for the seller", st1 == 200 and mid == "pending_approval", a1)
         st2, a2 = await b.call("POST", f"/api/negotiations/{nid}/approve", {"company_id": 7}, viewer=7)
         listing = b.q("SELECT status, qty FROM listings WHERE id=?", lid)[0]
         need = b.q("SELECT status FROM needs WHERE id=20")[0]
@@ -188,12 +200,26 @@ async def end_to_end() -> None:
               and open_alerts == 0, {"deal": a2, "listing": listing, "need": need, "open_alerts": open_alerts})
         _, sv = await b.call("GET", f"/api/negotiations/{nid}?company_id=7", viewer=7)
         _, bv = await b.call("GET", f"/api/negotiations/{nid}?company_id=39", viewer=39)
-        check(1, "Deal card per side: 'above your floor' for the seller, 'under your budget' for the buyer",
-              "above your floor" in sv["deal"]["relative"] and "under your budget" in bv["deal"]["relative"],
+        check(1, "Deal card per side: measured against each company's own limit",
+              "your floor" in sv["deal"]["relative"] and "your budget" in bv["deal"]["relative"],
               {"seller": sv["deal"]["relative"], "buyer": bv["deal"]["relative"]})
         board = (await b.call("GET", "/api/marketplace"))[1]
         check(1, "Sold listing and filled need are gone from the Marketplace",
               all(x["listing_id"] != lid for x in board["listings"]) and all(x["need_id"] != 20 for x in board["needs"]))
+
+        # buyer side: a request without a max price gets a suggested budget; confirming it starts the negotiation
+        rb = await b.flow("/api/need-flow/start", {"text": KEYS["two_sided"]["buyer_posts"][0]["text"], "buyer_id": 20})
+        nd = rb.get("need_id")
+        budget = next((s for s in rb["steps"] if s["step"] == "save"), {}).get("budget") or {}
+        row = b.q("SELECT ceiling_price, set_by, reason FROM buyer_private WHERE need_id=?", nd)
+        check(1, "Buyer (Riverbend) posts without a max price: a budget is suggested from the new price and downtime, saved, not confirmed",
+              bool(row) and row[0]["set_by"] == "suggested" and row[0]["ceiling_price"] == budget.get("value") and bool(row[0]["reason"]),
+              {"budget": budget, "db": row})
+        st3, c3 = await b.call("POST", "/api/limits", {"company_id": 20, "value": budget["value"], "need_id": nd}, viewer=20)
+        check(1, "Riverbend confirms its budget -> the negotiation with Hartwell (input cards) starts by itself",
+              st3 == 200 and any(x["listing_id"] == 13 for x in c3.get("started", [])), c3)
+        if c3.get("started"):
+            b.record("buyer-side auto Riverbend <- Hartwell", await b.wait(c3["started"][0]["negotiation_id"], 20))
         await leak_scan(b, 1)
 
 

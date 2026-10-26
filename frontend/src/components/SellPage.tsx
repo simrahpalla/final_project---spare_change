@@ -4,7 +4,8 @@ import { featured, SCENARIOS, type Scenario } from '../demo'
 import { outcomeKind, stepOf, workingText } from '../pipeline'
 import { CompanyStrip } from './CompanyStrip'
 import { PageBand } from './PageBand'
-import { AlertsSent, BuyerMatches, ImpactStrip, ListingCard, OutcomeCard, OutreachEmail, PriceCards, Skeleton } from './Results'
+import { LimitConfirm } from './LimitConfirm'
+import { AlertsSent, AutoNegotiated, BuyerMatches, ImpactStrip, ListingCard, OutcomeCard, OutreachEmail, PriceCards, Skeleton } from './Results'
 
 export function SellPage(props: {
   accountId: number
@@ -15,6 +16,7 @@ export function SellPage(props: {
   onRun: (r: RunStatus | null) => void
   onRunDone: () => void
   onStartNegotiation: (t: { listingId: number; needId: number }) => void
+  onOpenNegotiations: () => void
   text: string
   onText: (t: string) => void
   onScenario: (s: Scenario) => void
@@ -148,7 +150,21 @@ export function SellPage(props: {
               ) : running && listing && <Skeleton text={workingText(run)} />}
               {pricing ? <PriceCards pricing={pricing} /> : running && matching && <Skeleton text={workingText(run)} />}
               {impact && <ImpactStrip impact={impact} />}
+              {stepOf(steps, 'floor') && listing?.listing_id && (
+                <LimitConfirm
+                  side="seller"
+                  limit={stepOf(steps, 'floor') as any}
+                  companyId={props.accountId}
+                  listingId={listing.listing_id}
+                  autoOn={!!props.profile?.auto_negotiate}
+                  waitingWith={(stepOf(steps, 'auto_negotiate')?.waiting ?? []).filter((w: any) => w.waiting_for.includes('seller')).map((w: any) => w.buyer)}
+                  onOpenNegotiations={props.onOpenNegotiations}
+                />
+              )}
               {alerts && <AlertsSent alerts={alerts} />}
+              {stepOf(steps, 'auto_negotiate') && (
+                <AutoNegotiated step={stepOf(steps, 'auto_negotiate')!} side="seller" onOpen={props.onOpenNegotiations} />
+              )}
               {outreach && <OutreachEmail outreach={outreach} />}
             </>
           )}

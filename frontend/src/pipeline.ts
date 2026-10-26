@@ -14,6 +14,7 @@ const PIPELINE: { key: string; label: string; code: boolean; agent?: string }[] 
   { key: 'pricing', label: 'Pricing agent', code: false, agent: 'pricing_agent' },
   { key: 'impact', label: 'Impact estimate', code: true },
   { key: 'alerts', label: 'Alerts', code: true },
+  { key: 'auto_negotiate', label: 'Auto-negotiate', code: true },
 ]
 
 // The buyer side: the same guard, the same matching agent and the same pre-filter code, in reverse.
@@ -24,6 +25,7 @@ const NEED_PIPELINE: typeof PIPELINE = [
   { key: 'prefilter', label: 'Listing pre-filter', code: true },
   { key: 'matching', label: 'Matching agent', code: false, agent: 'matching_agent' },
   { key: 'alerts', label: 'Alerts', code: true },
+  { key: 'auto_negotiate', label: 'Auto-negotiate', code: true },
 ]
 
 // Named loading states (never a bare spinner).
@@ -62,6 +64,14 @@ function note(key: string, s: Step, reverse = false): string | undefined {
       return s.draft?.part_number ? 'part identified' : s.draft?.family ? 'machine + family' : 'part unclear'
     case 'prefilter':
       return reverse ? `${s.candidates} listing${s.candidates === 1 ? '' : 's'}` : `${s.candidates} plant${s.candidates === 1 ? '' : 's'}`
+    case 'auto_negotiate':
+      return s.status === 'started'
+        ? `started (${s.started.length})`
+        : s.status === 'waiting'
+          ? 'after limits confirmed'
+          : s.status === 'skipped'
+            ? 'not in this app'
+            : 'no strong match'
     case 'alerts':
       return s.sent ? `${s.sent} sent${s.duplicates ? ` · ${s.duplicates} dup skipped` : ''}` : s.duplicates ? 'already sent' : 'none (below 70)'
     case 'matching':

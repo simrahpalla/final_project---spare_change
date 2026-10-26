@@ -435,3 +435,33 @@ This file records the prompts I used while building my MGT 409 final project, Su
 
 > yes
 
+> Commit these follow-ups, then merge phase6 into main.
+
+## Phase 6 follow-up: limits up front + auto-negotiate
+
+### Initial prompt
+
+> Small change to how private limits are captured. Right now negotiation can't start until the user enters a floor or budget. I want the limit captured up front with an agent-suggested default, so the flow is agent-driven with only two human touchpoints: confirming the limit, and approving the deal.
+>
+> - Seller side: when a listing is created, the pricing agent suggests a private floor (with a one-line reason based on new price, scrap value and condition), shown pre-filled with "Only your agent sees this." The seller accepts or edits it as part of listing. Save it to seller_private.
+> - Buyer side: when a need is posted, suggest a private budget from the new price and the downtime cost they entered, pre-filled the same way. Save it to buyer_private.
+> - Add an "Auto-negotiate my matches" setting per company (on by default for demo accounts). When on, a match above the score threshold starts the negotiation automatically (respecting the concurrency limit and queue). When off, the "Start negotiation" button stays.
+> - The pre-negotiation screen no longer requires entering a limit. It just shows the saved one, editable.
+> - Final deal still requires both human approvals. That doesn't change.
+> - Make sure seeded demo data already has limits for every listing and need, so nothing blocks.
+> - Rerun the end-to-end test (list → auto-negotiate → both approve → sold) and the leak scan to confirm nothing broke.
+> - In harness.md, describe the design principle: humans set the guardrails (limits, final approval), agents do the work in between.
+>
+> Log this in AI_prompts.md.
+
+### What was missing
+
+- **When auto-negotiation may start relative to confirming:** it starts only once both limits are confirmed (confirming is the trigger), so an agent never bargains with an unreviewed suggestion.
+- **Whose setting counts:** both companies must have auto-negotiate on.
+- **Who suggests the budget:** code (from the new price, urgency and downtime), not a model; the seller's floor stays with the pricing agent.
+- **Which accounts are "demo accounts":** the 6 featured accounts plus Prairie Mills (used by an example chip).
+
+### Follow-up prompt(s)
+
+> None.
+

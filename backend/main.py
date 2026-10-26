@@ -83,6 +83,7 @@ class Runtime:
             return
         self.exchange, self.pool = exchange, pool
         self.neg_slot = asyncio.Semaphore(config.MAX_CONCURRENT_NEGOTIATIONS)  # created on the agent loop
+        exchange.auto_starter = lambda listing_id, need_id: _open_and_run(listing_id, need_id, auto=True)
         await pool.start()
 
     async def shutdown(self) -> None:
@@ -327,13 +328,67 @@ async def negotiation_start(body: StartNegotiationIn) -> dict:
     if (info["my_limit"] or {}).get("value") is None:
         word = "floor" if info["side"] == "seller" else "budget"
         raise HTTPException(400, f"Set your {word} first. Only your agent sees it.")
-    state = RunState(kind="negotiation", subject=f"listing:{body.listing_id}/need:{body.need_id}")
-    opened = await _tool("broker", "open_negotiation", listing_id=body.listing_id, need_id=body.need_id, run_id=state.run_id)
-    _refused(opened)
-    nid = opened["negotiation_id"]
+    started = await agent_loop.run(_open_and_run(body.listing_id, body.need_id))
+    _refused(started)
+    return {k: started[k] for k in ("negotiation_id", "run_id", "queued")}
+
+
+async def _open_and_run(listing_id: int, need_id: int, auto: bool = False) -> dict:
+    """Runs ON the agent loop: open the negotiation (units locked at once) and start its run, which waits for one of
+    the concurrent slots (shown as queued). Used by the Start button and by auto-negotiate."""
+    ex = runtime.require_ready()
+    state = RunState(kind="negotiation", subject=f"listing:{listing_id}/need:{need_id}")
+    opened = await runtime.pool["broker"].call("open_negotiation", {"listing_id": listing_id, "need_id": need_id,
+                                                                    "run_id": state.run_id, "auto": auto})
+    if not opened.get("ok"):
+        return opened
     queued = runtime.neg_slot.locked()
-    _register(state, ex.run_negotiation(body.listing_id, body.need_id, state=state, negotiation_id=nid, slot=runtime.neg_slot))
-    return {"negotiation_id": nid, "run_id": state.run_id, "queued": queued}
+    _register(state, ex.run_negotiation(listing_id, need_id, state=state, negotiation_id=opened["negotiation_id"],
+                                        slot=runtime.neg_slot))
+    return {"ok": True, "negotiation_id": opened["negotiation_id"], "run_id": state.run_id, "queued": queued}
+
+
+class LimitIn(BaseModel):
+    company_id: int
+    value: float = Field(gt=0, le=10_000_000)
+    listing_id: int | None = None
+    need_id: int | None = None
+
+
+class AutoIn(BaseModel):
+    on: bool
+
+
+async def _auto_start(**which) -> list[dict]:
+    """Start every strong match that is now allowed to negotiate by itself (both limits confirmed, both companies on)."""
+    pairs = await _tool("broker", "auto_negotiate_pairs", **which)
+    started = []
+    for p in pairs.get("start", []):
+        res = await agent_loop.run(_open_and_run(p["listing_id"], p["need_id"], auto=True))
+        if res.get("ok"):
+            started.append(p | {"negotiation_id": res["negotiation_id"], "queued": res["queued"]})
+    return started
+
+
+@app.post("/api/limits")
+async def confirm_limit(body: LimitIn) -> dict:
+    """The company confirms (or edits) ITS OWN private floor or budget. Only its own agent ever reads it. Confirming can
+    start the negotiations that were waiting for it (auto-negotiate)."""
+    if (body.listing_id is None) == (body.need_id is None):
+        raise HTTPException(422, "Give a listing_id or a need_id.")
+    key = {"listing_id": body.listing_id} if body.listing_id else {"need_id": body.need_id}
+    res = await _tool("human_approver", "set_private_limit", company_id=body.company_id, value=body.value, **key)
+    _refused(res, 400)
+    started = await _auto_start(**key)
+    return {"ok": True, "value": body.value, "confirmed": True, "started": started}
+
+
+@app.post("/api/companies/{company_id}/auto-negotiate")
+async def auto_negotiate(company_id: int, body: AutoIn) -> dict:
+    """Turn "Auto-negotiate my matches" on or off. Turning it on starts this company's strong matches that are ready."""
+    res = await _tool("human_approver", "set_auto_negotiate", company_id=company_id, on=body.on)
+    _refused(res, 404)
+    return {"ok": True, "auto_negotiate": body.on, "started": await _auto_start(company_id=company_id) if body.on else []}
 
 
 @app.get("/api/companies/{company_id}/negotiations")

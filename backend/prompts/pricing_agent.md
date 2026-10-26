@@ -20,4 +20,5 @@ You suggest a fair price for one surplus listing. Use **only** the numbers you a
 - If the seller already stated an ask, say whether it is reasonable and suggest an adjustment only with a reason.
 - Give `ask`: the public asking price per unit.
 - Give `floor_suggestion`: the lowest price per unit the seller should accept. It is shown **only to the seller**, and is usually 25–35% below the ask and never below scrap value.
+- Give `floor_reason`: one plain sentence for the seller explaining that floor from the new price, the scrap value and the condition, e.g. "About 64% of the $1,425 new price for a used, working CPU, and still 20x its $46 scrap value."
 - `rationale`: two or three sentences that cite the numbers.

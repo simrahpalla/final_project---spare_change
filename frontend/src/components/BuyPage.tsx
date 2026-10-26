@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { api, errorMessage, type CompanyProfile, type Need, type RunStatus, type Step } from '../api'
 import { featured, FEATURED } from '../demo'
 import { condition, money } from '../format'
-import { Check, Lock } from '../icons'
+import { Check } from '../icons'
 import { outcomeKind, stepOf, workingText } from '../pipeline'
 import { CompanyStrip } from './CompanyStrip'
 import { PageBand } from './PageBand'
-import { AlertsSent, OutcomeCard, Skeleton } from './Results'
+import { LimitConfirm } from './LimitConfirm'
+import { AlertsSent, AutoNegotiated, OutcomeCard, Skeleton } from './Results'
 
 const URGENCIES: { key: Need['urgency']; label: string }[] = [
   { key: 'low', label: 'Low' },
@@ -17,13 +18,13 @@ const URGENCIES: { key: Need['urgency']; label: string }[] = [
 
 export const urgencyLabel = (u: string) => URGENCIES.find((x) => x.key === u)?.label ?? u
 
-export type NeedForm = { text: string; maxPrice: string; urgency: Need['urgency'] | null; downtime: string }
+export type NeedForm = { text: string; urgency: Need['urgency'] | null; downtime: string }
 
 export function needFormFor(accountId: number): NeedForm {
   const n = featured(accountId)?.need
   return n
-    ? { text: n.text, maxPrice: String(n.maxPrice), urgency: n.urgency, downtime: n.downtime ? String(n.downtime) : '' }
-    : { text: '', maxPrice: '', urgency: null, downtime: '' }
+    ? { text: n.text, urgency: n.urgency, downtime: n.downtime ? String(n.downtime) : '' }
+    : { text: '', urgency: null, downtime: '' }
 }
 
 const toNumber = (v: string) => (v.trim() === '' ? null : Number(v.replace(/[$,\s]/g, '')))
@@ -38,12 +39,12 @@ export function BuyPage(props: {
   form: NeedForm
   onForm: (f: NeedForm) => void
   onStartNegotiation: (t: { listingId: number; needId: number }) => void
+  onOpenNegotiations: () => void
 }) {
   const { form, onForm, run, onRun, onRunDone } = props
   const sample = featured(props.accountId)?.need
   const [error, setError] = useState<string | null>(null)
   const [starting, setStarting] = useState(false)
-  const [postedMax, setPostedMax] = useState<number | null>(null)
   const timer = useRef<number | undefined>(undefined)
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
@@ -59,21 +60,17 @@ export function BuyPage(props: {
   }
 
   async function findSurplus() {
-    const max = toNumber(form.maxPrice)
     const downtime = toNumber(form.downtime)
     if (!form.text.trim()) return setError('Describe the part you need first.')
-    if (max !== null && (Number.isNaN(max) || max <= 0)) return setError('Max price must be a positive number, or leave it empty.')
     if (downtime !== null && (Number.isNaN(downtime) || downtime < 0)) return setError('Downtime cost must be a number, or leave it empty.')
     setError(null)
     setStarting(true)
     window.clearTimeout(timer.current)
     onRun(null)
-    setPostedMax(max)
     try {
       const { run_id } = await api.startNeedFlow({
         text: form.text,
         buyer_id: props.accountId,
-        max_price: max,
         urgency: form.urgency,
         downtime_cost_per_day: downtime,
       })
@@ -126,21 +123,6 @@ export function BuyPage(props: {
           placeholder={'What do you need? e.g. "2x 1756-ENBT for our ControlLogix rack, line down"'}
         />
         <div className="need-fields">
-          <label className="field">
-            <span className="field-label">
-              <Lock /> Max price per unit <span className="muted">(private)</span>
-            </span>
-            <span className="money-input">
-              <span>$</span>
-              <input
-                inputMode="decimal"
-                value={form.maxPrice}
-                onChange={(e) => onForm({ ...form, maxPrice: e.target.value })}
-                placeholder="optional"
-              />
-            </span>
-            <span className="field-help">Only you see this. Sellers, alerts and the Marketplace never do.</span>
-          </label>
           <div className="field">
             <span className="field-label">Urgency</span>
             <div className="seg" role="radiogroup" aria-label="Urgency">
@@ -169,7 +151,7 @@ export function BuyPage(props: {
                 placeholder="optional"
               />
             </span>
-            <span className="field-help">Shown to sellers: it explains your urgency.</span>
+            <span className="field-help">Shown to sellers: it explains your urgency. It also shapes your suggested budget.</span>
           </label>
         </div>
         <div className="controls">
@@ -190,7 +172,18 @@ export function BuyPage(props: {
 
       {run && (
         <>
-          {need && <NeedCard need={need} maxPrice={postedMax} />}
+          {need && <NeedCard need={need} />}
+          {need && stepOf(steps, 'save')?.budget && (
+            <LimitConfirm
+              side="buyer"
+              limit={stepOf(steps, 'save')?.budget}
+              companyId={props.accountId}
+              needId={need.need_id}
+              autoOn={!!props.profile?.auto_negotiate}
+              waitingWith={(stepOf(steps, 'auto_negotiate')?.waiting ?? []).filter((w: any) => w.waiting_for.includes('buyer')).map((w: any) => w.seller)}
+              onOpenNegotiations={props.onOpenNegotiations}
+            />
+          )}
           {!need && draft && running && <Skeleton text={workingText(run)} />}
           {!need && !draft && running && <Skeleton text={workingText(run)} />}
           {result && stopped && (
@@ -208,6 +201,7 @@ export function BuyPage(props: {
             running && <Skeleton text={workingText(run)} />
           ))}
           {alerts && <AlertsSent alerts={alerts} />}
+          {stepOf(steps, 'auto_negotiate') && <AutoNegotiated step={stepOf(steps, 'auto_negotiate')!} side="buyer" onOpen={props.onOpenNegotiations} />}
         </>
       )}
     </main>
@@ -245,7 +239,7 @@ function MyNeeds({ needs, sampleBuyer }: { needs: Need[]; sampleBuyer: boolean }
   )
 }
 
-function NeedCard({ need, maxPrice }: { need: Need; maxPrice: number | null }) {
+function NeedCard({ need }: { need: Need }) {
   return (
     <section className="card section key">
       <div className="row">
@@ -282,16 +276,6 @@ function NeedCard({ need, maxPrice }: { need: Need; maxPrice: number | null }) {
           <dd>{need.buyer_location}</dd>
         </div>
       </dl>
-      <div className="private">
-        <Lock />
-        {maxPrice ? (
-          <>
-            Your max: <b>{money(maxPrice)}</b> per unit · only you see this. It is not in your post, alerts or the Marketplace.
-          </>
-        ) : (
-          'No max price set. You can still negotiate when a seller is found.'
-        )}
-      </div>
     </section>
   )
 }

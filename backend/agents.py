@@ -137,6 +137,7 @@ class Exchange:
         self.listing_agent = Agent(
             m("listing_agent"), name="listing_agent", instructions=_prompt("listing_agent"), output_type=ListingDraft,
             toolsets=[self.pool["broker"].toolset.filtered(lambda ctx, td: td.name in LISTING_TOOLS)], retries=OUTPUT_RETRIES)
+        self.auto_starter = None  # set by the backend: async (listing_id, need_id) -> dict; starts a negotiation run
         self.need_agent = Agent(
             m("need_agent"), name="need_agent", instructions=_prompt("need_agent"), output_type=NeedDraft,
             toolsets=[self.pool["broker"].toolset.filtered(lambda ctx, td: td.name in LISTING_TOOLS)], retries=OUTPUT_RETRIES)
@@ -407,9 +408,11 @@ class Exchange:
         }, indent=1))
         ask = min(max(price.ask, ref["scrap_value"]), ref["new_price"])
         floor = min(max(price.floor_suggestion, ref["scrap_value"]), ask)
-        await self.call("store_suggested_floor", listing_id=listing_id, floor=round(floor, 2))  # only if none yet
+        saved_floor = await self.call("store_suggested_floor", listing_id=listing_id, floor=round(floor, 2),
+                                      reason=price.floor_reason)  # only if the seller has none yet
         state.step("pricing", "done", ask=round(ask, 2), floor_suggestion=round(floor, 2), rationale=price.rationale,
                    clamped=(ask != price.ask or floor != price.floor_suggestion), new_price=ref["new_price"], scrap_value=ref["scrap_value"])
+        state.step("floor", (saved_floor.get("floor") or {}).get("set_by", "suggested"), **(saved_floor.get("floor") or {}))
         if outreach:
             state.step("outreach", "drafted", **outreach)
 
@@ -419,6 +422,7 @@ class Exchange:
         late = await self._recheck_listing(state, listing_id, {(c["buyer_id"], (c.get("open_need") or {}).get("need_id"))
                                                                 for c in found.get("candidates") or []})
         outcome = "listed and matched" if matches.get("saved") or late else "listed (no matching buyers yet)"
+        await self._auto_negotiate(state)
         return self._finish(state, outcome, listing_id=listing_id)
 
     async def _recheck_listing(self, state: RunState, listing_id: int, seen: set[tuple]) -> int:
@@ -447,6 +451,20 @@ class Exchange:
             {k: m[k] for k in ("listing_id", "buyer_id", "need_id", "score", "reason")} for m in rules_ranking_reverse(new, need)])
         await self._alerts(state)
         return len(saved.get("saved", []))
+
+    async def _auto_negotiate(self, state: RunState) -> None:
+        """Code, not an agent: strong matches from this run start a negotiation when both companies have auto-negotiate
+        on and both limits are confirmed. Matches waiting for a confirmation start when the owner confirms (the API)."""
+        pairs = await self.call("auto_negotiate_pairs", run_id=state.run_id)
+        started = []
+        if self.auto_starter:
+            for p in pairs.get("start", []):
+                res = await self.auto_starter(p["listing_id"], p["need_id"])
+                if res.get("negotiation_id"):
+                    started.append(p | {"negotiation_id": res["negotiation_id"]})
+        waiting = pairs.get("waiting", [])
+        status = "started" if started else "waiting" if waiting else "none" if self.auto_starter else "skipped"
+        state.step("auto_negotiate", status, started=started, waiting=waiting)
 
     async def _alerts(self, state: RunState) -> None:
         """Alerts are decided in code (score >= 70 with an open need, top 3, never twice), not by an agent."""
@@ -530,7 +548,7 @@ class Exchange:
                 return self._finish(state, f"needs_review: {saved.get('message')}", error=saved.get("message"))
             need_id = saved["need_id"]
             state.subject = f"need:{need_id}"
-            state.step("save", "created", need_id=need_id, ceiling_recorded=saved.get("ceiling_recorded"))
+            state.step("save", "created", need_id=need_id, ceiling_recorded=saved.get("ceiling_recorded"), budget=saved.get("budget"))
 
         # 3. same pre-filter code (compatibility), reverse direction; no candidates -> no model call
         found = await self.call("search_listings_for_need", need_id=need_id)
@@ -544,6 +562,7 @@ class Exchange:
         if not cands:
             state.step("matching", "no_candidates", note="no active listing fits this need yet; no model call")
             if await self._recheck_need(state, need, set()):
+                await self._auto_negotiate(state)
                 return self._finish(state, "posted and matched", need_id=need_id)
             return self._finish(state, "posted (no matching surplus yet)", need_id=need_id)
 
@@ -582,6 +601,7 @@ class Exchange:
             state.step("outreach", "drafted", to=ranked[0]["seller_name"], subject=result.outreach_subject, body=result.outreach_body)
         await self._alerts(state)
         await self._recheck_need(state, need, {c["listing_id"] for c in cands})
+        await self._auto_negotiate(state)
         return self._finish(state, "posted and matched", need_id=need_id)
 
     # ------------------------------------------------------------------ negotiation

@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import type { Company, Step } from '../api'
 import { condition, date, kg, money } from '../format'
-import { Ban, Bell, Check, Copy, Eye, Help, Info, Leaf, Lock } from '../icons'
+import { Ban, Bell, Check, Copy, Eye, Help, Info, Leaf } from '../icons'
 import type { OutcomeKind } from '../pipeline'
 
 export function InfoTip({ text }: { text: string }) {
@@ -268,10 +268,6 @@ export function PriceCards({ pricing }: { pricing: Step }) {
         </div>
       </div>
       <p className="why">{pricing.rationale}</p>
-      <div className="private">
-        <Lock />
-        Suggested floor: <b>{money(pricing.floor_suggestion)}</b> · only you see this
-      </div>
     </section>
   )
 }
@@ -368,4 +364,34 @@ export function AlertsSent({ alerts }: { alerts: Step }) {
       </span>
     </section>
   )
+}
+
+// ------------------------------------------------------------------ auto-negotiate (decided in code after matching)
+
+export function AutoNegotiated({ step, side, onOpen }: { step: Step; side: 'seller' | 'buyer'; onOpen: () => void }) {
+  const other = (p: any) => (side === 'seller' ? p.buyer : p.seller)
+  if (step.status === 'started')
+    return (
+      <section className="alerts-sent section">
+        <span>
+          <b>Auto-negotiate:</b> your agent started negotiating with {step.started.map(other).join(', ')}.{' '}
+          <button className="linklike" onClick={onOpen}>
+            Watch it on Negotiations
+          </button>
+        </span>
+      </section>
+    )
+  if (step.status === 'waiting') {
+    // Waiting on THIS company's own confirmation is shown inside the limit card (and disappears once confirmed).
+    if (step.waiting.some((w: any) => w.waiting_for.includes(side))) return null
+    return (
+      <section className="alerts-sent section">
+        <span>
+          <b>Auto-negotiate:</b> waiting for {step.waiting.map(other).join(', ')} to confirm its limit; your agent starts as
+          soon as it does.
+        </span>
+      </section>
+    )
+  }
+  return null
 }

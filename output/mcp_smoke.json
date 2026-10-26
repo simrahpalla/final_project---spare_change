@@ -1,11 +1,12 @@
 {
   "description": "Smoke test of the surplus-exchange MCP server over the real MCP protocol (stdio): one server process per role, on a scratch copy of data/exchange.db. Each call states the expected outcome.",
-  "tested_at": "2026-10-26T05:59:31+00:00",
+  "tested_at": "2026-10-26T07:20:09+00:00",
   "server": "mcp_server/server.py (FastMCP, stdio)",
   "max_negotiation_rounds": 6,
   "tools_by_role": {
     "broker": [
       "activate_listing",
+      "auto_negotiate_pairs",
       "check_listing_rules",
       "create_listing",
       "create_need",
@@ -83,6 +84,7 @@
       "list_notifications",
       "lookup_part",
       "reject_deal",
+      "set_auto_negotiate",
       "set_private_limit"
     ],
     "system": [
@@ -119,6 +121,9 @@
     ],
     "approve_deal": [
       "human_approver"
+    ],
+    "auto_negotiate_pairs": [
+      "broker"
     ],
     "check_listing_rules": [
       "broker",
@@ -286,6 +291,9 @@
     ],
     "send_match_alerts": [
       "broker"
+    ],
+    "set_auto_negotiate": [
+      "human_approver"
     ],
     "set_private_limit": [
       "human_approver"
@@ -472,11 +480,11 @@
     ]
   },
   "summary": {
-    "calls": 100,
-    "passed": 100,
+    "calls": 102,
+    "passed": 102,
     "failed": 0,
-    "tools_registered": 46,
-    "tools_called": 46,
+    "tools_registered": 48,
+    "tools_called": 48,
     "tools_never_called": []
   },
   "calls": [
@@ -780,6 +788,7 @@
         "type": "plant",
         "location": "Cedar Rapids, IA",
         "industry": "Food & beverage",
+        "auto_negotiate": true,
         "installed_equipment": [
           {
             "platform": "Siemens S7-300",
@@ -1007,7 +1016,7 @@
             "fits_platforms": [
               "Grundfos CR 15"
             ],
-            "created_at": "2026-10-26T05:58:54+00:00",
+            "created_at": "2026-10-26T07:19:41+00:00",
             "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea",
             "why_it_fits": "96525458 is a pump spare that fits the buyer's Grundfos CR 15"
           }
@@ -1050,7 +1059,7 @@
           "fits_platforms": [
             "Grundfos CR 15"
           ],
-          "created_at": "2026-10-26T05:58:54+00:00",
+          "created_at": "2026-10-26T07:19:41+00:00",
           "seller_text_untrusted": "2 grundfos CR15 seal kits HQQE, opened box never used, $330 ea"
         },
         "candidate_count": 6,
@@ -1197,6 +1206,32 @@
     {
       "step": 20,
       "role": "broker",
+      "tool": "auto_negotiate_pairs",
+      "args": {
+        "run_id": "smoke"
+      },
+      "expect": "ok",
+      "why": "code: which strong matches may start a negotiation now (both companies on, both limits confirmed)",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "start": [
+          {
+            "listing_id": 28,
+            "need_id": 20,
+            "score": 96,
+            "seller": "Prairie Mills Flour",
+            "buyer": "Tidewater Dairy",
+            "part_number": "96525458"
+          }
+        ],
+        "waiting": []
+      }
+    },
+    {
+      "step": 21,
+      "role": "broker",
       "tool": "record_matches",
       "args": {
         "direction": "seller_to_buyer",
@@ -1228,7 +1263,7 @@
       }
     },
     {
-      "step": 21,
+      "step": 22,
       "role": "broker",
       "tool": "list_buyer_profiles",
       "args": {},
@@ -1274,7 +1309,7 @@
       }
     },
     {
-      "step": 22,
+      "step": 23,
       "role": "broker",
       "tool": "create_need",
       "args": {
@@ -1294,11 +1329,16 @@
         "ok": true,
         "need_id": 22,
         "status": "open",
-        "ceiling_recorded": true
+        "ceiling_recorded": true,
+        "budget": {
+          "value": 180.0,
+          "set_by": "buyer",
+          "reason": null
+        }
       }
     },
     {
-      "step": 23,
+      "step": 24,
       "role": "broker",
       "tool": "update_listing_draft",
       "args": {
@@ -1316,7 +1356,7 @@
       }
     },
     {
-      "step": 24,
+      "step": 25,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -1340,7 +1380,7 @@
       }
     },
     {
-      "step": 25,
+      "step": 26,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -1364,7 +1404,7 @@
       }
     },
     {
-      "step": 26,
+      "step": 27,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -1388,7 +1428,7 @@
       }
     },
     {
-      "step": 27,
+      "step": 28,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -1412,7 +1452,7 @@
       }
     },
     {
-      "step": 28,
+      "step": 29,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -1436,7 +1476,7 @@
       }
     },
     {
-      "step": 29,
+      "step": 30,
       "role": "broker",
       "tool": "activate_listing",
       "args": {
@@ -1460,7 +1500,7 @@
       }
     },
     {
-      "step": 30,
+      "step": 31,
       "role": "broker",
       "tool": "search_buyers_for_listing",
       "args": {
@@ -1477,7 +1517,7 @@
       }
     },
     {
-      "step": 31,
+      "step": 32,
       "role": "broker",
       "tool": "flag_listing",
       "args": {
@@ -1495,7 +1535,7 @@
       }
     },
     {
-      "step": 32,
+      "step": 33,
       "role": "broker",
       "tool": "approve_deal",
       "args": {
@@ -1512,7 +1552,7 @@
       }
     },
     {
-      "step": 33,
+      "step": 34,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1542,7 +1582,7 @@
       }
     },
     {
-      "step": 34,
+      "step": 35,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1572,7 +1612,7 @@
       }
     },
     {
-      "step": 35,
+      "step": 36,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1602,7 +1642,7 @@
       }
     },
     {
-      "step": 36,
+      "step": 37,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1620,7 +1660,7 @@
       }
     },
     {
-      "step": 37,
+      "step": 38,
       "role": "broker",
       "tool": "open_negotiation",
       "args": {
@@ -1650,7 +1690,7 @@
       }
     },
     {
-      "step": 38,
+      "step": 39,
       "role": "broker",
       "tool": "end_negotiation",
       "args": {
@@ -1668,7 +1708,7 @@
       }
     },
     {
-      "step": 39,
+      "step": 40,
       "role": "broker",
       "tool": "end_negotiation",
       "args": {
@@ -1686,7 +1726,7 @@
       }
     },
     {
-      "step": 40,
+      "step": 41,
       "role": "seller_agent",
       "tool": "get_my_private_terms",
       "args": {},
@@ -1705,7 +1745,7 @@
       }
     },
     {
-      "step": 41,
+      "step": 42,
       "role": "buyer_agent",
       "tool": "get_my_private_terms",
       "args": {},
@@ -1725,7 +1765,7 @@
       }
     },
     {
-      "step": 42,
+      "step": 43,
       "role": "buyer_agent",
       "tool": "get_company_profile",
       "args": {},
@@ -1740,6 +1780,7 @@
         "type": "plant",
         "location": "Cedar Rapids, IA",
         "industry": "Food & beverage",
+        "auto_negotiate": true,
         "installed_equipment": [
           {
             "platform": "Siemens S7-300",
@@ -1768,7 +1809,7 @@
       }
     },
     {
-      "step": 43,
+      "step": 44,
       "role": "buyer_agent",
       "tool": "get_company_profile",
       "args": {
@@ -1785,7 +1826,7 @@
       }
     },
     {
-      "step": 44,
+      "step": 45,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1803,7 +1844,7 @@
       }
     },
     {
-      "step": 45,
+      "step": 46,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1822,7 +1863,7 @@
       }
     },
     {
-      "step": 46,
+      "step": 47,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1841,7 +1882,7 @@
       }
     },
     {
-      "step": 47,
+      "step": 48,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1866,7 +1907,7 @@
       }
     },
     {
-      "step": 48,
+      "step": 49,
       "role": "buyer_agent",
       "tool": "get_negotiation",
       "args": {},
@@ -1895,7 +1936,7 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:03+00:00",
+            "created_at": "2026-10-26T07:19:47+00:00",
             "message_untrusted": "Pulled working, ships today."
           }
         ],
@@ -1903,7 +1944,7 @@
       }
     },
     {
-      "step": 49,
+      "step": 50,
       "role": "buyer_agent",
       "tool": "get_negotiation",
       "args": {
@@ -1920,7 +1961,7 @@
       }
     },
     {
-      "step": 50,
+      "step": 51,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -1945,7 +1986,7 @@
       }
     },
     {
-      "step": 51,
+      "step": 52,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1963,7 +2004,7 @@
       }
     },
     {
-      "step": 52,
+      "step": 53,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -1988,7 +2029,7 @@
       }
     },
     {
-      "step": 53,
+      "step": 54,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2006,7 +2047,7 @@
       }
     },
     {
-      "step": 54,
+      "step": 55,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2024,7 +2065,7 @@
       }
     },
     {
-      "step": 55,
+      "step": 56,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2049,7 +2090,7 @@
       }
     },
     {
-      "step": 56,
+      "step": 57,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2071,7 +2112,7 @@
       }
     },
     {
-      "step": 57,
+      "step": 58,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2089,7 +2130,7 @@
       }
     },
     {
-      "step": 58,
+      "step": 59,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2113,7 +2154,7 @@
       }
     },
     {
-      "step": 59,
+      "step": 60,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2137,7 +2178,7 @@
       }
     },
     {
-      "step": 60,
+      "step": 61,
       "role": "buyer_agent",
       "tool": "walk_away",
       "args": {
@@ -2154,7 +2195,7 @@
       }
     },
     {
-      "step": 61,
+      "step": 62,
       "role": "seller_agent",
       "tool": "walk_away",
       "args": {
@@ -2171,7 +2212,7 @@
       }
     },
     {
-      "step": 62,
+      "step": 63,
       "role": "seller_agent",
       "tool": "walk_away",
       "args": {
@@ -2192,7 +2233,7 @@
       }
     },
     {
-      "step": 63,
+      "step": 64,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2216,7 +2257,7 @@
       }
     },
     {
-      "step": 64,
+      "step": 65,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2240,7 +2281,7 @@
       }
     },
     {
-      "step": 65,
+      "step": 66,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2264,7 +2305,7 @@
       }
     },
     {
-      "step": 66,
+      "step": 67,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2288,7 +2329,7 @@
       }
     },
     {
-      "step": 67,
+      "step": 68,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2312,7 +2353,7 @@
       }
     },
     {
-      "step": 68,
+      "step": 69,
       "role": "buyer_agent",
       "tool": "submit_offer",
       "args": {
@@ -2336,7 +2377,7 @@
       }
     },
     {
-      "step": 69,
+      "step": 70,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2354,7 +2395,7 @@
       }
     },
     {
-      "step": 70,
+      "step": 71,
       "role": "seller_agent",
       "tool": "walk_away",
       "args": {
@@ -2375,7 +2416,7 @@
       }
     },
     {
-      "step": 71,
+      "step": 72,
       "role": "seller_agent",
       "tool": "submit_offer",
       "args": {
@@ -2392,7 +2433,7 @@
       }
     },
     {
-      "step": 72,
+      "step": 73,
       "role": "broker",
       "tool": "request_deal_approval",
       "args": {
@@ -2418,12 +2459,12 @@
           "buyer_approved_at": null,
           "approved_by": null,
           "decided_at": null,
-          "created_at": "2026-10-26T05:59:23+00:00"
+          "created_at": "2026-10-26T07:20:02+00:00"
         }
       }
     },
     {
-      "step": 73,
+      "step": 74,
       "role": "broker",
       "tool": "request_deal_approval",
       "args": {
@@ -2440,7 +2481,7 @@
       }
     },
     {
-      "step": 74,
+      "step": 75,
       "role": "broker",
       "tool": "save_turn_note",
       "args": {
@@ -2458,7 +2499,7 @@
       }
     },
     {
-      "step": 75,
+      "step": 76,
       "role": "broker",
       "tool": "store_suggested_floor",
       "args": {
@@ -2472,11 +2513,16 @@
       "result": {
         "ok": true,
         "listing_id": 28,
-        "stored": false
+        "stored": false,
+        "floor": {
+          "value": 240.0,
+          "set_by": "seller",
+          "reason": null
+        }
       }
     },
     {
-      "step": 76,
+      "step": 77,
       "role": "broker",
       "tool": "get_negotiation",
       "args": {
@@ -2507,7 +2553,7 @@
             "action": "offer",
             "price": 2875.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:18+00:00",
+            "created_at": "2026-10-26T07:19:58+00:00",
             "message_untrusted": ""
           },
           {
@@ -2516,7 +2562,7 @@
             "action": "offer",
             "price": 2000.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:19+00:00",
+            "created_at": "2026-10-26T07:19:59+00:00",
             "message_untrusted": ""
           },
           {
@@ -2525,7 +2571,7 @@
             "action": "offer",
             "price": 2850.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:19+00:00",
+            "created_at": "2026-10-26T07:19:59+00:00",
             "message_untrusted": ""
           },
           "... 4 more"
@@ -2534,7 +2580,7 @@
       }
     },
     {
-      "step": 77,
+      "step": 78,
       "role": "broker",
       "tool": "list_listings",
       "args": {
@@ -2626,7 +2672,7 @@
       }
     },
     {
-      "step": 78,
+      "step": 79,
       "role": "broker",
       "tool": "list_needs",
       "args": {
@@ -2689,7 +2735,7 @@
       }
     },
     {
-      "step": 79,
+      "step": 80,
       "role": "broker",
       "tool": "list_matches",
       "args": {},
@@ -2709,14 +2755,14 @@
             "reason": "Exact CR 15 HQQE seal kit for Tidewater's CIP pump",
             "direction": "buyer_to_seller",
             "run_id": "smoke",
-            "created_at": "2026-10-26T05:58:55+00:00",
+            "created_at": "2026-10-26T07:19:41+00:00",
             "buyer_name": "Tidewater Dairy"
           }
         ]
       }
     },
     {
-      "step": 80,
+      "step": 81,
       "role": "broker",
       "tool": "list_negotiations",
       "args": {},
@@ -2747,7 +2793,7 @@
                 "action": "offer",
                 "price": 1400.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:03+00:00",
+                "created_at": "2026-10-26T07:19:47+00:00",
                 "message_untrusted": "Pulled working, ships today."
               },
               {
@@ -2756,7 +2802,7 @@
                 "action": "offer",
                 "price": 1100.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:03+00:00",
+                "created_at": "2026-10-26T07:19:47+00:00",
                 "message_untrusted": "Line is down; can pay fast."
               },
               {
@@ -2765,7 +2811,7 @@
                 "action": "offer",
                 "price": 1300.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:03+00:00",
+                "created_at": "2026-10-26T07:19:47+00:00",
                 "message_untrusted": "Meet me at [price]."
               },
               "... 2 more"
@@ -2792,7 +2838,7 @@
                 "action": "offer",
                 "price": 1149.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:10+00:00",
+                "created_at": "2026-10-26T07:19:52+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2801,7 +2847,7 @@
                 "action": "offer",
                 "price": 650.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:11+00:00",
+                "created_at": "2026-10-26T07:19:53+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2810,7 +2856,7 @@
                 "action": "walk_away",
                 "price": 0.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:11+00:00",
+                "created_at": "2026-10-26T07:19:53+00:00",
                 "message_untrusted": "Too far apart."
               }
             ],
@@ -2836,7 +2882,7 @@
                 "action": "offer",
                 "price": 2875.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:18+00:00",
+                "created_at": "2026-10-26T07:19:58+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2845,7 +2891,7 @@
                 "action": "offer",
                 "price": 2000.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:19+00:00",
+                "created_at": "2026-10-26T07:19:59+00:00",
                 "message_untrusted": ""
               },
               {
@@ -2854,7 +2900,7 @@
                 "action": "offer",
                 "price": 2850.0,
                 "qty": 1,
-                "created_at": "2026-10-26T05:59:19+00:00",
+                "created_at": "2026-10-26T07:19:59+00:00",
                 "message_untrusted": ""
               },
               "... 4 more"
@@ -2866,7 +2912,7 @@
       }
     },
     {
-      "step": 81,
+      "step": 82,
       "role": "broker",
       "tool": "list_deals",
       "args": {},
@@ -2891,7 +2937,7 @@
             "buyer_approved_at": null,
             "approved_by": null,
             "decided_at": null,
-            "created_at": "2026-10-26T05:59:23+00:00",
+            "created_at": "2026-10-26T07:20:02+00:00",
             "part_number": "6ES7315-2AG10-0AB0",
             "seller_name": "Hartwell Precision Components",
             "buyer_name": "Riverbend Foods"
@@ -2900,7 +2946,7 @@
       }
     },
     {
-      "step": 82,
+      "step": 83,
       "role": "broker",
       "tool": "list_notifications",
       "args": {
@@ -2924,14 +2970,14 @@
             "run_id": "smoke",
             "read": 0,
             "closed_reason": null,
-            "created_at": "2026-10-26T05:58:55+00:00",
+            "created_at": "2026-10-26T07:19:41+00:00",
             "company_name": "Tidewater Dairy"
           }
         ]
       }
     },
     {
-      "step": 83,
+      "step": 84,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
@@ -2950,7 +2996,7 @@
       }
     },
     {
-      "step": 84,
+      "step": 85,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
@@ -2974,7 +3020,7 @@
       }
     },
     {
-      "step": 85,
+      "step": 86,
       "role": "human_approver",
       "tool": "approve_deal",
       "args": {
@@ -2997,7 +3043,7 @@
       }
     },
     {
-      "step": 86,
+      "step": 87,
       "role": "human_approver",
       "tool": "reject_deal",
       "args": {
@@ -3015,7 +3061,7 @@
       }
     },
     {
-      "step": 87,
+      "step": 88,
       "role": "human_approver",
       "tool": "set_private_limit",
       "args": {
@@ -3034,7 +3080,7 @@
       }
     },
     {
-      "step": 88,
+      "step": 89,
       "role": "human_approver",
       "tool": "set_private_limit",
       "args": {
@@ -3053,7 +3099,25 @@
       }
     },
     {
-      "step": 89,
+      "step": 90,
+      "role": "human_approver",
+      "tool": "set_auto_negotiate",
+      "args": {
+        "company_id": 39,
+        "on": true
+      },
+      "expect": "ok",
+      "why": "a company turns 'Auto-negotiate my matches' on",
+      "expected_code": null,
+      "passed": true,
+      "result": {
+        "ok": true,
+        "company_id": 39,
+        "auto_negotiate": true
+      }
+    },
+    {
+      "step": 91,
       "role": "system",
       "tool": "log_tokens",
       "args": {
@@ -3075,7 +3139,7 @@
       }
     },
     {
-      "step": 90,
+      "step": 92,
       "role": "system",
       "tool": "get_token_summary",
       "args": {
@@ -3109,7 +3173,7 @@
       }
     },
     {
-      "step": 91,
+      "step": 93,
       "role": "system",
       "tool": "list_companies",
       "args": {},
@@ -3158,7 +3222,7 @@
       }
     },
     {
-      "step": 92,
+      "step": 94,
       "role": "system",
       "tool": "get_marketplace_board",
       "args": {},
@@ -3329,7 +3393,7 @@
       }
     },
     {
-      "step": 93,
+      "step": 95,
       "role": "system",
       "tool": "get_negotiation_start",
       "args": {
@@ -3367,7 +3431,8 @@
         "my_limit": {
           "label": "Your floor",
           "value": 790.0,
-          "set_by": "seller"
+          "set_by": "seller",
+          "reason": null
         },
         "can_start": true,
         "blocker": null,
@@ -3375,7 +3440,7 @@
       }
     },
     {
-      "step": 94,
+      "step": 96,
       "role": "system",
       "tool": "get_negotiation_start",
       "args": {
@@ -3394,7 +3459,7 @@
       }
     },
     {
-      "step": 95,
+      "step": 97,
       "role": "system",
       "tool": "list_negotiable_pairs",
       "args": {
@@ -3425,7 +3490,7 @@
       }
     },
     {
-      "step": 96,
+      "step": 98,
       "role": "system",
       "tool": "list_negotiations_for_company",
       "args": {
@@ -3451,13 +3516,13 @@
             "price": 1250.0,
             "needs_my_approval": false,
             "run_id": null,
-            "created_at": "2026-10-26T05:58:55+00:00"
+            "created_at": "2026-10-26T07:19:41+00:00"
           }
         ]
       }
     },
     {
-      "step": 97,
+      "step": 99,
       "role": "system",
       "tool": "get_negotiation_for_company",
       "args": {
@@ -3504,7 +3569,7 @@
             "action": "offer",
             "price": 1400.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:03+00:00",
+            "created_at": "2026-10-26T07:19:47+00:00",
             "message_untrusted": "Pulled working, ships today."
           },
           {
@@ -3513,7 +3578,7 @@
             "action": "offer",
             "price": 1100.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:03+00:00",
+            "created_at": "2026-10-26T07:19:47+00:00",
             "message_untrusted": "Line is down; can pay fast."
           },
           {
@@ -3522,7 +3587,7 @@
             "action": "offer",
             "price": 1300.0,
             "qty": 1,
-            "created_at": "2026-10-26T05:59:03+00:00",
+            "created_at": "2026-10-26T07:19:47+00:00",
             "message_untrusted": "Meet me at [price]."
           },
           "... 2 more"
@@ -3534,19 +3599,19 @@
         "my_notes": [],
         "my_blocked": [
           {
-            "at": "2026-10-26T05:59:03+00:00",
+            "at": "2026-10-26T07:19:47+00:00",
             "code": "not_your_turn",
             "price": 1000,
             "text": "Your agent tried to move out of turn, and the rules blocked it."
           },
           {
-            "at": "2026-10-26T05:59:03+00:00",
+            "at": "2026-10-26T07:19:47+00:00",
             "code": "wrong_direction",
             "price": 1050,
             "text": "Your agent tried to lower its offer to $1,050.00 after a higher one, and the rules blocked it."
           },
           {
-            "at": "2026-10-26T05:59:03+00:00",
+            "at": "2026-10-26T07:19:47+00:00",
             "code": "outside_your_limit",
             "price": 2000,
             "text": "Your agent tried to offer $2,000.00 above your budget, and the rules blocked it."
@@ -3579,7 +3644,7 @@
       }
     },
     {
-      "step": 98,
+      "step": 100,
       "role": "system",
       "tool": "get_negotiation_for_company",
       "args": {
@@ -3597,7 +3662,7 @@
       }
     },
     {
-      "step": 99,
+      "step": 101,
       "role": "system",
       "tool": "mark_notifications_read",
       "args": {
@@ -3614,7 +3679,7 @@
       }
     },
     {
-      "step": 100,
+      "step": 102,
       "role": "system",
       "tool": "submit_offer",
       "args": {

@@ -438,3 +438,24 @@ h1.tagline { font-size: 26px; font-weight: 650; letter-spacing: -0.015em; line-h
   border-top: 1px solid var(--line); flex-wrap: wrap; }
 .match-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .match-actions .btn { font-size: 12px; padding: 4px 10px; }
+
+/* ---------------------------------------------------------------- private limit confirm + auto-negotiate */
+.limit-card { border: 1px solid #a9b4c3; border-radius: 8px; padding: 12px 16px; background: #fff; }
+.limit-card.side-seller { border-left: 3px solid var(--orange); }
+.limit-card.side-buyer { border-left: 3px solid var(--blue); }
+.limit-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.limit-head .icon { width: 14px; height: 14px; color: var(--navy); }
+.limit-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.limit-input { width: 160px; }
+.limit-value { font-size: 20px; font-weight: 700; color: var(--navy); }
+.limit-reason { margin: 6px 0 0; font-size: 12px; color: var(--ink-2); }
+.limit-started { margin-top: 8px; font-size: 13px; color: var(--navy); background: var(--subtle); border-radius: 6px; padding: 6px 10px; }
+.linklike { background: none; border: 0; padding: 0; color: var(--navy); text-decoration: underline; cursor: pointer; font: inherit; }
+.auto-toggle { display: flex; align-items: flex-start; gap: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px;
+  margin-bottom: 14px; background: #fff; }
+.switch { position: relative; width: 38px; height: 22px; border-radius: 999px; border: 0; background: #c9d2de; cursor: pointer; flex: none;
+  margin-top: 1px; }
+.switch span { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left 0.15s; }
+.switch.on { background: var(--navy); }
+.switch.on span { left: 19px; }
+.limit-next { margin: 6px 0 0; font-size: 13px; color: var(--navy); }

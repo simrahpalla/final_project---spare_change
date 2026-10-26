@@ -44,6 +44,7 @@ HASH_FILE = DATA / "exchange.db.sha256"
 ANSWER_KEYS = DATA / "answer_keys.json"
 
 RANDOM_SEED = 409  # MGT 409: fixed so every rebuild is identical
+DEMO_ACCOUNTS = (1, 7, 11, 12, 13, 20, 39)  # frontend/src/demo.ts: featured accounts + example-chip accounts
 EXCHANGE_TODAY = "2026-10-25"  # the marketplace's "today" for expiry checks (not the computer clock)
 
 SCHEMA = """
@@ -57,7 +58,8 @@ CREATE TABLE companies (
     type TEXT NOT NULL CHECK (type IN ('plant', 'distributor')),
     city TEXT NOT NULL,
     state TEXT NOT NULL,
-    industry TEXT NOT NULL
+    industry TEXT NOT NULL,
+    auto_negotiate INTEGER NOT NULL DEFAULT 0  -- 1: a strong match starts a negotiation once both limits are confirmed
 );
 
 -- What machines each company runs. This is what compatibility matching is based on.
@@ -154,11 +156,14 @@ CREATE TABLE matches (
 CREATE TABLE seller_private (
     listing_id INTEGER PRIMARY KEY REFERENCES listings(id),
     floor_price REAL NOT NULL CHECK (floor_price > 0),  -- lowest acceptable price per unit
-    set_by TEXT NOT NULL DEFAULT 'seller'               -- 'seller', or 'suggested' (pricing agent, until the seller edits it)
+    set_by TEXT NOT NULL DEFAULT 'seller',              -- 'seller' (confirmed), or 'suggested' (pricing agent, not confirmed yet)
+    reason TEXT                                         -- one line: why the suggested floor
 );
 CREATE TABLE buyer_private (
     need_id INTEGER PRIMARY KEY REFERENCES needs(id),
-    ceiling_price REAL NOT NULL CHECK (ceiling_price > 0)  -- highest acceptable price per unit
+    ceiling_price REAL NOT NULL CHECK (ceiling_price > 0),  -- highest acceptable price per unit
+    set_by TEXT NOT NULL DEFAULT 'buyer',                  -- 'buyer' (confirmed), or 'suggested' (code, not confirmed yet)
+    reason TEXT                                            -- one line: why the suggested budget
 );
 
 CREATE TABLE negotiations (
@@ -725,7 +730,9 @@ def build(db_path: Path) -> None:
     con.execute("INSERT INTO exchange_meta VALUES ('today', ?)", (EXCHANGE_TODAY,))
     con.execute("INSERT INTO exchange_meta VALUES ('dataset', 'synthetic v4 (small test dataset, placeholder impact factors)')")
     con.execute("INSERT INTO exchange_meta VALUES ('random_seed', ?)", (str(RANDOM_SEED),))
-    con.executemany("INSERT INTO companies VALUES (?,?,?,?,?,?)", COMPANIES)
+    con.executemany("INSERT INTO companies (id, name, type, city, state, industry) VALUES (?,?,?,?,?,?)", COMPANIES)
+    # Demo accounts (featured in the switcher, or signed in by an example chip) negotiate their strong matches on their own.
+    con.execute(f"UPDATE companies SET auto_negotiate=1 WHERE id IN ({','.join(map(str, DEMO_ACCOUNTS))})")
     con.executemany("INSERT INTO installed_equipment (company_id, platform, qty, years_in_use) VALUES (?,?,?,?)", EQUIPMENT)
     for *fields, fits in _jitter_catalog(rng):
         con.execute("INSERT INTO part_catalog VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (*fields, WEIGHT_KG[fields[0]]))
@@ -753,7 +760,7 @@ def build(db_path: Path) -> None:
             "downtime_cost_per_day, status, created_at) VALUES (?,?,?,?,?,?,?,?,?, 'open', ?)",
             (n["id"], n["buyer"], n["text"], n["part"], n["platform"], n.get("family"), n["qty"], n["urgency"],
              n["downtime"], created))
-        con.execute("INSERT INTO buyer_private VALUES (?,?)", (n["id"], n["ceiling"]))
+        con.execute("INSERT INTO buyer_private (need_id, ceiling_price) VALUES (?,?)", (n["id"], n["ceiling"]))
     con.commit()
     con.close()
 
